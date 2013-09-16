@@ -46,17 +46,19 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $app = $this->app;
+
         $this->app['geocoder.adapter'] = $this->app->share(function() {
             return new CurlHttpAdapter;
         });
 
-        $this->app['geocoder.provider'] = $this->app->share(function() {
-            return new FreeGeoIpProvider($this->app['geocoder.adapter']);
+        $this->app['geocoder.provider'] = $this->app->share(function($app) {
+            return new FreeGeoIpProvider($app['geocoder.adapter']);
         });
 
-        $this->app['geocoder'] = $this->app->share(function() {
+        $this->app['geocoder'] = $this->app->share(function($app) {
             $geocoder = new Geocoder;
-            $geocoder->registerProvider($this->app['geocoder.provider']);
+            $geocoder->registerProvider($app['geocoder.provider']);
 
             return $geocoder;
         });
