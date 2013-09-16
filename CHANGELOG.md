@@ -1,7 +1,8 @@
 CHANGELOG
 =========
 
-0.1.0 (xxxx-xx-xx)
+0.1.0 (2013-09-16)
 ------------------
 
-n/a
+* add badges
+* initial import
