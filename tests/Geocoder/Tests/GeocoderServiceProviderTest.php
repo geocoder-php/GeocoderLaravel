@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Geocoder-laravel library.
+ * This file is part of the GeocoderLaravel library.
  *
  * (c) Antoine Corcy <contact@sbin.dk>
  *
