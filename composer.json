@@ -1,6 +1,6 @@
 {
     "name"        : "toin0u/geocoder-laravel",
-    "description" : "Geocoder library for Laravel 4",
+    "description" : "Geocoder Service provider for Laravel 4",
     "keywords"    : ["laravel", "geocoder", "geocoding"],
     "homepage"    : "http://geocoder-php.org/",
     "license"     : "MIT",
