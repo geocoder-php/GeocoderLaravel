@@ -33,7 +33,8 @@ class GeocoderServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot() {
+    public function boot()
+    {
         $this->package('toin0u/geocoder-laravel');
     }
 
@@ -49,12 +50,14 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app['geocoder.adapter'] = $this->app->share(function() {
             $adapter = \Config::get('geocoder-laravel::adapter');
             $class = 'Geocoder\HttpAdapter\\' . $adapter;
+
             return new $class;
         });
 
         $this->app['geocoder.provider'] = $this->app->share(function($app) {
-    $provider = \Config::get('geocoder-laravel::provider');
-            $class = '\Geocoder\Provider\\' . $provider;
+            $provider = \Config::get('geocoder-laravel::provider');
+            $class    = '\Geocoder\Provider\\' . $provider;
+
             return new $class($app['geocoder.adapter']);
         });
 
