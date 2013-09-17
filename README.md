@@ -64,6 +64,10 @@ Find the `aliases` key in `app/config/app.php` and register the **Geocoder Facad
 Configuration
 -------------
 
+Publish the configuration
+
+    $ php artisan config:publish toin0u\geocoder-laravel
+
 The service provider creates the following services:
 
     * `geocoder`: the Geocoder instance.
