@@ -62,9 +62,9 @@ Configuration
 
 The service provider creates the following services:
 
-  * `geocoder`: the Geocoder instance.
-  * `geocoder.provider`: the provider used by Geocoder.
-  * `geocoder.adapter`: the HTTP adapter used to get data from remotes APIs.
+    * `geocoder`: the Geocoder instance.
+    * `geocoder.provider`: the provider used by Geocoder.
+    * `geocoder.adapter`: the HTTP adapter used to get data from remotes APIs.
 
 By default, the `geocoder.provider` service uses FreeGeoIP and the `geocoder.adapter` service uses the cURL adapter.
 Override these services to use the adapter/provider you want.
@@ -83,6 +83,7 @@ try {
     $geocode = Geocoder::geocode('10 rue Gambetta, Paris, France');
     // ...
 } catch (\Exception $e) {
+    // Here we will get "The FreeGeoIpProvider does not support Street addresses." ;)
     echo $e->getMessage();
 }
 ```
