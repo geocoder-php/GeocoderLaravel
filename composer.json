@@ -1,5 +1,5 @@
 {
-    "name"        : "spinegar/geocoder-laravel",
+    "name"        : "toin0u/geocoder-laravel",
     "description" : "Geocoder Service provider for Laravel 4",
     "keywords"    : ["laravel", "geocoder", "geocoding"],
     "homepage"    : "http://geocoder-php.org/",

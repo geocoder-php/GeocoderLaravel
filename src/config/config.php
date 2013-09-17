@@ -1,4 +1,6 @@
 <?php
-return array (
-    'provider' => 'FreeGeoIpProvider'
+
+return array(
+    'provider' => 'GoogleMapsProvider',
+    'adapter' => 'CurlHttpAdapter'
 );

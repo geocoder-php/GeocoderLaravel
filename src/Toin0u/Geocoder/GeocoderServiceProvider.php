@@ -12,7 +12,6 @@
 namespace Toin0u\Geocoder;
 
 use Geocoder\Geocoder;
-use Geocoder\HttpAdapter\CurlHttpAdapter;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -35,7 +34,7 @@ class GeocoderServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot() {
-        $this->package('willdurand/geocoder');
+        $this->package('toin0u/geocoder-laravel');
     }
 
     /**
@@ -48,13 +47,14 @@ class GeocoderServiceProvider extends ServiceProvider
         $app = $this->app;
 
         $this->app['geocoder.adapter'] = $this->app->share(function() {
-            return new CurlHttpAdapter;
+            $adapter = \Config::get('geocoder-laravel::adapter');
+            $class = 'Geocoder\HttpAdapter\\' . $adapter;
+            return new $class;
         });
 
         $this->app['geocoder.provider'] = $this->app->share(function($app) {
-            //return new FreeGeoIpProvider($app['geocoder.adapter']);
-	    $definition = Config.get('geocoder.provider');
-            $class = '\\Geocoder\\Provider\\' . $definition;
+    $provider = \Config::get('geocoder-laravel::provider');
+            $class = '\Geocoder\Provider\\' . $provider;
             return new $class($app['geocoder.adapter']);
         });
 
