@@ -12,7 +12,6 @@
 namespace Toin0u\Geocoder;
 
 use Geocoder\Geocoder;
-use Geocoder\Provider\FreeGeoIpProvider;
 use Geocoder\HttpAdapter\CurlHttpAdapter;
 use Illuminate\Support\ServiceProvider;
 
@@ -53,7 +52,10 @@ class GeocoderServiceProvider extends ServiceProvider
         });
 
         $this->app['geocoder.provider'] = $this->app->share(function($app) {
-            return new FreeGeoIpProvider($app['geocoder.adapter']);
+            //return new FreeGeoIpProvider($app['geocoder.adapter']);
+	    $definition = Config.get('geocoder.provider');
+            $class = '\\Geocoder\\Provider\\' . $definition;
+            return new $class($app['geocoder.adapter']);
         });
 
         $this->app['geocoder'] = $this->app->share(function($app) {
