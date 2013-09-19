@@ -66,7 +66,7 @@ Configuration
 
 Publish the configuration
 
-    $ php artisan config:publish toin0u\geocoder-laravel
+    $ php artisan config:publish toin0u/geocoder-laravel
 
 The service provider creates the following services:
 
