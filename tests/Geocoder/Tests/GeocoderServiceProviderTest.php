@@ -11,11 +11,19 @@
 
 namespace Geocoder\Tests;
 
+use Config;
+
 /**
  * @author Antoine Corcy <contact@sbin.dk>
  */
 class GeocoderServiceProviderTest extends TestCase
 {
+    public function testConfig()
+    {
+        $this->assertSame('FreeGeoIpProvider', Config::get('geocoder-laravel::provider'));
+        $this->assertSame('CurlHttpAdapter', Config::get('geocoder-laravel::adapter'));
+    }
+
     public function testLoadedProviders()
     {
         $loadedProviders = $this->app->getLoadedProviders();
