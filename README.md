@@ -64,15 +64,17 @@ Find the `aliases` key in `app/config/app.php` and register the **Geocoder Facad
 Configuration
 -------------
 
-Publish the configuration
+Publish and edit the configuration file
 
-    $ php artisan config:publish toin0u/geocoder-laravel
+```bash
+$ php artisan config:publish toin0u/geocoder-laravel
+```
 
 The service provider creates the following services:
 
-    * `geocoder`: the Geocoder instance.
-    * `geocoder.provider`: the provider used by Geocoder.
-    * `geocoder.adapter`: the HTTP adapter used to get data from remotes APIs.
+* `geocoder`: the Geocoder instance.
+* `geocoder.provider`: the provider used by Geocoder.
+* `geocoder.adapter`: the HTTP adapter used to get data from remotes APIs.
 
 By default, the `geocoder.provider` service uses FreeGeoIP and the `geocoder.adapter` service uses the cURL adapter.
 Override these services to use the adapter/provider you want.
