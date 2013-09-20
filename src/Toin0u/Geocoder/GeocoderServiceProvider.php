@@ -11,6 +11,7 @@
 
 namespace Toin0u\Geocoder;
 
+use Config;
 use Geocoder\Geocoder;
 use Illuminate\Support\ServiceProvider;
 
@@ -48,14 +49,14 @@ class GeocoderServiceProvider extends ServiceProvider
         $app = $this->app;
 
         $this->app['geocoder.adapter'] = $this->app->share(function() {
-            $adapter = \Config::get('geocoder-laravel::adapter');
-            $class = 'Geocoder\HttpAdapter\\' . $adapter;
+            $adapter = Config::get('geocoder-laravel::adapter');
+            $class   = 'Geocoder\HttpAdapter\\' . $adapter;
 
             return new $class;
         });
 
         $this->app['geocoder.provider'] = $this->app->share(function($app) {
-            $provider = \Config::get('geocoder-laravel::provider');
+            $provider = Config::get('geocoder-laravel::provider');
             $class    = '\Geocoder\Provider\\' . $provider;
 
             return new $class($app['geocoder.adapter']);
