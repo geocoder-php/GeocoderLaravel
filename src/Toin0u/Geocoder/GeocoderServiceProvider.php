@@ -45,8 +45,6 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $app = $this->app;
-
         $this->app->singleton('geocoder.adapter', function($app) {
             $adapter = $app['config']->get('geocoder-laravel::adapter');
 
