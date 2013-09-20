@@ -10,6 +10,6 @@
  */
 
 return array(
-    'provider' => 'FreeGeoIpProvider',
-    'adapter'  => 'CurlHttpAdapter'
+    'provider' => 'Geocoder\Provider\FreeGeoIpProvider',
+    'adapter'  => 'Geocoder\HttpAdapter\CurlHttpAdapter'
 );
