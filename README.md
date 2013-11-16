@@ -77,7 +77,15 @@ The service provider creates the following services:
 * `geocoder.adapter`: the HTTP adapter used to get data from remotes APIs.
 
 By default, the `geocoder.provider` service uses FreeGeoIP and the `geocoder.adapter` service uses the cURL adapter.
-Override these services to use the adapter/provider you want.
+Override these services to use the adapter/provider you want by editing
+`app/config/packages/toin0u/geocoder-laravel/config.php`:
+
+```php
+return array(
+    'provider' => 'Geocoder\Provider\GoogleMapsProvider',
+    'adapter'  => 'Geocoder\HttpAdapter\CurlHttpAdapter'
+);
+```
 
 See [the Geocoder documentation](http://geocoder-php.org/Geocoder/) for a list of available adapters and providers.
 
