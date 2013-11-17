@@ -16,7 +16,7 @@ Installation
 It can be found on [Packagist](https://packagist.org/packages/toin0u/geocoder-laravel).
 The recommended way is through [composer](http://getcomposer.org).
 
-Edit `compose.json` and add:
+Edit `composer.json` and add:
 
 ```json
 {
