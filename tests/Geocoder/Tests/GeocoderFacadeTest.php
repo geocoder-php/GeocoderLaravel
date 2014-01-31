@@ -19,7 +19,7 @@ class GeocoderFacadeTest extends TestCase
     public function testGeocoderFacade()
     {
         $this->assertTrue(is_array($providers = \Geocoder::getProviders()));
-        $this->assertArrayHasKey('free_geo_ip', $providers);
-        $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoipProvider', $providers['free_geo_ip']);
+        $this->assertArrayHasKey('chain', $providers);
+        $this->assertInstanceOf('Geocoder\\Provider\\ChainProvider', $providers['chain']);
     }
 }
