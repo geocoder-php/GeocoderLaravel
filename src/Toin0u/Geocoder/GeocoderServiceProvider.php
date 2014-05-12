@@ -52,11 +52,17 @@ class GeocoderServiceProvider extends ServiceProvider
             return new $adapter;
         });
 
-        $this->app->singleton('geocoder.provider', function($app) {
-            $providers = $app['config']->get('geocoder-laravel::providers');
+        $this->app->singleton('geocoder.chain', function($app) {
+            $providers = array();
 
-            foreach($providers as &$provider) {
-                $provider = new $provider($app['geocoder.adapter']);
+            foreach($app['config']->get('geocoder-laravel::providers') as $provider => $arguments) {
+                if (0 !== count($arguments)) {
+                    $providers[] = new $provider($app['geocoder.adapter'], implode(',', $arguments));
+
+                    continue;
+                }
+
+                $providers[] = new $provider($app['geocoder.adapter']);
             }
 
             return new ChainProvider($providers);
@@ -64,7 +70,7 @@ class GeocoderServiceProvider extends ServiceProvider
 
         $this->app['geocoder'] = $this->app->share(function($app) {
             $geocoder = new Geocoder;
-            $geocoder->registerProvider($app['geocoder.provider']);
+            $geocoder->registerProvider($app['geocoder.chain']);
 
             return $geocoder;
         });
@@ -77,6 +83,6 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('geocoder', 'geocoder.adapter', 'geocoder.provider');
+        return array('geocoder', 'geocoder.adapter', 'geocoder.chain');
     }
 }
