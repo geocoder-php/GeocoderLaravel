@@ -10,9 +10,11 @@
  */
 
 return array(
-    /* Providers get called in the chain order given here. The first one to return a result will be used. */
+    // Providers get called in the chain order given here.
+    // The first one to return a result will be used.
     'providers' => array(
-        'Geocoder\Provider\FreeGeoIpProvider'
+        'Geocoder\Provider\GoogleMapsProvider',
+        'Geocoder\Provider\FreeGeoIpProvider',
     ),
     'adapter'  => 'Geocoder\HttpAdapter\CurlHttpAdapter'
 );

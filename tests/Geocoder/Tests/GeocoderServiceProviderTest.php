@@ -18,8 +18,10 @@ class GeocoderServiceProviderTest extends TestCase
 {
     public function testConfig()
     {
-        $this->assertContains('Geocoder\Provider\FreeGeoIpProvider', $this->app['config']->get('geocoder-laravel::providers'));
-        $this->assertSame('Geocoder\HttpAdapter\CurlHttpAdapter', $this->app['config']->get('geocoder-laravel::adapter'));
+        $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder-laravel::providers')));
+        $this->assertContains('Geocoder\\Provider\\GoogleMapsProvider', $providers);
+        $this->assertContains('Geocoder\\Provider\\FreeGeoIpProvider', $providers);
+        $this->assertSame('Geocoder\\HttpAdapter\\CurlHttpAdapter', $this->app['config']->get('geocoder-laravel::adapter'));
     }
 
     public function testLoadedProviders()
@@ -42,9 +44,9 @@ class GeocoderServiceProviderTest extends TestCase
 
     public function testGeocoderDefaultProvider()
     {
-        $providersArray = $this->getProtectedProperty($this->app['geocoder.provider'], 'providers');
-        $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoIpProvider', $providersArray[0]);
+        $providers = $this->getProtectedProperty($this->app['geocoder.provider'], 'providers');
 
+        $this->assertInstanceOf('Geocoder\\Provider\\GoogleMapsProvider', $providers[0]);
     }
 
     public function testGeocoder()
@@ -60,5 +62,4 @@ class GeocoderServiceProviderTest extends TestCase
 
         return $property->getValue($testObj);
     }
-
 }
