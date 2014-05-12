@@ -1,10 +1,10 @@
 CHANGELOG
 =========
 
-0.2.1 (xxxx-xx-xx)
+0.3.0 (2014-04-13)
 ------------------
 
-n/a
+* support provider's arugments
 
 
 0.2.0 (2013-11-16)
