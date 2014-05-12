@@ -18,7 +18,7 @@ class GeocoderServiceProviderTest extends TestCase
 {
     public function testConfig()
     {
-        $this->assertSame('Geocoder\Provider\FreeGeoIpProvider', $this->app['config']->get('geocoder-laravel::provider'));
+        $this->assertContains('Geocoder\Provider\FreeGeoIpProvider', $this->app['config']->get('geocoder-laravel::providers'));
         $this->assertSame('Geocoder\HttpAdapter\CurlHttpAdapter', $this->app['config']->get('geocoder-laravel::adapter'));
     }
 
@@ -35,13 +35,30 @@ class GeocoderServiceProviderTest extends TestCase
         $this->assertInstanceOf('Geocoder\\HttpAdapter\\CurlHttpAdapter', $this->app['geocoder.adapter']);
     }
 
+    public function testGeocoderChainProvider()
+    {
+        $this->assertInstanceOf('Geocoder\\Provider\\ChainProvider', $this->app['geocoder.provider']);
+    }
+
     public function testGeocoderDefaultProvider()
     {
-        $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoIpProvider', $this->app['geocoder.provider']);
+        $providersArray = $this->getProtectedProperty($this->app['geocoder.provider'], 'providers');
+        $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoIpProvider', $providersArray[0]);
+
     }
 
     public function testGeocoder()
     {
         $this->assertInstanceOf('Geocoder\\Geocoder', $this->app['geocoder']);
     }
+
+    protected function getProtectedProperty($testObj, $propertyName)
+    {
+        $reflection = new \ReflectionClass($testObj);
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+
+        return $property->getValue($testObj);
+    }
+
 }
