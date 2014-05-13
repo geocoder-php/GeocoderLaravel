@@ -9,7 +9,7 @@ n/a
 0.3.0 (2014-04-13)
 ------------------
 
-* support provider's arugments
+* support provider's arugments (BC break)
 
 
 0.2.0 (2013-11-16)
