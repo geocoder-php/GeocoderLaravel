@@ -83,7 +83,7 @@ adapter/providers you want by editing `app/config/packages/toin0u/geocoder-larav
 ```php
 return array(
     'providers' => array(
-        'Geocoder\Provider\GoogleMapsProvider' => array('my-locale', 'my-region', $ssl = true),
+        'Geocoder\Provider\GoogleMapsProvider' => array('my-locale', 'my-region', $ssl = true, 'my-api-key'),
         'Geocoder\Provider\CloudMadeProvider'  => array('my-api-key'),
         'Geocoder\Provider\FreeGeoIpProvider'  => null, // or array()
         // ...
