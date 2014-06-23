@@ -57,7 +57,12 @@ class GeocoderServiceProvider extends ServiceProvider
 
             foreach($app['config']->get('geocoder-laravel::providers') as $provider => $arguments) {
                 if (0 !== count($arguments)) {
-                    $providers[] = new $provider($app['geocoder.adapter'], implode(',', $arguments));
+                    $providers[] = call_user_func_array(
+                        function ($arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null) use ($app, $provider) {
+                            return new $provider($app['geocoder.adapter'], $arg1, $arg2, $arg3, $arg4);
+                        },
+                        $arguments
+                    );
 
                     continue;
                 }

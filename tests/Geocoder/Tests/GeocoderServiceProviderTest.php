@@ -48,7 +48,12 @@ class GeocoderServiceProviderTest extends TestCase
         $providers = $this->getProtectedProperty($this->app['geocoder.chain'], 'providers');
 
         $this->assertInstanceOf('Geocoder\\Provider\\GoogleMapsProvider', $providers[0]);
+        $this->assertSame('fr-FR', $providers[0]->getLocale());
+        $this->assertInstanceOf('Geocoder\\HttpAdapter\\CurlHttpAdapter', $providers[0]->getAdapter());
+
         $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoIpProvider', $providers[1]);
+        $this->assertNull($providers[1]->getLocale());
+        $this->assertInstanceOf('Geocoder\\HttpAdapter\\CurlHttpAdapter', $providers[1]->getAdapter());
     }
 
     public function testGeocoder()
