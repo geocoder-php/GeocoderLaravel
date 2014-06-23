@@ -1,10 +1,10 @@
 CHANGELOG
 =========
 
-0.4.1 (xxxx-xx-xx)
+0.4.1 (2014-06-23)
 ------------------
 
-n/a
+* fix the way to implode provider's arguments + unit tests
 
 0.4.0 (2014-04-13)
 ------------------
