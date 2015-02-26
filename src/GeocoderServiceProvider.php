@@ -13,22 +13,14 @@ namespace Toin0u\Geocoder;
 
 use Geocoder\Geocoder;
 use Geocoder\Provider\ChainProvider;
-use Illuminate\Support\ServiceProvider;
 
 /**
  * Geocoder service provider
  *
  * @author Antoine Corcy <contact@sbin.dk>
  */
-class GeocoderServiceProvider extends ServiceProvider
+class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
     /**
      * Bootstrap the application events.
      *
@@ -36,7 +28,11 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('toin0u/geocoder-laravel');
+        $source = realpath(__DIR__ . '/../config/geocoder.php');
+
+        $this->publishes([$source => config_path('geocoder.php')]);
+
+        $this->mergeConfigFrom($source, 'geocoder');
     }
 
     /**
@@ -47,15 +43,15 @@ class GeocoderServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('geocoder.adapter', function($app) {
-            $adapter = $app['config']->get('geocoder-laravel::adapter');
+            $adapter = $app['config']->get('geocoder.adapter');
 
             return new $adapter;
         });
 
         $this->app->singleton('geocoder.chain', function($app) {
-            $providers = array();
+            $providers = [];
 
-            foreach($app['config']->get('geocoder-laravel::providers') as $provider => $arguments) {
+            foreach($app['config']->get('geocoder.providers') as $provider => $arguments) {
                 if (0 !== count($arguments)) {
                     $providers[] = call_user_func_array(
                         function ($arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null) use ($app, $provider) {
@@ -88,6 +84,6 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('geocoder', 'geocoder.adapter', 'geocoder.chain');
+        return ['geocoder', 'geocoder.adapter', 'geocoder.chain'];
     }
 }

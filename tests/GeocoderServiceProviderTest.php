@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Geocoder\Tests;
+namespace Toin0u\Tests\Geocoder;
 
 /**
  * @author Antoine Corcy <contact@sbin.dk>
@@ -18,11 +18,11 @@ class GeocoderServiceProviderTest extends TestCase
 {
     public function testConfig()
     {
-        $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder-laravel::providers')));
+        $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
         $this->assertCount(2, $providers);
         $this->assertArrayHasKey('Geocoder\\Provider\\GoogleMapsProvider', $providers);
         $this->assertArrayHasKey('Geocoder\\Provider\\FreeGeoIpProvider', $providers);
-        $this->assertSame('Geocoder\\HttpAdapter\\CurlHttpAdapter', $this->app['config']->get('geocoder-laravel::adapter'));
+        $this->assertSame('Geocoder\\HttpAdapter\\CurlHttpAdapter', $this->app['config']->get('geocoder.adapter'));
     }
 
     public function testLoadedProviders()

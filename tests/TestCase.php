@@ -9,24 +9,30 @@
  * file that was distributed with this source code.
  */
 
-namespace Geocoder\Tests;
+namespace Toin0u\Tests\Geocoder;
 
 /**
  * @author Antoine Corcy <contact@sbin.dk>
  */
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    protected function getPackageProviders()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getPackageProviders($app)
     {
-        return array(
+        return [
             'Toin0u\Geocoder\GeocoderServiceProvider',
-        );
+        ];
     }
 
-    protected function getPackageAliases()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getPackageAliases($app)
     {
-        return array(
-            'Geocoder' => 'Toin0u\Geocoder\GeocoderFacade',
-        );
+        return [
+            'Geocoder' => 'Toin0u\Geocoder\Facade\Geocoder',
+        ];
     }
 }

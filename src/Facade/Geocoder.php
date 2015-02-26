@@ -9,16 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Toin0u\Geocoder;
-
-use Illuminate\Support\Facades\Facade;
+namespace Toin0u\Geocoder\Facade;
 
 /**
  * Facade for Geocoder
  *
  * @author Antoine Corcy <contact@sbin.dk>
  */
-class GeocoderFacade extends Facade
+class Geocoder extends \Illuminate\Support\Facades\Facade
 {
     /**
     * Get the registered name of the component.
