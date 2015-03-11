@@ -1,8 +1,8 @@
-Geocoder for Lavarel 4
+Geocoder for Lavarel 5
 ======================
 
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
-in [**Laravel 4**](http://laravel.com/).
+in [**Laravel 5**](http://laravel.com/).
 
 [![Latest StableVersion](https://poser.pugx.org/toin0u/geocoder-laravel/v/stable.png)](https://packagist.org/packages/toin0u/geocoder-laravel)
 [![Total Downloads](https://poser.pugx.org/toin0u/geocoder-laravel/downloads.png)](https://packagist.org/packages/toin0u/geocoder-laravel)
@@ -31,6 +31,11 @@ Edit `composer.json` and add:
 page to choose a stable version to use, avoid the `@stable` meta constraint.
 
 And install dependencies:
+```bash
+$ composer update
+```
+
+If you do not have [**Composer**](https://getcomposer.org) installed, run these two commands:
 
 ```bash
 $ curl -sS https://getcomposer.org/installer | php
@@ -41,7 +46,7 @@ $ php composer.phar install
 Usage
 -----
 
-Find the `providers` key in `app/config/app.php` and register the **Geocoder Service Provider**.
+Find the `providers` array key in `config/app.php` and register the **Geocoder Service Provider**.
 
 ```php
 'providers' => array(
@@ -51,13 +56,13 @@ Find the `providers` key in `app/config/app.php` and register the **Geocoder Ser
 )
 ```
 
-Find the `aliases` key in `app/config/app.php` and register the **Geocoder Facade**.
+Find the `aliases` array key in `config/app.php` and register the **Geocoder Facade**.
 
 ```php
 'aliases' => array(
     // ...
 
-    'Geocoder' => 'Toin0u\Geocoder\GeocoderFacade',
+    'Geocoder' => 'Toin0u\Geocoder\Facade\Geocoder',
 )
 ```
 
@@ -78,7 +83,7 @@ The service provider creates the following services:
 
 By default, the `geocoder.chain` service contains `GoogleMapsProvider` and `FreeGeoIpProvider`.
 The `geocoder.adapter` service uses the cURL adapter. Override these services to use the
-adapter/providers you want by editing `app/config/packages/toin0u/geocoder-laravel/config.php`:
+adapter/providers you want by editing `config/geocoder.php`:
 
 ```php
 return array(
