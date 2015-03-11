@@ -1,6 +1,8 @@
 Geocoder for Lavarel 5
 ======================
 
+If you still use **Lavarel 4**, please check out the `0.4.x` branch [here](https://github.com/geocoder-php/GeocoderLaravel/tree/0.4.x).
+
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
 in [**Laravel 5**](http://laravel.com/).
 

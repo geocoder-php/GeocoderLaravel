@@ -1,10 +1,12 @@
 CHANGELOG
 =========
 
-0.4.2 (xxxx-xx-xx)
+0.5.0 (2015-03-11)
 ------------------
 
-n/a
+* [BC] the package is now compatible for Laravel 5
+* improved the doc
+* add code of conduct
 
 0.4.1 (2014-06-23)
 ------------------
