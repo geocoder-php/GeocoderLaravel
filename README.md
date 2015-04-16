@@ -74,7 +74,7 @@ Configuration
 Publish and edit the configuration file
 
 ```bash
-$ php artisan config:publish toin0u/geocoder-laravel
+$ php artisan vendor:publish --provider="toin0u/geocoder-laravel"
 ```
 
 The service provider creates the following services:
