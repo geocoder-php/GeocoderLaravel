@@ -1,4 +1,4 @@
-Geocoder for Lavarel 4
+Geocoder for Laravel 4
 ======================
 
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
@@ -21,7 +21,7 @@ Edit `composer.json` and add:
 ```json
 {
     "require": {
-        "toin0u/geocoder-laravel": "@stable"
+        "toin0u/geocoder-laravel": "0.4.*@dev"
     }
 }
 ```
