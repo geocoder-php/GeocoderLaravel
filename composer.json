@@ -1,6 +1,6 @@
 {
     "name"        : "toin0u/geocoder-laravel",
-    "description" : "Geocoder Service provider for Laravel 5.1",
+    "description" : "Geocoder Service provider for Laravel 5.0 / 5.1",
     "keywords"    : ["laravel", "geocoder", "geocoding"],
     "homepage"    : "http://geocoder-php.org/",
     "license"     : "MIT",
@@ -14,7 +14,7 @@
 
     "require" : {
         "php"                 : ">=5.4",
-        "illuminate/support"  : "5.1.*",
+        "illuminate/support"  : "5.0 - 5.1",
         "willdurand/geocoder" : "~2.4"
     },
 
