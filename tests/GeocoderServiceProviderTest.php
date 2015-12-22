@@ -19,10 +19,10 @@ class GeocoderServiceProviderTest extends TestCase
     public function testConfig()
     {
         $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
-        $this->assertCount(2, $providers);
-        $this->assertArrayHasKey('Geocoder\\Provider\\GoogleMapsProvider', $providers);
-        $this->assertArrayHasKey('Geocoder\\Provider\\FreeGeoIpProvider', $providers);
-        $this->assertSame('Geocoder\\HttpAdapter\\CurlHttpAdapter', $this->app['config']->get('geocoder.adapter'));
+        $this->assertCount(3, $providers);
+        $this->assertArrayHasKey('Geocoder\\Provider\\GoogleMaps', $providers);
+        $this->assertArrayHasKey('Geocoder\\Provider\\FreeGeoIp', $providers);
+        $this->assertSame('Ivory\\HttpAdapter\\CurlHttpAdapter', $this->app['config']->get('geocoder.adapter'));
     }
 
     public function testLoadedProviders()
@@ -35,25 +35,38 @@ class GeocoderServiceProviderTest extends TestCase
 
     public function testGeocoderDefaultAdapter()
     {
-        $this->assertInstanceOf('Geocoder\\HttpAdapter\\CurlHttpAdapter', $this->app['geocoder.adapter']);
+        $this->assertInstanceOf('Ivory\\HttpAdapter\\CurlHttpAdapter', $this->app['geocoder.adapter']);
     }
 
     public function testGeocoderChainProvider()
     {
-        $this->assertInstanceOf('Geocoder\\Provider\\ChainProvider', $this->app['geocoder.chain']);
+        $providers = $this->getProtectedProperty($this->app['geocoder'], 'providers');
+
+        $this->assertArrayHasKey('chain', $providers);
+
+        $this->assertInstanceOf('Geocoder\\Provider\\Chain', $providers['chain']);
+
+        $chainProviders = $this->getProtectedProperty($providers['chain'], 'providers');
+
+        $this->assertInstanceOf('Geocoder\\Provider\\GoogleMaps', $chainProviders[0]);
+        $this->assertSame('fr-FR', $chainProviders[0]->getLocale());
+        $this->assertInstanceOf('Ivory\\HttpAdapter\\CurlHttpAdapter', $chainProviders[0]->getAdapter());
+
+        $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoIp', $chainProviders[1]);
+        $this->assertInstanceOf('Ivory\\HttpAdapter\\CurlHttpAdapter', $chainProviders[1]->getAdapter());
+
     }
 
-    public function testGeocoderDefaultProvider()
+    public function testGeocoderNamedProviders()
     {
-        $providers = $this->getProtectedProperty($this->app['geocoder.chain'], 'providers');
+        $providers = $this->getProtectedProperty($this->app['geocoder'], 'providers');
 
-        $this->assertInstanceOf('Geocoder\\Provider\\GoogleMapsProvider', $providers[0]);
-        $this->assertSame('fr-FR', $providers[0]->getLocale());
-        $this->assertInstanceOf('Geocoder\\HttpAdapter\\CurlHttpAdapter', $providers[0]->getAdapter());
+        $this->assertInstanceOf('Geocoder\\Provider\\GoogleMaps', $providers['google_maps']);
+        $this->assertSame('fr-FR', $providers['google_maps']->getLocale());
+        $this->assertInstanceOf('Ivory\\HttpAdapter\\CurlHttpAdapter', $providers['google_maps']->getAdapter());
 
-        $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoIpProvider', $providers[1]);
-        $this->assertNull($providers[1]->getLocale());
-        $this->assertInstanceOf('Geocoder\\HttpAdapter\\CurlHttpAdapter', $providers[1]->getAdapter());
+        $this->assertInstanceOf('Geocoder\\Provider\\FreeGeoIp', $providers['free_geo_ip']);
+        $this->assertInstanceOf('Ivory\\HttpAdapter\\CurlHttpAdapter', $providers['free_geo_ip']->getAdapter());
     }
 
     public function testGeocoder()
