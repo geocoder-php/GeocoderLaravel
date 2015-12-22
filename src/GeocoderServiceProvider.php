@@ -71,7 +71,9 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->app['geocoder'] = $this->app->share(function($app) {
             $geocoder = new Geocoder;
-            $geocoder->registerProvider($app['geocoder.chain']);
+            $geocoder->registerProviders(
+                $this->getGeocoderProviders($this->app['config']->get('geocoder.providers'))
+            );
 
             return $geocoder;
         });
@@ -85,5 +87,33 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
     public function provides()
     {
         return ['geocoder', 'geocoder.adapter', 'geocoder.chain'];
+    }
+    
+    protected function getGeocoderProviders(array $providersConfig)
+    {
+        $providers = [];
+
+        foreach($providersConfig as $provider => $arguments) {
+            //Chain provider
+            if(is_int($provider)){
+                $chainProviders = $this->getGeocoderProviders($arguments);
+                $providers[] = new ChainProvider($chainProviders);
+            }else {
+                if (0 !== count($arguments)) {
+                    $providers[] = call_user_func_array(
+                        function ($arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null) use ($provider) {
+                            return new $provider($this->app['geocoder.adapter'], $arg1, $arg2, $arg3, $arg4);
+                        },
+                        $arguments
+                    );
+
+                    continue;
+                }
+
+                $providers[] = new $provider($this->app['geocoder.adapter']);
+            }
+        }
+
+        return $providers;
     }
 }
