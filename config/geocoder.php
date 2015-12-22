@@ -14,13 +14,13 @@ return [
     // The first one to return a result will be used.
     'providers' => [
         // Named Providers
-        Geocoder\Provider\GoogleMaps::class => ['fr-FR', 'Île-de-France', true],
-        Geocoder\Provider\FreeGeoIp::class  => null,
+        'Geocoder\Provider\GoogleMaps' => ['fr-FR', 'Île-de-France', true],
+        'Geocoder\Provider\FreeGeoIp'  => null,
         // Chain Provider
         [
-            Geocoder\Provider\GoogleMaps::class => ['fr-FR', 'Île-de-France', true],
-            Geocoder\Provider\FreeGeoIp::class  => null,
+            'Geocoder\Provider\GoogleMaps' => ['fr-FR', 'Île-de-France', true],
+            'Geocoder\Provider\FreeGeoIp'  => null,
         ]
     ],
-    'adapter'  => Ivory\HttpAdapter\CurlHttpAdapter::class,
+    'adapter'  => 'Ivory\HttpAdapter\CurlHttpAdapter',
 ];
