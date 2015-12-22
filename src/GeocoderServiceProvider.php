@@ -11,8 +11,8 @@
 
 namespace Toin0u\Geocoder;
 
-use Geocoder\Geocoder;
-use Geocoder\Provider\ChainProvider;
+use Geocoder\ProviderAggregator;
+use Geocoder\Provider\Chain;
 
 /**
  * Geocoder service provider
@@ -49,7 +49,7 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
         });
 
         $this->app['geocoder'] = $this->app->share(function($app) {
-            $geocoder = new Geocoder;
+            $geocoder = new ProviderAggregator;
             $geocoder->registerProviders(
                 $this->getGeocoderProviders($this->app['config']->get('geocoder.providers'))
             );
@@ -65,7 +65,7 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function provides()
     {
-        return ['geocoder', 'geocoder.adapter', 'geocoder.chain'];
+        return ['geocoder', 'geocoder.adapter'];
     }
     
     protected function getGeocoderProviders(array $providersConfig)
@@ -76,7 +76,7 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
             //Chain provider
             if(is_int($provider)){
                 $chainProviders = $this->getGeocoderProviders($arguments);
-                $providers[] = new ChainProvider($chainProviders);
+                $providers[] = new Chain($chainProviders);
             }else {
                 if (0 !== count($arguments)) {
                     $providers[] = call_user_func_array(
