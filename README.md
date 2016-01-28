@@ -54,7 +54,7 @@ Find the `providers` array key in `config/app.php` and register the **Geocoder S
 'providers' => array(
     // ...
 
-    'Toin0u\Geocoder\GeocoderServiceProvider',
+    Toin0u\Geocoder\GeocoderServiceProvider::class,
 )
 ```
 
@@ -64,7 +64,7 @@ Find the `aliases` array key in `config/app.php` and register the **Geocoder Fac
 'aliases' => array(
     // ...
 
-    'Geocoder' => 'Toin0u\Geocoder\Facade\Geocoder',
+    'Geocoder' => Toin0u\Geocoder\Facade\Geocoder::class,
 )
 ```
 
@@ -88,18 +88,13 @@ The `geocoder.adapter` service uses the cURL adapter. Override these services to
 adapter/providers you want by editing `config/geocoder.php`:
 
 ```php
-return array(
-    'providers' => array(
-        'Geocoder\Provider\GoogleMapsProvider' => array('my-locale', 'my-region', $ssl = true, 'my-api-key'),
-        'Geocoder\Provider\GoogleMapsBusinessProvider' => array(
-            'my-client-id', 'my-api-key', 'my-locale', 'my-region', $ssl = true
-        ),
-        'Geocoder\Provider\CloudMadeProvider'  => array('my-api-key'),
-        'Geocoder\Provider\FreeGeoIpProvider'  => null, // or array()
-        // ...
-    ),
-    'adapter'  => 'Geocoder\HttpAdapter\CurlHttpAdapter'
-);
+return [
+    'providers' => [
+        '\Geocoder\Provider\GoogleMapsProvider' => ['en_EN', 'my-region', $ssl = false, 'MY_API_KEY'],
+        '\Geocoder\Provider\GoogleMapsBusinessProvider' => ['my-locale', 'my-region', $ssl = true, 'MY_API_KEY'],
+    ],
+    'adapter'  => '\Geocoder\HttpAdapter\CurlHttpAdapter'
+];
 ```
 
 NB: As you can see the array value of the provider is the constructor arguments.
