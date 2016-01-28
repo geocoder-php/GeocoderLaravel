@@ -20,6 +20,6 @@ class GeocoderTest extends \Toin0u\Tests\Geocoder\TestCase
     {
         $this->assertTrue(is_array($providers = \Geocoder::getProviders()));
         $this->assertArrayHasKey('chain', $providers);
-        $this->assertInstanceOf('Geocoder\\Provider\\ChainProvider', $providers['chain']);
+        $this->assertInstanceOf('Geocoder\\Provider\\Chain', $providers['chain']);
     }
 }

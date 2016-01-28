@@ -11,8 +11,8 @@
 
 namespace Toin0u\Geocoder;
 
-use Geocoder\Geocoder;
-use Geocoder\Provider\ChainProvider;
+use Geocoder\ProviderAggregator;
+use Geocoder\Provider\Chain;
 
 /**
  * Geocoder service provider
@@ -48,30 +48,11 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
             return new $adapter;
         });
 
-        $this->app->singleton('geocoder.chain', function($app) {
-            $providers = [];
-
-            foreach($app['config']->get('geocoder.providers') as $provider => $arguments) {
-                if (0 !== count($arguments)) {
-                    $providers[] = call_user_func_array(
-                        function ($arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null) use ($app, $provider) {
-                            return new $provider($app['geocoder.adapter'], $arg1, $arg2, $arg3, $arg4);
-                        },
-                        $arguments
-                    );
-
-                    continue;
-                }
-
-                $providers[] = new $provider($app['geocoder.adapter']);
-            }
-
-            return new ChainProvider($providers);
-        });
-
         $this->app['geocoder'] = $this->app->share(function($app) {
-            $geocoder = new Geocoder;
-            $geocoder->registerProvider($app['geocoder.chain']);
+            $geocoder = new ProviderAggregator;
+            $geocoder->registerProviders(
+                $this->getGeocoderProviders($this->app['config']->get('geocoder.providers'))
+            );
 
             return $geocoder;
         });
@@ -84,6 +65,34 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function provides()
     {
-        return ['geocoder', 'geocoder.adapter', 'geocoder.chain'];
+        return ['geocoder', 'geocoder.adapter'];
+    }
+    
+    protected function getGeocoderProviders(array $providersConfig)
+    {
+        $providers = [];
+
+        foreach($providersConfig as $provider => $arguments) {
+            //Chain provider
+            if(is_int($provider)){
+                $chainProviders = $this->getGeocoderProviders($arguments);
+                $providers[] = new Chain($chainProviders);
+            }else {
+                if (0 !== count($arguments)) {
+                    $providers[] = call_user_func_array(
+                        function ($arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null) use ($provider) {
+                            return new $provider($this->app['geocoder.adapter'], $arg1, $arg2, $arg3, $arg4);
+                        },
+                        $arguments
+                    );
+
+                    continue;
+                }
+
+                $providers[] = new $provider($this->app['geocoder.adapter']);
+            }
+        }
+
+        return $providers;
     }
 }
