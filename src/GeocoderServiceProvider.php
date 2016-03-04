@@ -75,6 +75,8 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
 
             return $geocoder;
         });
+        
+        $this->app->alias('geocoder', 'Geocoder\Geocoder');
     }
 
     /**
@@ -84,6 +86,6 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function provides()
     {
-        return ['geocoder', 'geocoder.adapter', 'geocoder.chain'];
+        return ['geocoder', 'geocoder.adapter', 'geocoder.chain', 'Geocoder\Geocoder'];
     }
 }
