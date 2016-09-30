@@ -1,5 +1,10 @@
 <?php
 
+use Ivory\HttpAdapter\CurlHttpAdapter;
+use Geocoder\Provider\BingMaps;
+use Geocoder\Provider\FreeGeoIp;
+use Geocoder\Provider\GoogleMaps;
+
 /**
  * This file is part of the GeocoderLaravel library.
  *
@@ -13,8 +18,17 @@ return [
     // Providers get called in the chain order given here.
     // The first one to return a result will be used.
     'providers' => [
-        'Geocoder\Provider\GoogleMaps' => ['fr-FR', 'France', true],
-        'Geocoder\Provider\FreeGeoIp'  => null,
+        GoogleMaps::class => [
+            'en_US',
+            null,
+            true,
+            env('GOOGLE_MAPS_API_KEY'),
+        ],
+        BingMaps::class => [
+            'en_US',
+            env('BING_MAPS_API_KEY'),
+        ],
+        FreeGeoIp::class  => null,
     ],
-    'adapter'  => 'Ivory\HttpAdapter\Guzzle6HttpAdapter',
+    'adapter'  => CurlHttpAdapter::class,
 ];
