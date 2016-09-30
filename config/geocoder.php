@@ -13,8 +13,8 @@ return [
     // Providers get called in the chain order given here.
     // The first one to return a result will be used.
     'providers' => [
-        'Geocoder\Provider\GoogleMapsProvider' => ['fr-FR', 'Île-de-France', true],
-        'Geocoder\Provider\FreeGeoIpProvider'  => null,
+        'Geocoder\Provider\GoogleMaps' => ['fr-FR', 'France', true],
+        'Geocoder\Provider\FreeGeoIp'  => null,
     ],
-    'adapter'  => 'Geocoder\HttpAdapter\CurlHttpAdapter',
+    'adapter'  => 'Ivory\HttpAdapter\Guzzle6HttpAdapter',
 ];

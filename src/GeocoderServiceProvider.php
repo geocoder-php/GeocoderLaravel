@@ -11,8 +11,9 @@
 
 namespace Toin0u\Geocoder;
 
-use Geocoder\Geocoder;
-use Geocoder\Provider\ChainProvider;
+use Geocoder\ProviderAggregator;
+use Geocoder\Provider\Chain;
+use ReflectionClass;
 
 /**
  * Geocoder service provider
@@ -30,7 +31,7 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $source = realpath(__DIR__ . '/../config/geocoder.php');
 
-        $this->publishes([$source => config_path('geocoder.php')]);
+        $this->publishes([$source => config_path('geocoder.php')], 'config');
 
         $this->mergeConfigFrom($source, 'geocoder');
     }
@@ -42,35 +43,30 @@ class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('geocoder.adapter', function($app) {
-            $adapter = $app['config']->get('geocoder.adapter');
+        $this->app->singleton('geocoder.adapter', function ($app) {
+            $adapter = config('geocoder.adapter');
 
             return new $adapter;
         });
 
-        $this->app->singleton('geocoder.chain', function($app) {
-            $providers = [];
+        $this->app->singleton('geocoder.chain', function ($app) {
+            $providers = collect(config('geocoder.providers'))
+                ->map(function ($arguments, $provider) {
+                    $reflection = new ReflectionClass($provider);
 
-            foreach($app['config']->get('geocoder.providers') as $provider => $arguments) {
-                if (0 !== count($arguments)) {
-                    $providers[] = call_user_func_array(
-                        function ($arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null) use ($app, $provider) {
-                            return new $provider($app['geocoder.adapter'], $arg1, $arg2, $arg3, $arg4);
-                        },
-                        $arguments
-                    );
+                    if (is_array($arguments)) {
+                        array_unshift($arguments, $this->app['geocoder.adapter']);
+                        return $reflection->newInstanceArgs($arguments);
+                    }
 
-                    continue;
-                }
+                    return $reflection->newInstance($this->app['geocoder.adapter']);
+                });
 
-                $providers[] = new $provider($app['geocoder.adapter']);
-            }
-
-            return new ChainProvider($providers);
+            return new Chain($providers->toArray());
         });
 
-        $this->app['geocoder'] = $this->app->share(function($app) {
-            $geocoder = new Geocoder;
+        $this->app->singleton('geocoder', function ($app) {
+            $geocoder = new ProviderAggregator();
             $geocoder->registerProvider($app['geocoder.chain']);
 
             return $geocoder;
