@@ -68,13 +68,11 @@ Find the `aliases` array key in `config/app.php` and register the **Geocoder Fac
 )
 ```
 
-Configuration
--------------
-
+## Configuration
 Publish and edit the configuration file
 
-```bash
-$ php artisan vendor:publish --provider="toin0u/geocoder-laravel"
+```sh
+php artisan vendor:publish --provider="Toin0u\Geocoder\GeocoderServiceProvider" --tags="config"
 ```
 
 The service provider creates the following services:
