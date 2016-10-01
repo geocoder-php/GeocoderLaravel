@@ -13,6 +13,7 @@ namespace Toin0u\Geocoder;
 
 use Geocoder\ProviderAggregator;
 use Geocoder\Provider\Chain;
+use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 
 /**
@@ -20,7 +21,7 @@ use ReflectionClass;
  *
  * @author Antoine Corcy <contact@sbin.dk>
  */
-class GeocoderServiceProvider extends \Illuminate\Support\ServiceProvider
+class GeocoderServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application events.

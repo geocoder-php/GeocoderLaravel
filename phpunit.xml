@@ -9,10 +9,11 @@
     stopOnFailure="false"
     syntaxCheck="false"
     bootstrap="vendor/autoload.php"
-    >
+>
     <testsuites>
         <testsuite name="Geocoder library for Laravel Test Suite">
-            <directory>./tests/</directory>
+            <directory suffix="Test.php">./tests/Geocoder</directory>
+            <directory suffix="Test.php">./tests/Laravel5_3</directory>
         </testsuite>
     </testsuites>
     <filter>

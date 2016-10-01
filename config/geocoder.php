@@ -18,14 +18,9 @@ return [
     // Providers get called in the chain order given here.
     // The first one to return a result will be used.
     'providers' => [
-        GoogleMaps::class => [
-            'en_US',
-            null,
-            true,
-            env('GOOGLE_MAPS_API_KEY'),
-        ],
+        GoogleMaps::class => null,
         BingMaps::class => [
-            'en_US',
+            'en-US',
             env('BING_MAPS_API_KEY'),
         ],
         FreeGeoIp::class  => null,

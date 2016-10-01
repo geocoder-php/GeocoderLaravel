@@ -34,12 +34,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Toin0u\\Geocoder\\": "src/"
+            "Toin0u\\Geocoder\\": "src/",
+            "Toin0u\\GeocoderLaravel\\Tests\\Laravel5_3\\": "tests/Laravel5_3/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Toin0u\\Tests\\Geocoder\\": "tests/"
+            "Toin0u\\Tests\\Geocoder\\": "tests/Geocoder/",
+            "Toin0u\\GeocoderLaravel\\Tests\\Laravel5_3\\": "tests/Laravel5_3/"
         }
     },
     "extra": {
