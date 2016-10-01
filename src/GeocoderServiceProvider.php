@@ -13,6 +13,7 @@ namespace Toin0u\Geocoder;
 
 use Geocoder\ProviderAggregator;
 use Geocoder\Provider\Chain;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 
@@ -50,24 +51,30 @@ class GeocoderServiceProvider extends ServiceProvider
             return new $adapter;
         });
 
-        $this->app->singleton('geocoder.chain', function ($app) {
-            $providers = collect(config('geocoder.providers'))
-                ->map(function ($arguments, $provider) {
-                    $arguments = $this->prepArguments($arguments, $provider);
-                    $reflection = new ReflectionClass($provider);
-
-                    return $reflection->newInstanceArgs($arguments);
-                });
-
-            return new Chain($providers->toArray());
-        });
-
         $this->app->singleton('geocoder', function ($app) {
             $geocoder = new ProviderAggregator();
-            $geocoder->registerProvider($app['geocoder.chain']);
+            $geocoder->registerProviders(
+                $this->getProviders(collect(config('geocoder.providers')))
+            );
 
             return $geocoder;
         });
+    }
+
+    private function getProviders(Collection $providers)
+    {
+        $providers = $providers->map(function ($arguments, $provider) {
+            $arguments = $this->prepArguments($arguments, $provider);
+            $reflection = new ReflectionClass($provider);
+
+            if ($provider === 'Geocoder\Provider\Chain') {
+                return $reflection->newInstance($arguments);
+            }
+
+            return $reflection->newInstanceArgs($arguments);
+        });
+
+        return $providers->toArray();
     }
 
     private function prepArguments(array $arguments, $provider)
@@ -81,9 +88,15 @@ class GeocoderServiceProvider extends ServiceProvider
         }
 
         if ($this->providerRequiresAdapter($provider)) {
-            array_unshift($arguments, $this->app['geocoder.adapter']);
+            array_unshift($arguments, app('geocoder.adapter'));
 
             return $arguments;
+        }
+
+        if ($provider === 'Geocoder\Provider\Chain') {
+            return $this->getProviders(
+                collect(config('geocoder.providers.Geocoder\Provider\Chain'))
+            );
         }
 
         return $arguments;

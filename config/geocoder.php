@@ -2,6 +2,7 @@
 
 use Ivory\HttpAdapter\CurlHttpAdapter;
 use Ivory\HttpAdapter\Guzzle6HttpAdapter;
+use Geocoder\Provider\Chain;
 use Geocoder\Provider\BingMaps;
 use Geocoder\Provider\FreeGeoIp;
 use Geocoder\Provider\GoogleMaps;
@@ -20,17 +21,25 @@ return [
     // Providers get called in the chain order given here.
     // The first one to return a result will be used.
     'providers' => [
+        Chain::class => [
+            GoogleMaps::class => [
+                'de-DE',
+                'Wien, Österreich',
+                true,
+                env('GOOGLE_MAPS_API_KEY'),
+            ],
+            BingMaps::class => [
+                'en-US',
+                env('BING_MAPS_API_KEY'),
+            ],
+            FreeGeoIp::class  => [],
+        ],
         GoogleMaps::class => [
             'de-DE',
             'Wien, Österreich',
             true,
             env('GOOGLE_MAPS_API_KEY'),
         ],
-        BingMaps::class => [
-            'en-US',
-            env('BING_MAPS_API_KEY'),
-        ],
-        FreeGeoIp::class  => [],
     ],
     // 'adapter'  => CurlHttpAdapter::class,
     'adapter'  => Guzzle6HttpAdapter::class,
