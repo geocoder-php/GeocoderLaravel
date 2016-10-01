@@ -2,6 +2,12 @@
 
 use Toin0u\GeocoderLaravel\Tests\Laravel5_3\TestCase;
 use Toin0u\Geocoder\Exceptions\InvalidDumperException;
+use Toin0u\Geocoder\ProviderAndDumperAggregator;
+use Toin0u\Geocoder\GeocoderServiceProvider;
+use Geocoder\Provider\Chain;
+use Geocoder\Provider\FreeGeoIp;
+use Geocoder\Provider\GoogleMaps;
+use Ivory\HttpAdapter\CurlHttpAdapter;
 
 class GeocoderServiceProviderTest extends TestCase
 {
@@ -80,5 +86,27 @@ class GeocoderServiceProviderTest extends TestCase
         $jsonAddress = json_decode($result->first());
 
         $this->assertEquals('1600', $jsonAddress->properties->streetNumber);
+    }
+
+    public function testConfig()
+    {
+        $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
+        $this->assertCount(2, $providers);
+        $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
+        $this->assertArrayHasKey(FreeGeoIp::class, $providers[Chain::class]);
+        $this->assertSame(CurlHttpAdapter::class, $this->app['config']->get('geocoder.adapter'));
+    }
+
+    public function testLoadedProviders()
+    {
+        $loadedProviders = $this->app->getLoadedProviders();
+
+        $this->assertArrayHasKey(GeocoderServiceProvider::class, $loadedProviders);
+        $this->assertTrue($loadedProviders[GeocoderServiceProvider::class]);
+    }
+
+    public function testGeocoder()
+    {
+        $this->assertInstanceOf(ProviderAndDumperAggregator::class, app('geocoder'));
     }
 }
