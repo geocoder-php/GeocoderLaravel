@@ -1,4 +1,4 @@
-<?php namespace Toin0u\Geocoder\Exceptions;
+<?php namespace Geocoder\Laravel\Exceptions;
 
 /**
  * This file is part of the GeocoderLaravel library.

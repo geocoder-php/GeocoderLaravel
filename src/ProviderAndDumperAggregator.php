@@ -1,4 +1,4 @@
-<?php namespace Toin0u\Geocoder;
+<?php namespace Geocoder\Laravel;
 
 /**
  * This file is part of the Geocoder package.
@@ -15,8 +15,8 @@ use Geocoder\Dumper\Kml;
 use Geocoder\Dumper\Wkb;
 use Geocoder\Dumper\Wkt;
 use Geocoder\Dumper\GeoJson;
+use Geocoder\Laravel\Exceptions\InvalidDumperException;
 use Illuminate\Support\Collection;
-use Toin0u\Geocoder\Exceptions\InvalidDumperException;
 
 /**
  * @author Mike Bronner <hello@genealabs.com>

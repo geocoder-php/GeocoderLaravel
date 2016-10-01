@@ -1,4 +1,4 @@
-<?php namespace Toin0u\Geocoder;
+<?php namespace Geocoder\Laravel\Providers;
 
 /**
  * This file is part of the GeocoderLaravel library.
@@ -9,9 +9,12 @@
  * file that was distributed with this source code.
  */
 
+use Geocoder\Laravel\Facades\Geocoder;
+use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\Provider\Chain;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\AliasLoader;
 use ReflectionClass;
 
 /**
@@ -20,7 +23,7 @@ use ReflectionClass;
  * @author Antoine Corcy <contact@sbin.dk>
  * @author Mike Bronner <hello@genealabs.com>
  */
-class GeocoderServiceProvider extends ServiceProvider
+class GeocoderService extends ServiceProvider
 {
     /**
      * Bootstrap the application events.
@@ -29,9 +32,9 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $source = realpath(__DIR__ . '/../config/geocoder.php');
-        $this->publishes([$source => config_path('geocoder.php')], 'config');
-        $this->mergeConfigFrom($source, 'geocoder');
+        $configPath = __DIR__ . '/../../config/geocoder.php';
+        $this->publishes([$configPath => config_path('geocoder.php')], 'config');
+        $this->mergeConfigFrom($configPath, 'geocoder');
     }
 
     /**
@@ -41,6 +44,8 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        AliasLoader::getInstance()->alias('Geocoder', Geocoder::class);
+
         $this->app->singleton('geocoder', function () {
             $geocoder = new ProviderAndDumperAggregator();
             $geocoder->registerProviders(

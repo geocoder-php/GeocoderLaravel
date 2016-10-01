@@ -1,4 +1,4 @@
-<?php
+<?php namespace Geocoder\Laravel\Facades;
 
 /**
  * This file is part of the GeocoderLaravel library.
@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Toin0u\Geocoder\Facade;
+use Illuminate\Support\Facades\Facade;
 
 /**
  * Facade for Geocoder
  *
  * @author Antoine Corcy <contact@sbin.dk>
  */
-class Geocoder extends \Illuminate\Support\Facades\Facade
+class Geocoder extends Facade
 {
     /**
     * Get the registered name of the component.

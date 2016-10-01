@@ -1,41 +1,61 @@
-CHANGELOG
-=========
+# Geocoder for Laravel Changelog
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](http://semver.org/).
 
-0.5.0 (2015-03-11)
-------------------
+## [0.7.0] - 1 Oct 2016
+### Added
+- ability to dump results #16.
+- ability to use multiple providers in addition to the chain provider #47.
+- more integration tests.
+- special aggregator that allows chaining of `geocode()` and other methods.
 
-* [BC] the package is now compatible for Laravel 5
-* improved the doc
-* add code of conduct
+### Changed
+- README documentation.
+- to use Geocoder 3.3.x.
+- namespace to `Geocoder\Laravel\...`.
+- service provider to auto-load the facade.
+- config file format.
+- geocoding commands necessary to obtain results (must use `->all()`, `->get()`,
+ or `->dump()`) after the respective command.
+- the service provider architecture.
 
-0.4.1 (2014-06-23)
-------------------
+### Fixed
+- MaxMindBinary Provider being instantiated with an Adapter #24.
+- GeoIP2 Provider being instantiated with a generic Adapter.
 
-* fix the way to implode provider's arguments + unit tests
+## [0.6.0]
+- TBD
 
-0.4.0 (2014-04-13)
-------------------
+## [0.5.0] - 11 Mar 2015
+### Added
+- code of conduct message.
+- Laravel 5 compatibility [BC].
 
-* use Geocoder 2.4.*
+### Updated
+- documentation.
 
+## [0.4.1] - 23 Jun 2014
+### Fixed
+- the way to implode provider's arguments + unit tests.
 
-0.3.0 (2014-04-13)
-------------------
+## [0.4.0] - 13 Apr 2014
+### Updated
+- to use Geocoder 2.4.x.
 
-* support provider's arugments (BC break)
+## [0.3.0] - 13 Apr 2014
+### Added
+- support for Provider arguments (backwards-compatibility break).
 
+## [0.2.0] - 16 Nov 2013
+### Added
+- config file.
 
-0.2.0 (2013-11-16)
-------------------
+### Updated
+- to use Geocoder 2.3.x.
+- to use singleton instead of share.
+- tests.
 
-* use Geocoder 2.3.x
-* use config file
-* use singleton instead of share
-* improve tests
-
-
-0.1.0 (2013-09-16)
-------------------
-
-* add badges
-* initial import
+## [0.1.0] - 16 Sep 2013
+### Added
+- badges.
+- initial package.

@@ -1,4 +1,4 @@
-<?php namespace Toin0u\GeocoderLaravel\Tests\Laravel5_3;
+<?php namespace Geocoder\Laravel\Tests\Laravel5_3;
 
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
