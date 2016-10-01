@@ -41,6 +41,5 @@ return [
             env('GOOGLE_MAPS_API_KEY'),
         ],
     ],
-    // 'adapter'  => CurlHttpAdapter::class,
-    'adapter'  => Guzzle6HttpAdapter::class,
+    'adapter'  => CurlHttpAdapter::class,
 ];

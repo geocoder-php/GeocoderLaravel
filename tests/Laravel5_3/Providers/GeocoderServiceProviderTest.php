@@ -1,6 +1,7 @@
 <?php namespace Toin0u\GeocoderLaravel\Tests\Laravel5_3\Providers;
 
 use Toin0u\GeocoderLaravel\Tests\Laravel5_3\TestCase;
+use Toin0u\Geocoder\Exceptions\InvalidDumperException;
 
 class GeocoderServiceProviderTest extends TestCase
 {
@@ -48,7 +49,6 @@ class GeocoderServiceProviderTest extends TestCase
 
     public function testItCanUseASpecificProvider()
     {
-        // dd(config('geocoder.providers'));
         $result = app('geocoder')
             ->using('google_maps')
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
@@ -57,5 +57,28 @@ class GeocoderServiceProviderTest extends TestCase
         $this->assertEquals('Pennsylvania Avenue Southeast', $result[0]->getStreetName());
         $this->assertEquals('Washington', $result[0]->getLocality());
         $this->assertEquals('20003', $result[0]->getPostalCode());
+    }
+
+    public function testItDumpsAndAddress()
+    {
+        $result = app('geocoder')
+            ->using('google_maps')
+            ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
+            ->dump('geojson');
+        $jsonAddress = json_decode($result->first());
+
+        $this->assertEquals('1600', $jsonAddress->properties->streetNumber);
+    }
+
+    public function testItThrowsAnExceptionForInvalidDumper()
+    {
+        $this->expectException(InvalidDumperException::class);
+        $result = app('geocoder')
+            ->using('google_maps')
+            ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
+            ->dump('test');
+        $jsonAddress = json_decode($result->first());
+
+        $this->assertEquals('1600', $jsonAddress->properties->streetNumber);
     }
 }

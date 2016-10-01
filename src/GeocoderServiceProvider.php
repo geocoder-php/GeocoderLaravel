@@ -9,12 +9,17 @@
  * file that was distributed with this source code.
  */
 
-use Geocoder\ProviderAggregator;
 use Geocoder\Provider\Chain;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 
+/**
+ * Geocoder service provider
+ *
+ * @author Antoine Corcy <contact@sbin.dk>
+ * @author Mike Bronner <hello@genealabs.com>
+ */
 class GeocoderServiceProvider extends ServiceProvider
 {
     /**
@@ -37,7 +42,7 @@ class GeocoderServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('geocoder', function () {
-            $geocoder = new ProviderAggregator();
+            $geocoder = new ProviderAndDumperAggregator();
             $geocoder->registerProviders(
                 $this->getProviders(collect(config('geocoder.providers')))
             );
