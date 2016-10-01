@@ -1,4 +1,4 @@
-<?php
+<?php namespace Toin0u\Geocoder;
 
 /**
  * This file is part of the GeocoderLaravel library.
@@ -9,19 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Toin0u\Geocoder;
-
 use Geocoder\ProviderAggregator;
 use Geocoder\Provider\Chain;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 
-/**
- * Geocoder service provider
- *
- * @author Antoine Corcy <contact@sbin.dk>
- */
 class GeocoderServiceProvider extends ServiceProvider
 {
     /**
@@ -32,9 +25,7 @@ class GeocoderServiceProvider extends ServiceProvider
     public function boot()
     {
         $source = realpath(__DIR__ . '/../config/geocoder.php');
-
         $this->publishes([$source => config_path('geocoder.php')], 'config');
-
         $this->mergeConfigFrom($source, 'geocoder');
     }
 
@@ -45,13 +36,7 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('geocoder.adapter', function ($app) {
-            $adapter = config('geocoder.adapter');
-
-            return new $adapter;
-        });
-
-        $this->app->singleton('geocoder', function ($app) {
+        $this->app->singleton('geocoder', function () {
             $geocoder = new ProviderAggregator();
             $geocoder->registerProviders(
                 $this->getProviders(collect(config('geocoder.providers')))
@@ -61,10 +46,16 @@ class GeocoderServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Instantiate the configured Providers, as well as the Chain Provider.
+     *
+     * @param Collection
+     * @return array
+     */
     private function getProviders(Collection $providers)
     {
         $providers = $providers->map(function ($arguments, $provider) {
-            $arguments = $this->prepArguments($arguments, $provider);
+            $arguments = $this->getArguments($arguments, $provider);
             $reflection = new ReflectionClass($provider);
 
             if ($provider === 'Geocoder\Provider\Chain') {
@@ -77,64 +68,51 @@ class GeocoderServiceProvider extends ServiceProvider
         return $providers->toArray();
     }
 
-    private function prepArguments(array $arguments, $provider)
+    /**
+     * Insert the required Adapter instance (if required) as the first element
+     * of the arguments array.
+     *
+     * @param array
+     * @param string
+     * @return string
+     */
+    private function getArguments(array $arguments, $provider)
     {
-        $specificAdapter = $this->providerRequiresSpecificAdapter($provider);
-
-        if ($specificAdapter) {
-            array_unshift($arguments, $specificAdapter);
-
-            return $arguments;
-        }
-
-        if ($this->providerRequiresAdapter($provider)) {
-            array_unshift($arguments, app('geocoder.adapter'));
-
-            return $arguments;
-        }
-
         if ($provider === 'Geocoder\Provider\Chain') {
             return $this->getProviders(
                 collect(config('geocoder.providers.Geocoder\Provider\Chain'))
             );
         }
 
+        $adapter = $this->getAdapterClass($provider);
+
+        if ($adapter) {
+            array_unshift($arguments, (new $adapter));
+        }
+
         return $arguments;
     }
 
-    private function providerRequiresSpecificAdapter($provider)
+    /**
+     * Get the required Adapter class name for the current provider. It will
+     * select a specific adapter if required, handle the Chain provider, and
+     * return the default configured adapter if non of the above are true.
+     *
+     * @param string
+     * @return string
+     */
+    private function getAdapterClass($provider)
     {
         $specificAdapters = collect([
             'Geocoder\Provider\GeoIP2' => 'Geocoder\Adapter\GeoIP2Adapter',
+            'Geocoder\Provider\MaxMindBinary' => null,
         ]);
 
-        return $specificAdapters->get($provider);
-    }
+        if ($specificAdapters->has($provider)) {
+            return $specificAdapters->get($provider);
+        }
 
-    private function providerRequiresAdapter($provider)
-    {
-        $providersRequiringAdapter = collect([
-            'Geocoder\Provider\ArcGISOnline',
-            'Geocoder\Provider\BingMaps',
-            'Geocoder\Provider\FreeGeoIp',
-            'Geocoder\Provider\GeoIPs',
-            'Geocoder\Provider\Geonames',
-            'Geocoder\Provider\GeoPlugin',
-            'Geocoder\Provider\GoogleMaps',
-            'Geocoder\Provider\GoogleMapsBusiness',
-            'Geocoder\Provider\HostIp',
-            'Geocoder\Provider\IpInfoDb',
-            'Geocoder\Provider\MapQuest',
-            'Geocoder\Provider\MaxMind',
-            'Geocoder\Provider\Nominatim',
-            'Geocoder\Provider\OpenCage',
-            'Geocoder\Provider\OpenStreetMap',
-            'Geocoder\Provider\Provider',
-            'Geocoder\Provider\TomTom',
-            'Geocoder\Provider\Yandex',
-        ]);
-
-        return $providersRequiringAdapter->contains($provider);
+        return config('geocoder.adapter');
     }
 
     /**
@@ -144,6 +122,6 @@ class GeocoderServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['geocoder', 'geocoder.adapter', 'geocoder.chain'];
+        return ['geocoder'];
     }
 }
