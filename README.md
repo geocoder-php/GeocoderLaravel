@@ -100,12 +100,12 @@ app('geocoder')->geocode('Los Angeles, CA')->all();
 
 #### Reverse-Geocoding
 ```php
-app('geocoder')->reverse('Los Angeles, CA')->all();
+app('geocoder')->reverse(43.882587,-103.454067)->get();
 ```
 
 #### Dumping Results
 ```php
-app('geocoder')->reverse('Los Angeles, CA')->dump('kml');
+app('geocoder')->geocode('Los Angeles, CA')->dump('kml');
 ```
 
 ## Changelog
