@@ -25,7 +25,7 @@ This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
  Service Provider**:
   ```php
   // 'providers' => [
-      Toin0u\GeocoderLaravel\Providers\GeocoderService::class,
+      Geocoder\Laravel\Providers\GeocoderService::class,
   // ];
   ```
 
@@ -80,7 +80,7 @@ return [
 If you would like to make changes to the default configuration, publish and
  edit the configuration file:
 ```sh
-php artisan vendor:publish --provider="Toin0u\Geocoder\GeocoderServiceProvider" --tags="config"
+php artisan vendor:publish --provider="Geocoder\Laravel\GeocoderServiceProvider" --tags="config"
 ```
 
 ## Usage
