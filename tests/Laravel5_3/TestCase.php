@@ -1,5 +1,6 @@
 <?php namespace Geocoder\Laravel\Tests\Laravel5_3;
 
+use Geocoder\Laravel\Providers\GeocoderService;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -16,8 +17,9 @@ abstract class TestCase extends BaseTestCase
 
     public function createApplication() : Application
     {
-        $app = require __DIR__ . '/../../../../../bootstrap/app.php';
+        $app = require __DIR__ . '/../../vendor/laravel/laravel/bootstrap/app.php';
         $app->make(Kernel::class)->bootstrap();
+        $app->register(GeocoderService::class);
 
         return $app;
     }
