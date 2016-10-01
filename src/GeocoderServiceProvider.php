@@ -53,14 +53,10 @@ class GeocoderServiceProvider extends ServiceProvider
         $this->app->singleton('geocoder.chain', function ($app) {
             $providers = collect(config('geocoder.providers'))
                 ->map(function ($arguments, $provider) {
+                    $arguments = $this->prepArguments($arguments, $provider);
                     $reflection = new ReflectionClass($provider);
 
-                    if (is_array($arguments)) {
-                        array_unshift($arguments, $this->app['geocoder.adapter']);
-                        return $reflection->newInstanceArgs($arguments);
-                    }
-
-                    return $reflection->newInstance($this->app['geocoder.adapter']);
+                    return $reflection->newInstanceArgs($arguments);
                 });
 
             return new Chain($providers->toArray());
@@ -72,6 +68,60 @@ class GeocoderServiceProvider extends ServiceProvider
 
             return $geocoder;
         });
+    }
+
+    private function prepArguments(array $arguments, $provider)
+    {
+        $specificAdapter = $this->providerRequiresSpecificAdapter($provider);
+
+        if ($specificAdapter) {
+            array_unshift($arguments, $specificAdapter);
+
+            return $arguments;
+        }
+
+        if ($this->providerRequiresAdapter($provider)) {
+            array_unshift($arguments, $this->app['geocoder.adapter']);
+
+            return $arguments;
+        }
+
+        return $arguments;
+    }
+
+    private function providerRequiresSpecificAdapter($provider)
+    {
+        $specificAdapters = collect([
+            'Geocoder\Provider\GeoIP2' => 'Geocoder\Adapter\GeoIP2Adapter',
+        ]);
+
+        return $specificAdapters->get($provider);
+    }
+
+    private function providerRequiresAdapter($provider)
+    {
+        $providersRequiringAdapter = collect([
+            'Geocoder\Provider\ArcGISOnline',
+            'Geocoder\Provider\BingMaps',
+            'Geocoder\Provider\FreeGeoIp',
+            'Geocoder\Provider\GeoIPs',
+            'Geocoder\Provider\Geonames',
+            'Geocoder\Provider\GeoPlugin',
+            'Geocoder\Provider\GoogleMaps',
+            'Geocoder\Provider\GoogleMapsBusiness',
+            'Geocoder\Provider\HostIp',
+            'Geocoder\Provider\IpInfoDb',
+            'Geocoder\Provider\MapQuest',
+            'Geocoder\Provider\MaxMind',
+            'Geocoder\Provider\Nominatim',
+            'Geocoder\Provider\OpenCage',
+            'Geocoder\Provider\OpenStreetMap',
+            'Geocoder\Provider\Provider',
+            'Geocoder\Provider\TomTom',
+            'Geocoder\Provider\Yandex',
+        ]);
+
+        return $providersRequiringAdapter->contains($provider);
     }
 
     /**
