@@ -8,17 +8,16 @@
     processIsolation="false"
     stopOnFailure="false"
     syntaxCheck="false"
-    bootstrap="vendor/autoload.php"
+    bootstrap="vendor/laravel/laravel/bootstrap/autoload.php"
 >
     <testsuites>
         <testsuite name="Geocoder library for Laravel Test Suite">
-            <directory suffix="Test.php">./tests/Geocoder</directory>
             <directory suffix="Test.php">./tests/Laravel5_3</directory>
         </testsuite>
     </testsuites>
     <filter>
-        <whitelist>
-            <directory>./src/</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
     <php>
