@@ -7,16 +7,30 @@ use Geocoder\Laravel\Providers\GeocoderService;
 use Geocoder\Provider\Chain;
 use Geocoder\Provider\FreeGeoIp;
 use Geocoder\Provider\GoogleMaps;
+use Geocoder\Provider\MaxMindBinary;
+use Geocoder\Exception\FunctionNotFound;
 use Ivory\HttpAdapter\CurlHttpAdapter;
 
 class GeocoderServiceTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        app()->register(GeocoderService::class);
+    }
+
     public function testItResolvesAGivenAddress()
     {
+        // Arrange
+
+        // Act
         $result = app('geocoder')
             ->using('chain')
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
             ->all();
+
+        // Assert
         $this->assertEquals('1600', $result[0]->getStreetNumber());
         $this->assertEquals('Pennsylvania Avenue Southeast', $result[0]->getStreetName());
         $this->assertEquals('Washington', $result[0]->getLocality());
@@ -25,17 +39,50 @@ class GeocoderServiceTest extends TestCase
 
     public function testItResolvesAGivenIPAddress()
     {
+        // Arrange
+
+        // Act
         $result = app('geocoder')
             ->geocode('8.8.8.8')
             ->all();
+
+        // Assert
         $this->assertEquals('US', $result[0]->getCountry()->getCode());
     }
 
     public function testItResolvesAGivenAddressWithUmlauts()
     {
+        // Arrange
+
+        // Act
         $result = app('geocoder')
             ->geocode('Obere Donaustrasse 22, Wien, Österreich')
             ->all();
+
+        // Assert
+        $this->assertEquals('22', $result[0]->getStreetNumber());
+        $this->assertEquals('Obere Donaustraße', $result[0]->getStreetName());
+        $this->assertEquals('Wien', $result[0]->getLocality());
+        $this->assertEquals('1020', $result[0]->getPostalCode());
+    }
+
+    public function testItResolvesAGivenAddressWithUmlautsInRegion()
+    {
+        // Arrange
+        config()->set('geocoder.providers.Geocoder\Provider\Chain.Geocoder\Provider\GoogleMaps', [
+            'de-DE',
+            'Wien, Österreich',
+            true,
+            null,
+        ]);
+        app()->register(GeocoderService::class);
+
+        // Act
+        $result = app('geocoder')
+            ->geocode('Obere Donaustrasse 22, Wien, Österreich')
+            ->all();
+
+        // Assert
         $this->assertEquals('22', $result[0]->getStreetNumber());
         $this->assertEquals('Obere Donaustraße', $result[0]->getStreetName());
         $this->assertEquals('Wien', $result[0]->getLocality());
@@ -44,13 +91,16 @@ class GeocoderServiceTest extends TestCase
 
     public function testItCanUseMaxMindBinaryWithoutProvider()
     {
-        $result = app('geocoder')
-            ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
-            ->all();
-        $this->assertEquals('1600', $result[0]->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Southeast', $result[0]->getStreetName());
-        $this->assertEquals('Washington', $result[0]->getLocality());
-        $this->assertEquals('20003', $result[0]->getPostalCode());
+        //Arrange
+        $this->expectException(FunctionNotFound::class);
+        $provider = new MaxMindBinary('dummy');
+
+        // Act
+        app('geocoder')->registerProvider($provider);
+
+        // Assert
+        // By getting past the constructor parameters requirements, we know we
+        // are instantiating the provider correctly.
     }
 
     public function testItCanUseASpecificProvider()

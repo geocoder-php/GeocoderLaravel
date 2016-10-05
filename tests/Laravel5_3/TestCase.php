@@ -19,7 +19,6 @@ abstract class TestCase extends BaseTestCase
     {
         $app = require __DIR__ . '/../../vendor/laravel/laravel/bootstrap/app.php';
         $app->make(Kernel::class)->bootstrap();
-        $app->register(GeocoderService::class);
 
         return $app;
     }
