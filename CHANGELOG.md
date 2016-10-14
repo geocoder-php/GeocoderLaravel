@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.0.0] - 3 Oct 2016
+## [1.0.0-RC1] - 13 Oct 2016
 ### Added
 - ability to dump results #16.
 - ability to use multiple providers in addition to the chain provider #47.
@@ -22,9 +22,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - MaxMindBinary Provider being instantiated with an Adapter #24.
 - GeoIP2 Provider being instantiated with a generic Adapter.
-
-### Removed
-- TravisCI and Coveralls CI in favor of PHPCI.
 
 ## [0.6.0]
 - TBD
