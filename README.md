@@ -6,8 +6,8 @@
 > If you still use **Laravel 4**, please check out the `0.4.x` branch
  [here](https://github.com/geocoder-php/GeocoderLaravel/tree/0.4.x).
 
-** Version 1.0.0 is a backwards-compatibility-breaking update. Please review
- this documentation, especially the _Usage_ section before installing. **
+**Version 1.0.0 is a backwards-compatibility-breaking update. Please review
+ this documentation, especially the _Usage_ section before installing.**
 
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
  in [**Laravel 5**](http://laravel.com/).
@@ -15,7 +15,7 @@ This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
 ## Installation
 1. Install the package via composer:
   ```sh
-  composer require toin0u/geocoder-laravel
+  composer require toin0u/geocoder-laravel:1.0.0-RC1@dev
   ```
 
 2. Find the `providers` array key in `config/app.php` and register the **Geocoder
