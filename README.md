@@ -17,6 +17,7 @@ This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
   ```sh
   composer require toin0u/geocoder-laravel:1.0.0-RC1@dev
   ```
+  _Once 1.0.0 is stable, we will update this command to reflect that. In the interest of getting it out and into your hands, a temporary RC build is best._
 
 2. Find the `providers` array key in `config/app.php` and register the **Geocoder
  Service Provider**:
