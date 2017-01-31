@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0] - 30 Jan 2017
+### Changed
+- minimum Laravel requirement to 5.3.
+
 ## [1.0.0-RC1] - 13 Oct 2016
 ### Added
 - ability to dump results #16.
