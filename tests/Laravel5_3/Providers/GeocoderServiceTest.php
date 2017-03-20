@@ -20,6 +20,20 @@ class GeocoderServiceTest extends TestCase
         app()->register(GeocoderService::class);
     }
 
+    public function testItReverseGeocodesCoordinates()
+    {
+        // Arrange
+
+        // Act
+        $result = app('geocoder')->reverse(38.8791981, -76.9818437)->all();
+
+        // Assert
+        $this->assertEquals('1600', $result[0]->getStreetNumber());
+        $this->assertEquals('Pennsylvania Avenue Southeast', $result[0]->getStreetName());
+        $this->assertEquals('Washington', $result[0]->getLocality());
+        $this->assertEquals('20003', $result[0]->getPostalCode());
+    }
+
     public function testItResolvesAGivenAddress()
     {
         // Arrange
