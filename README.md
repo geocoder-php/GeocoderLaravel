@@ -39,22 +39,22 @@ If you are upgrading from a pre-1.x version of this package, please keep the
     ```
 
 2. Remove your `config/geocoder.php` configuration file. (If you need to customize it, follow the configuration instructions below.)
-3. Update the service provider entry in your `config/app.php` to read:
+3. Remove any Geocoder alias in the aliases section of your `config/app.php`. (This package auto-registers the aliases.)
+4. Update the service provider entry in your `config/app.php` to read:
 
     ```php
     Geocoder\Laravel\Providers\GeocoderService::class,
     ```
 
- Also make sure you remove any Geocoder alias in the aliases section of this file. (This package auto-registers the aliases.)
-4. If you are using the facade in your code, update the `use` statements to the
- following:
+5. If you are using the facade in your code, you have two options:
+  1. Replace the facades `Geocoder::` (and remove the corresponding `use` statements) with `app('geocoder')->`.
+  2. Update the `use` statements to the following:
 
     ```php
     use use Geocoder\Laravel\Facades\Geocoder;
     ```
-
-  Alternatively you can replace the facades `Geocoder::` (and remove the corresponding `use` statements) with `app('geocoder')->`.
-5. Update your query statements to use `->get()` (to retrieve a collection of
+  
+6. Update your query statements to use `->get()` (to retrieve a collection of
  GeoCoder objects) or `->all()` (to retrieve an array of arrays), then iterate
  to process each result.
 
