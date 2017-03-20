@@ -47,12 +47,12 @@ If you are upgrading from a pre-1.x version of this package, please keep the
     ```
 
 5. If you are using the facade in your code, you have two options:
-  1. Replace the facades `Geocoder::` (and remove the corresponding `use` statements) with `app('geocoder')->`.
-  2. Update the `use` statements to the following:
+    1. Replace the facades `Geocoder::` (and remove the corresponding `use` statements) with `app('geocoder')->`.
+    2. Update the `use` statements to the following:
 
-    ```php
-    use use Geocoder\Laravel\Facades\Geocoder;
-    ```
+        ```php
+        use use Geocoder\Laravel\Facades\Geocoder;
+        ```
   
 6. Update your query statements to use `->get()` (to retrieve a collection of
  GeoCoder objects) or `->all()` (to retrieve an array of arrays), then iterate
