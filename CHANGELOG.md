@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.2] - 20 Mar 2017
+### Added
+- unit test for reverse-geocoding.
+
 ## [1.0.1] - 30 Jan 2017
 ### Removed
 - minimum Laravel requirement of 5.3 (reverted back to 5.0, just in case it was working for someone, but only Laravel 5.3 and 5.4 are officially supported).
