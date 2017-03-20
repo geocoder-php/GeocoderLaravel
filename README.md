@@ -47,7 +47,7 @@ If you are upgrading from a pre-1.x version of this package, please keep the
     ```php
     use use Geocoder\Laravel\Facades\Geocoder;
     ```
- Alternatively you can replace the facades `Geocoder::` (and remove the corresponding `use`
+    Alternatively you can replace the facades `Geocoder::` (and remove the corresponding `use`
  statements) with `app('geocoder')->`.
 5. Update your query statements to use `->get()` (to retrieve a collection of
  GeoCoder objects) or `->all()` (to retrieve an array of arrays), then iterate
