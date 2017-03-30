@@ -51,7 +51,7 @@ If you are upgrading from a pre-1.x version of this package, please keep the
     2. Update the `use` statements to the following:
 
         ```php
-        use use Geocoder\Laravel\Facades\Geocoder;
+        use Geocoder\Laravel\Facades\Geocoder;
         ```
   
 6. Update your query statements to use `->get()` (to retrieve a collection of
