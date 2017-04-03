@@ -137,6 +137,11 @@ app('geocoder')->reverse(43.882587,-103.454067)->get();
 app('geocoder')->geocode('Los Angeles, CA')->dump('kml');
 ```
 
+#### To change provider localization dynamically
+```php
+app('geocoder')->setLocale('en')->geocode('Los Angeles, CA')->all();
+```
+
 ## Changelog
 https://github.com/geocoder-php/GeocoderLaravel/blob/master/CHANGELOG.md
 

@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] 3 Apr 2017
+### Added
+- dynamic changing of providers locale 
+
 ## [1.0.2] - 20 Mar 2017
 ### Added
 - unit test for reverse-geocoding.
