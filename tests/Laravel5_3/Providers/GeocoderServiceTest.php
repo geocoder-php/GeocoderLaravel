@@ -46,9 +46,9 @@ class GeocoderServiceTest extends TestCase
 
         // Assert
         $this->assertEquals('1600', $result[0]->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Southeast', $result[0]->getStreetName());
+        $this->assertEquals('Pennsylvania Avenue Northwest', $result[0]->getStreetName());
         $this->assertEquals('Washington', $result[0]->getLocality());
-        $this->assertEquals('20003', $result[0]->getPostalCode());
+        $this->assertEquals('20500', $result[0]->getPostalCode());
     }
 
     public function testItResolvesAGivenIPAddress()
@@ -124,9 +124,9 @@ class GeocoderServiceTest extends TestCase
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
             ->all();
         $this->assertEquals('1600', $result[0]->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Southeast', $result[0]->getStreetName());
+        $this->assertEquals('Pennsylvania Avenue Northwest', $result[0]->getStreetName());
         $this->assertEquals('Washington', $result[0]->getLocality());
-        $this->assertEquals('20003', $result[0]->getPostalCode());
+        $this->assertEquals('20500', $result[0]->getPostalCode());
     }
 
     public function testItDumpsAndAddress()
