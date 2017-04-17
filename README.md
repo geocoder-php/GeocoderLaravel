@@ -3,7 +3,7 @@
 [![Build Status](https://ci.genealabs.com/build-status/image/1)](https://ci.genealabs.com/build-status/view/1)
 [Code Coverate Report](https://ci.genealabs.com/coverage/1)
 
-# Geocoder for Lavarel
+# Geocoder for Laravel
 
 > If you still use **Laravel 4**, please check out the `0.4.x` branch
  [here](https://github.com/geocoder-php/GeocoderLaravel/tree/0.4.x).
