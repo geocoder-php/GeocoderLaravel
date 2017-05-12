@@ -98,4 +98,21 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
 
         return $this;
     }
+
+    /**
+     * @param $locale
+     * @return $this
+     */
+    public function setLocale($locale)
+    {
+        $this->registerProviders(array_map(function ($provider) use ($locale) {
+            if (is_callable([$provider, 'setLocale'])) {
+                return $provider->setLocale($locale);
+            }
+
+            return $provider;
+        }, $this->getProviders()));
+
+        return $this;
+    }
 }
