@@ -11,8 +11,8 @@
 
 namespace Geocoder\Laravel\Exceptions;
 
-use Geocoder\Exception\Exception;
 use Exception as BaseException;
+use Geocoder\Exception\Exception;
 
 /**
  * Exception to indicate an invalidly specified dumper identifier when calling
