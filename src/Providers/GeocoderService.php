@@ -12,9 +12,9 @@
 use Geocoder\Laravel\Facades\Geocoder;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\Provider\Chain;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\AliasLoader;
 use ReflectionClass;
 
 /**
@@ -60,7 +60,7 @@ class GeocoderService extends ServiceProvider
     /**
      * Instantiate the configured Providers, as well as the Chain Provider.
      *
-     * @param Collection
+     * @param Collection $providers
      * @return array
      */
     private function getProviders(Collection $providers)
@@ -85,7 +85,7 @@ class GeocoderService extends ServiceProvider
      *
      * @param array
      * @param string
-     * @return string
+     * @return array
      */
     private function getArguments(array $arguments, $provider)
     {
