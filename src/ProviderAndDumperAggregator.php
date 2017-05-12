@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
 class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
 {
     /**
-     * @var AddressCollection
+     * @var \Geocoder\Model\AddressCollection
      */
     protected $results;
 
@@ -79,7 +79,7 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
     }
 
     /**
-     * @return ProviderAndDumperAggregator
+     * @return \Geocoder\Model\AddressCollection
      */
     public function get()
     {
