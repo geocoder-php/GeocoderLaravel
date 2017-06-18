@@ -1,52 +1,31 @@
 <?php namespace Geocoder\Laravel\Providers;
 
 /**
- * This file is part of the GeocoderLaravel library.
- *
- * (c) Antoine Corcy <contact@sbin.dk>
- *
+ * This file is part of the Geocoder Laravel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * @author Mike Bronner <hello@genealabs.com>
+ * @license    MIT License
  */
 
 use Geocoder\Laravel\Facades\Geocoder;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
-use Geocoder\Provider\Chain;
+use Geocoder\Provider\Chain\Chain;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 
-/**
- * Geocoder service provider
- *
- * @author Antoine Corcy <contact@sbin.dk>
- * @author Mike Bronner <hello@genealabs.com>
- */
 class GeocoderService extends ServiceProvider
 {
     protected $defer = false;
 
-    /**
-     * Bootstrap the application events.
-     *
-     * @return void
-     */
     public function boot()
     {
         $configPath = __DIR__ . '/../../config/geocoder.php';
         $this->publishes([$configPath => config_path('geocoder.php')], 'config');
         $this->mergeConfigFrom($configPath, 'geocoder');
-    }
-
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->app->alias('Geocoder', Geocoder::class);
         $this->app->singleton('geocoder', function () {
             return (new ProviderAndDumperAggregator)->registerProviders(
                 $this->getProviders(collect(config('geocoder.providers')))
@@ -54,19 +33,21 @@ class GeocoderService extends ServiceProvider
         });
     }
 
+    public function register()
+    {
+        $this->app->alias('Geocoder', Geocoder::class);
+    }
+
     /**
      * Instantiate the configured Providers, as well as the Chain Provider.
-     *
-     * @param Collection $providers
-     * @return array
      */
-    private function getProviders(Collection $providers)
+    private function getProviders(Collection $providers) : array
     {
         $providers = $providers->map(function ($arguments, $provider) {
             $arguments = $this->getArguments($arguments, $provider);
             $reflection = new ReflectionClass($provider);
 
-            if ($provider === 'Geocoder\Provider\Chain') {
+            if ($provider === 'Geocoder\Provider\Chain\Chain') {
                 return $reflection->newInstance($arguments);
             }
 
@@ -79,16 +60,12 @@ class GeocoderService extends ServiceProvider
     /**
      * Insert the required Adapter instance (if required) as the first element
      * of the arguments array.
-     *
-     * @param array
-     * @param string
-     * @return array
      */
-    private function getArguments(array $arguments, $provider)
+    private function getArguments(array $arguments, string $provider) : array
     {
-        if ($provider === 'Geocoder\Provider\Chain') {
+        if ($provider === 'Geocoder\Provider\Chain\Chain') {
             return $this->getProviders(
-                collect(config('geocoder.providers.Geocoder\Provider\Chain'))
+                collect(config('geocoder.providers.Geocoder\Provider\Chain\Chain'))
             );
         }
 
@@ -105,11 +82,8 @@ class GeocoderService extends ServiceProvider
      * Get the required Adapter class name for the current provider. It will
      * select a specific adapter if required, handle the Chain provider, and
      * return the default configured adapter if non of the above are true.
-     *
-     * @param string
-     * @return string
      */
-    private function getAdapterClass($provider)
+    private function getAdapterClass(string $provider) : string
     {
         $specificAdapters = collect([
             'Geocoder\Provider\GeoIP2' => 'Geocoder\Adapter\GeoIP2Adapter',
@@ -123,12 +97,7 @@ class GeocoderService extends ServiceProvider
         return config('geocoder.adapter');
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
+    public function provides() : array
     {
         return ['geocoder'];
     }

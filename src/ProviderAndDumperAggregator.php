@@ -1,10 +1,11 @@
 <?php namespace Geocoder\Laravel;
 
 /**
- * This file is part of the Geocoder package.
+ * This file is part of the Geocoder Laravel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
+ * @author Mike Bronner <hello@genealabs.com>
  * @license    MIT License
  */
 
@@ -14,36 +15,37 @@ use Geocoder\Dumper\Kml;
 use Geocoder\Dumper\Wkb;
 use Geocoder\Dumper\Wkt;
 use Geocoder\Geocoder;
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
-use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\ProviderAggregator;
-use Geocoder\Model\AddressCollection;
 use Illuminate\Support\Collection;
 
-/**
- * @author Mike Bronner <hello@genealabs.com>
- */
 class ProviderAndDumperAggregator
 {
-    protected $results;
     protected $aggregator;
+    protected $results;
 
     public function __construct(int $limit = Geocoder::DEFAULT_RESULT_LIMIT)
     {
         $this->aggregator = new ProviderAggregator($limit);
+        $this->results = collect();
     }
 
+    /**
+     * @deprecated Use `get()` instead.
+     */
     public function all() : array
     {
         return $this->results->all();
     }
 
-    public function get() : AddressCollection
+    public function get() : Collection
     {
         return $this->results;
     }
 
-    public function dump($dumper) : Collection
+    public function dump(string $dumper) : Collection
     {
         $dumperClasses = collect([
             'geojson' => GeoJson::class,
@@ -70,29 +72,69 @@ class ProviderAndDumperAggregator
         });
     }
 
-    public function geocodeQuery($query)
+    public function geocodeQuery(GeocodeQuery $query) : self
     {
-        return $this->aggregator->geocodeQuery($query);
+        $cacheKey = serialize($query);
+        $this->results = cache()->remember(
+            "geocoder-{$cacheKey}",
+            config('geocoder.cache-duraction', 0),
+            function () use ($query) {
+                $addresses = collect();
+                $addressCollection = $this->aggregator->geocodeQuery($query);
+
+                foreach ($addressCollection as $address) {
+                    $addresses->push($address);
+                }
+
+                return $addresses;
+            }
+        );
+
+        return $this;
     }
 
-    public function reverseQuery($query)
+    public function reverseQuery(ReverseQuery $query) : self
     {
-        return $this->aggregator->reverseQuery($query);
+        $cacheKey = serialize($query);
+        $this->results = cache()->remember(
+            "geocoder-{$cacheKey}",
+            config('geocoder.cache-duraction', 0),
+            function () use ($query) {
+                $addresses = collect();
+                $addressCollection = $this->aggregator->reverseQuery($query);
+
+                foreach ($addressCollection as $address) {
+                    $addresses->push($address);
+                }
+
+                return $addresses;
+            }
+        );
+
+        return $this;
     }
 
-    public function getName()
+    public function getName() : string
     {
         return $this->aggregator->getName();
     }
 
     public function geocode(string $value) : self
     {
-        $cacheId = str_slug($value);
+        $cacheKey = str_slug($value);
         $this->results = cache()->remember(
-            "geocoder-{$cacheId}",
+            "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
             function () use ($value) {
-                return $this->aggregator->geocode($value);
+
+                $addresses = collect();
+                $addressCollection = $this->aggregator->geocode($value);
+
+                foreach ($addressCollection as $address) {
+                    $addresses->push($address);
+                }
+
+                return $addresses;
             }
         );
 
@@ -106,47 +148,54 @@ class ProviderAndDumperAggregator
             "geocoder-{$cacheId}",
             config('geocoder.cache-duraction', 0),
             function () use ($latitude, $longitude) {
-                return $this->aggregator->reverse($latitude, $longitude);
+                $addresses = collect();
+                $addressCollection = $this->aggregator->reverse($latitude, $longitude);
+
+                foreach ($addressCollection as $address) {
+                    $addresses->push($address);
+                }
+
+                return $addresses;
             }
         );
 
         return $this;
     }
 
-    public function limit($limit)
+    public function limit(int $limit) : self
     {
         $this->aggregator->limit($limit);
 
         return $this;
     }
 
-    public function getLimit()
+    public function getLimit() : int
     {
         return $this->aggregator->getLimit();
     }
 
-    public function registerProvider($provider)
+    public function registerProvider(string $provider) : self
     {
         $this->aggregator->registerProvider($provider);
 
         return $this;
     }
 
-    public function registerProviders($providers = [])
+    public function registerProviders(array $providers = []) : self
     {
         $this->aggregator->registerProviders($providers);
 
         return $this;
     }
 
-    public function using($name)
+    public function using(string $name) : self
     {
         $this->aggregator->using($name);
 
         return $this;
     }
 
-    public function getProviders()
+    public function getProviders() : array
     {
         return $this->aggregator->getProviders();
     }

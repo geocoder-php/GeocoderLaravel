@@ -1,15 +1,18 @@
 <?php namespace Geocoder\Laravel\Tests\Laravel5_3\Providers;
 
+use Geocoder\Exception\FunctionNotFound;
 use Geocoder\Laravel\Tests\Laravel5_3\TestCase;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\Laravel\Providers\GeocoderService;
-use Geocoder\Provider\Chain;
-use Geocoder\Provider\FreeGeoIp;
-use Geocoder\Provider\GoogleMaps;
-use Geocoder\Provider\MaxMindBinary;
-use Geocoder\Exception\FunctionNotFound;
-use Ivory\HttpAdapter\CurlHttpAdapter;
+use Geocoder\Provider\Chain\Chain;
+use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
+use Geocoder\Provider\GoogleMaps\GoogleMaps;
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
+use Geocoder\Model\Coordinates;
+use Http\Adapter\Guzzle6\Client as GuzzleAdaptor;
+use Illuminate\Support\Collection;
 
 class GeocoderServiceTest extends TestCase
 {
@@ -83,10 +86,8 @@ class GeocoderServiceTest extends TestCase
     public function testItResolvesAGivenAddressWithUmlautsInRegion()
     {
         // Arrange
-        config()->set('geocoder.providers.Geocoder\Provider\Chain.Geocoder\Provider\GoogleMaps', [
+        config()->set('geocoder.providers.Geocoder\Provider\Chain\Chain.Geocoder\Provider\GoogleMaps\GoogleMaps', [
             'de-DE',
-            'Wien, Österreich',
-            true,
             null,
         ]);
         app()->register(GeocoderService::class);
@@ -101,20 +102,6 @@ class GeocoderServiceTest extends TestCase
         $this->assertEquals('Obere Donaustraße', $result[0]->getStreetName());
         $this->assertEquals('Wien', $result[0]->getLocality());
         $this->assertEquals('1020', $result[0]->getPostalCode());
-    }
-
-    public function testItCanUseMaxMindBinaryWithoutProvider()
-    {
-        //Arrange
-        $this->expectException(FunctionNotFound::class);
-        $provider = new MaxMindBinary('dummy');
-
-        // Act
-        app('geocoder')->registerProvider($provider);
-
-        // Assert
-        // By getting past the constructor parameters requirements, we know we
-        // are instantiating the provider correctly.
     }
 
     public function testItCanUseASpecificProvider()
@@ -158,7 +145,7 @@ class GeocoderServiceTest extends TestCase
         $this->assertCount(3, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
         $this->assertArrayHasKey(FreeGeoIp::class, $providers[Chain::class]);
-        $this->assertSame(CurlHttpAdapter::class, $this->app['config']->get('geocoder.adapter'));
+        $this->assertSame(GuzzleAdaptor::class, $this->app['config']->get('geocoder.adapter'));
     }
 
     public function testLoadedProviders()
@@ -182,5 +169,24 @@ class GeocoderServiceTest extends TestCase
 
         $this->assertTrue(cache()->has($cacheKey));
         $this->assertEquals($result, cache($cacheKey));
+    }
+
+    public function testGeocodeQueryProvidesResults()
+    {
+        $query = GeocodeQuery::create('1600 Pennsylvania Ave., Washington, DC USA');
+
+        $results = app('geocoder')->geocodeQuery($query)->get();
+
+        $this->assertInstanceOf(Collection::class, $results);
+    }
+
+    public function testReverseQueryProvidesResults()
+    {
+        $coordinates = new Coordinates(38.8791981, -76.9818437);
+        $query = ReverseQuery::create($coordinates);
+
+        $results = app('geocoder')->reverseQuery($query)->get();
+
+        $this->assertInstanceOf(Collection::class, $results);
     }
 }

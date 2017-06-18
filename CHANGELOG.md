@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0-RC1] - 18 Jun 2017
+### Added
+- compatibility with Geocoder 4.0-dev.
+- caching to `geocodeQuery()` and `reverseQuery()` methods.
+
+### Updated
+- the geocoder `all()` method to be deprecated. Use `get()`.
+
 ## [1.1.0] - 17 Jun 2017
 ### Added
 - caching functionality for `geocode()` and `reverse()` methods.

@@ -8,18 +8,21 @@
 > If you still use **Laravel 4**, please check out the `0.4.x` branch
  [here](https://github.com/geocoder-php/GeocoderLaravel/tree/0.4.x).
 
-**Version 1.0.0 is a backwards-compatibility-breaking update. Please review
+**Version 2.0.0 is a backwards-compatibility-breaking update. Please review
  this documentation, especially the _Usage_ section before installing.**
 
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
  in [**Laravel 5**](http://laravel.com/).
+
+## Requirements
+- PHP >= 7.0.0
+- Laravel >= 5.0
 
 ## Installation
 1. Install the package via composer:
  ```sh
 composer require toin0u/geocoder-laravel
 ```
- _Once 1.0.0 is stable, we will update this command to reflect that. In the interest of getting it out and into your hands, a temporary RC build is best._
 
 2. Find the `providers` array key in `config/app.php` and register the **Geocoder Service Provider**:
  ```php
@@ -29,6 +32,31 @@ composer require toin0u/geocoder-laravel
 ```
 
 ## Upgrading
+### 1.x to 2.x
+The one change to keep in mind here is that the results returned from
+ `Geocoder for Laravel` are now using the Laravel-native Collections class
+ instead of returning and instance of `AddressCollection`. This should provide
+ greater versatility in manipulation of the results, and be inline with
+ expectations for working with Laravel. The existing `AddressCollection`
+ methods should map strait over to Laravel's `Collection` methods. But be sure
+ to double-check your results, if you have been using `getIterator()`, `count()`,
+ `first()`, `isEmpty()`, `slice()`, `has()`, `get()`, or `all()` on your results.
+
+**Alert:** if you have been using the `getIterator()` method, it is no longer
+ needed. Simply iterate over your results as you would any other Laravel
+ collection.
+
+**Deprecated:** the `all()` method on the geocoder is being deprecated in favor
+ of using `get()`, which will return a Laravel Collection. You can then run
+ `all()` on that. This method will be removed in version 3.0.0.
+
+**Added:** this version introduces a new way to create more complex queries:
+  - geocodeQuery()
+  - reverseQuery()
+ Please see the [Geocoder documentation](https://github.com/geocoder-php/Geocoder)
+ for more details.
+
+### 0.x to 1.x
 If you are upgrading from a pre-1.x version of this package, please keep the
  following things in mind:
 
@@ -126,11 +154,6 @@ The service provider initializes the `geocoder` service, accessible via the
 #### Get Collection of Addresses
 ```php
 app('geocoder')->geocode('Los Angeles, CA')->get();
-```
-
-#### Get Array of Addresses
-```php
-app('geocoder')->geocode('Los Angeles, CA')->all();
 ```
 
 #### Reverse-Geocoding
