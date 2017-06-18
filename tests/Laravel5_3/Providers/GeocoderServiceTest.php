@@ -173,4 +173,14 @@ class GeocoderServiceTest extends TestCase
     {
         $this->assertInstanceOf(ProviderAndDumperAggregator::class, app('geocoder'));
     }
+
+    public function testCacheIsUsed()
+    {
+        $result = app('geocoder')->geocode('1600 Pennsylvania Ave., Washington, DC USA')
+            ->get();
+        $cacheKey = 'geocoder-' . str_slug('1600 Pennsylvania Ave., Washington, DC USA');
+
+        $this->assertTrue(cache()->has($cacheKey));
+        $this->assertEquals($result, cache($cacheKey));
+    }
 }

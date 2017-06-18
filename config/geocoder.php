@@ -18,6 +18,7 @@ use Geocoder\Provider\GoogleMaps;
 use Geocoder\Provider\MaxMindBinary;
 
 return [
+    'cache-duraction' => 999999999,
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [

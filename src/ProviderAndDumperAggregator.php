@@ -73,7 +73,14 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
      */
     public function geocode($value)
     {
-        $this->results = parent::geocode($value);
+        $cacheId = str_slug($value);
+        $this->results = cache()->remember(
+            "geocoder-{$cacheId}",
+            config('geocoder.cache-duraction', 0),
+            function () use ($value) {
+                return parent::geocode($value);
+            }
+        );
 
         return $this;
     }
@@ -93,7 +100,14 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
      */
     public function reverse($latitude, $longitude)
     {
-        $this->results = parent::reverse($latitude, $longitude);
+        $cacheId = str_slug("{$latitude}-{$longitude}");
+        $this->results = cache()->remember(
+            "geocoder-{$cacheId}",
+            config('geocoder.cache-duraction', 0),
+            function () use ($latitude, $longitude) {
+                return parent::reverse($latitude, $longitude);
+            }
+        );
 
         return $this;
     }
