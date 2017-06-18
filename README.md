@@ -35,11 +35,11 @@ composer require toin0u/geocoder-laravel
 ### 1.x to 2.x
 The one change to keep in mind here is that the results returned from
  `Geocoder for Laravel` are now using the Laravel-native Collections class
- instead of returning and instance of `AddressCollection`. This should provide
+ instead of returning an instance of `AddressCollection`. This should provide
  greater versatility in manipulation of the results, and be inline with
  expectations for working with Laravel. The existing `AddressCollection`
  methods should map strait over to Laravel's `Collection` methods. But be sure
- to double-check your results, if you have been using `getIterator()`, `count()`,
+ to double-check your results, if you have been using `count()`,
  `first()`, `isEmpty()`, `slice()`, `has()`, `get()`, or `all()` on your results.
 
 **Alert:** if you have been using the `getIterator()` method, it is no longer
@@ -53,6 +53,7 @@ The one change to keep in mind here is that the results returned from
 **Added:** this version introduces a new way to create more complex queries:
   - geocodeQuery()
   - reverseQuery()
+
  Please see the [Geocoder documentation](https://github.com/geocoder-php/Geocoder)
  for more details.
 
