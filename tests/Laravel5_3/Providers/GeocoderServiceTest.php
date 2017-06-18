@@ -11,7 +11,7 @@ use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
 use Geocoder\Model\Coordinates;
-use Http\Adapter\Guzzle6\Client as GuzzleAdaptor;
+use Http\Client\Curl\Client as CurlAdapter;
 use Illuminate\Support\Collection;
 
 /**
@@ -148,7 +148,7 @@ class GeocoderServiceTest extends TestCase
         $this->assertCount(3, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
         $this->assertArrayHasKey(FreeGeoIp::class, $providers[Chain::class]);
-        $this->assertSame(GuzzleAdaptor::class, $this->app['config']->get('geocoder.adapter'));
+        $this->assertSame(CurlAdapter::class, $this->app['config']->get('geocoder.adapter'));
     }
 
     public function testLoadedProviders()

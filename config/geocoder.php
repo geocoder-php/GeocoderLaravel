@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-use Http\Adapter\Guzzle6\Client;
+use Http\Client\Curl\Client;
 use Geocoder\Provider\BingMaps\BingMaps;
 use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
