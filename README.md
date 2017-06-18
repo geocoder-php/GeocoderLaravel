@@ -113,14 +113,18 @@ By default, the configuration specifies a Chain Provider as the first provider,
  explicitly). The second GoogleMaps Provider outside of the Chain Provider is
  there just to illustrate this point (and is used by the PHPUnit tests).
 ```php
+use Http\Client\Curl\Client;
+use Geocoder\Provider\BingMaps\BingMaps;
+use Geocoder\Provider\Chain\Chain;
+use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
+use Geocoder\Provider\GoogleMaps\GoogleMaps;
+
 return [
     'cache-duraction' => 999999999,
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [
-                'en',
-                'us',
-                true,
+                'en-US',
                 env('GOOGLE_MAPS_API_KEY'),
             ],
             FreeGeoIp::class  => [],
@@ -130,13 +134,11 @@ return [
             env('BING_MAPS_API_KEY'),
         ],
         GoogleMaps::class => [
-            'en',
             'us',
-            true,
             env('GOOGLE_MAPS_API_KEY'),
         ],
     ],
-    'adapter'  => CurlHttpAdapter::class,
+    'adapter'  => Client::class,
 ];
 ```
 
