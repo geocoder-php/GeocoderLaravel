@@ -21,6 +21,9 @@ use Geocoder\Laravel\Exceptions\InvalidDumperException;
 use Geocoder\ProviderAggregator;
 use Illuminate\Support\Collection;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProviderAndDumperAggregator
 {
     protected $aggregator;

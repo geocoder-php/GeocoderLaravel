@@ -14,6 +14,9 @@ use Geocoder\Model\Coordinates;
 use Http\Adapter\Guzzle6\Client as GuzzleAdaptor;
 use Illuminate\Support\Collection;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class GeocoderServiceTest extends TestCase
 {
     public function setUp()
@@ -171,6 +174,9 @@ class GeocoderServiceTest extends TestCase
         $this->assertEquals($result, cache($cacheKey));
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
     public function testGeocodeQueryProvidesResults()
     {
         $query = GeocodeQuery::create('1600 Pennsylvania Ave., Washington, DC USA');
@@ -180,6 +186,9 @@ class GeocoderServiceTest extends TestCase
         $this->assertInstanceOf(Collection::class, $results);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
     public function testReverseQueryProvidesResults()
     {
         $coordinates = new Coordinates(38.8791981, -76.9818437);
