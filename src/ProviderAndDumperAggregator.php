@@ -8,14 +8,14 @@
  * @license    MIT License
  */
 
-use Geocoder\ProviderAggregator;
-use Geocoder\Geocoder;
+use Geocoder\Dumper\GeoJson;
 use Geocoder\Dumper\Gpx;
 use Geocoder\Dumper\Kml;
 use Geocoder\Dumper\Wkb;
 use Geocoder\Dumper\Wkt;
-use Geocoder\Dumper\GeoJson;
+use Geocoder\Geocoder;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
+use Geocoder\ProviderAggregator;
 use Illuminate\Support\Collection;
 
 /**
@@ -37,8 +37,9 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
     }
 
     /**
-     * @param string
+     * @param $dumper
      * @return Collection
+     * @throws InvalidDumperException
      */
     public function dump($dumper)
     {
@@ -50,7 +51,7 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
             'wkt' => Wkt::class,
         ]);
 
-        if (! $dumperClasses->has($dumper)) {
+        if (!$dumperClasses->has($dumper)) {
             $errorMessage = implode('', [
                 "The dumper specified ('{$dumper}') is invalid. Valid dumpers ",
                 "are: geojson, gpx, kml, wkb, wkt.",
