@@ -33,6 +33,11 @@ composer require toin0u/geocoder-laravel
 
 ## Upgrading
 ### 1.x to 2.x
+Update your composer.json file:
+```json
+    "toin0u/geocoder-laravel": "^2.0",
+```
+
 The one change to keep in mind here is that the results returned from
  `Geocoder for Laravel` are now using the Laravel-native Collections class
  instead of returning an instance of `AddressCollection`. This should provide
