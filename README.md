@@ -53,7 +53,7 @@ If you are upgrading from a pre-1.x version of this package, please keep the
         ```php
         use Geocoder\Laravel\Facades\Geocoder;
         ```
-  
+
 6. Update your query statements to use `->get()` (to retrieve a collection of
  GeoCoder objects) or `->all()` (to retrieve an array of arrays), then iterate
  to process each result.
@@ -71,6 +71,11 @@ See the [Geocoder documentation](http://geocoder-php.org/Geocoder/) for a list
  of available adapters and providers.
 
 ### Default Settings
+If you are upgrading and do not update your config file with the `cache-duraction`
+ variable, cache will by default be disabled (it will have a `0` cache duration).
+ The default cache duration provided by the config file is `999999999` minutes,
+ essentially forever.
+
 By default, the configuration specifies a Chain Provider as the first provider,
  containing GoogleMaps and FreeGeoIp providers. The first to return a result
  will be returned. After the Chain Provider, we have added the BingMaps provider
@@ -80,6 +85,7 @@ By default, the configuration specifies a Chain Provider as the first provider,
  there just to illustrate this point (and is used by the PHPUnit tests).
 ```php
 return [
+    'cache-duraction' => 999999999,
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [

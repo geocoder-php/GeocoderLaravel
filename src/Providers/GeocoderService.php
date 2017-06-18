@@ -48,12 +48,9 @@ class GeocoderService extends ServiceProvider
     {
         $this->app->alias('Geocoder', Geocoder::class);
         $this->app->singleton('geocoder', function () {
-            $geocoder = new ProviderAndDumperAggregator();
-            $geocoder->registerProviders(
+            return (new ProviderAndDumperAggregator)->registerProviders(
                 $this->getProviders(collect(config('geocoder.providers')))
             );
-
-            return $geocoder;
         });
     }
 

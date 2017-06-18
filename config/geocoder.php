@@ -9,36 +9,35 @@
  * file that was distributed with this source code.
  */
 
-use Ivory\HttpAdapter\CurlHttpAdapter;
-use Ivory\HttpAdapter\Guzzle6HttpAdapter;
-use Geocoder\Provider\Chain;
-use Geocoder\Provider\BingMaps;
-use Geocoder\Provider\FreeGeoIp;
-use Geocoder\Provider\GoogleMaps;
-use Geocoder\Provider\MaxMindBinary;
+use Http\Adapter\Guzzle6\Client;
+// use Geocoder\Provider\Chain;
+// use Geocoder\Provider\BingMaps;
+// use Geocoder\Provider\FreeGeoIp;
+use Geocoder\Provider\GoogleMaps\Model\GoogleAddress;
+// use Geocoder\Provider\MaxMindBinary;
 
 return [
     'cache-duraction' => 999999999,
     'providers' => [
-        Chain::class => [
-            GoogleMaps::class => [
-                'en',
-                'us',
-                true,
-                env('GOOGLE_MAPS_API_KEY'),
-            ],
-            FreeGeoIp::class  => [],
-        ],
-        BingMaps::class => [
-            'en-US',
-            env('BING_MAPS_API_KEY'),
-        ],
-        GoogleMaps::class => [
+        // Chain::class => [
+        //     GoogleMaps::class => [
+        //         'en',
+        //         'us',
+        //         true,
+        //         env('GOOGLE_MAPS_API_KEY'),
+        //     ],
+        //     FreeGeoIp::class  => [],
+        // ],
+        // BingMaps::class => [
+        //     'en-US',
+        //     env('BING_MAPS_API_KEY'),
+        // ],
+        GoogleAddress::class => [
             'en',
             'us',
             true,
             env('GOOGLE_MAPS_API_KEY'),
         ],
     ],
-    'adapter'  => CurlHttpAdapter::class,
+    'adapter'  => Client::class,
 ];

@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] - 17 Jun 2017
+### Added
+- caching functionality for `geocode()` and `reverse()` methods.
+- `cache-duration` variable to geocoder config.
+
 ## [1.0.2] - 20 Mar 2017
 ### Added
 - unit test for reverse-geocoding.
