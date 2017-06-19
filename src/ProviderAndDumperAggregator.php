@@ -169,9 +169,9 @@ class ProviderAndDumperAggregator
         return $this;
     }
 
-    public function getProviders() : array
+    public function getProviders() : Collection
     {
-        return $this->aggregator->getProviders();
+        return collect($this->aggregator->getProviders());
     }
 
     protected function getProvider()
