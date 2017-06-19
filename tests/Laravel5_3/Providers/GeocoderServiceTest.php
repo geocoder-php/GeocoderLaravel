@@ -3,6 +3,7 @@
 use Geocoder\Exception\FunctionNotFound;
 use Geocoder\Laravel\Tests\Laravel5_3\TestCase;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
+use Geocoder\Laravel\Facades\Geocoder;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\Laravel\Providers\GeocoderService;
 use Geocoder\Provider\Chain\Chain;
@@ -195,6 +196,13 @@ class GeocoderServiceTest extends TestCase
         $query = ReverseQuery::create($coordinates);
 
         $results = app('geocoder')->reverseQuery($query)->get();
+
+        $this->assertInstanceOf(Collection::class, $results);
+    }
+
+    public function testFacadeProvidesResults()
+    {
+        $results = Geocoder::geocode('1600 Pennsylvania Ave., Washington, DC USA')->get();
 
         $this->assertInstanceOf(Collection::class, $results);
     }
