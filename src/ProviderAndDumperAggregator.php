@@ -82,14 +82,7 @@ class ProviderAndDumperAggregator
             "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
             function () use ($query) {
-                $addresses = collect();
-                $addressCollection = $this->aggregator->geocodeQuery($query);
-
-                foreach ($addressCollection as $address) {
-                    $addresses->push($address);
-                }
-
-                return $addresses;
+                return collect($this->aggregator->geocodeQuery($query));
             }
         );
 
@@ -103,14 +96,7 @@ class ProviderAndDumperAggregator
             "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
             function () use ($query) {
-                $addresses = collect();
-                $addressCollection = $this->aggregator->reverseQuery($query);
-
-                foreach ($addressCollection as $address) {
-                    $addresses->push($address);
-                }
-
-                return $addresses;
+                return collect($this->aggregator->reverseQuery($query));
             }
         );
 
@@ -129,15 +115,7 @@ class ProviderAndDumperAggregator
             "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
             function () use ($value) {
-
-                $addresses = collect();
-                $addressCollection = $this->aggregator->geocode($value);
-
-                foreach ($addressCollection as $address) {
-                    $addresses->push($address);
-                }
-
-                return $addresses;
+                return collect($this->aggregator->geocode($value));
             }
         );
 
@@ -151,14 +129,7 @@ class ProviderAndDumperAggregator
             "geocoder-{$cacheId}",
             config('geocoder.cache-duraction', 0),
             function () use ($latitude, $longitude) {
-                $addresses = collect();
-                $addressCollection = $this->aggregator->reverse($latitude, $longitude);
-
-                foreach ($addressCollection as $address) {
-                    $addresses->push($address);
-                }
-
-                return $addresses;
+                return collect($this->aggregator->reverse($latitude, $longitude));
             }
         );
 
@@ -177,7 +148,7 @@ class ProviderAndDumperAggregator
         return $this->aggregator->getLimit();
     }
 
-    public function registerProvider(string $provider) : self
+    public function registerProvider($provider) : self
     {
         $this->aggregator->registerProvider($provider);
 
