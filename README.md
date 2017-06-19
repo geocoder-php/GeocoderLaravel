@@ -47,6 +47,8 @@ The one change to keep in mind here is that the results returned from
  to double-check your results, if you have been using `count()`,
  `first()`, `isEmpty()`, `slice()`, `has()`, `get()`, or `all()` on your results.
 
+Also, `getProviders()` now returns a Laravel Collection instead of an array.
+
 **Alert:** if you have been using the `getIterator()` method, it is no longer
  needed. Simply iterate over your results as you would any other Laravel
  collection.
