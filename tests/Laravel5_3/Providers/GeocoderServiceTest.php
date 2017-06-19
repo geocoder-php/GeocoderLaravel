@@ -226,4 +226,22 @@ class GeocoderServiceTest extends TestCase
 
         app('geocoder')->registerProvider($provider);
     }
+
+    public function testGetNameReturnsString()
+    {
+        $this->assertEquals('provider_aggregator', app('geocoder')->getName());
+    }
+
+    public function testLimitingOfResults()
+    {
+        $expectedLimit = 1;
+
+        app('geocoder')->limit($expectedLimit);
+        $actualLimit = app('geocoder')->getLimit();
+        $results = app('geocoder')->geocode('1600 Pennsylvania Ave., Washington, DC USA')
+            ->get();
+
+        $this->assertEquals($expectedLimit, $actualLimit);
+        $this->assertEquals($expectedLimit, $results->count());
+    }
 }
