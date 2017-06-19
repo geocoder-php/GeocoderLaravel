@@ -244,4 +244,26 @@ class GeocoderServiceTest extends TestCase
         $this->assertEquals($expectedLimit, $actualLimit);
         $this->assertEquals($expectedLimit, $results->count());
     }
+
+    public function testFetchingAllResults()
+    {
+        $expectedResults = app('geocoder')
+            ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
+            ->get()
+            ->all();
+        $actualResults = app('geocoder')
+            ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
+            ->all();
+
+        $this->assertEquals($expectedResults, $actualResults);
+    }
+
+    public function testGetProviders()
+    {
+        $providers = app('geocoder')->getProviders();
+
+        $this->assertTrue($providers->has('chain'));
+        $this->assertTrue($providers->has('bing_maps'));
+        $this->assertTrue($providers->has('google_maps'));
+    }
 }
