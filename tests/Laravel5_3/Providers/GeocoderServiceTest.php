@@ -8,6 +8,7 @@ use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\Laravel\Providers\GeocoderService;
 use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
+use Geocoder\Provider\MaxMindBinary\MaxMindBinary;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
@@ -32,13 +33,14 @@ class GeocoderServiceTest extends TestCase
         // Arrange
 
         // Act
-        $result = app('geocoder')->reverse(38.8791981, -76.9818437)->all();
+        $results = app('geocoder')->reverse(38.8791981, -76.9818437)->get();
 
         // Assert
-        $this->assertEquals('1600', $result[0]->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Southeast', $result[0]->getStreetName());
-        $this->assertEquals('Washington', $result[0]->getLocality());
-        $this->assertEquals('20003', $result[0]->getPostalCode());
+        $this->assertEquals('1600', $results->first()->getStreetNumber());
+        $this->assertEquals('Pennsylvania Avenue Southeast', $results->first()->getStreetName());
+        $this->assertEquals('Washington', $results->first()->getLocality());
+        $this->assertEquals('20003', $results->first()->getPostalCode());
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testItResolvesAGivenAddress()
@@ -46,16 +48,17 @@ class GeocoderServiceTest extends TestCase
         // Arrange
 
         // Act
-        $result = app('geocoder')
+        $results = app('geocoder')
             ->using('chain')
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
-            ->all();
+            ->get();
 
         // Assert
-        $this->assertEquals('1600', $result[0]->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Northwest', $result[0]->getStreetName());
-        $this->assertEquals('Washington', $result[0]->getLocality());
-        $this->assertEquals('20500', $result[0]->getPostalCode());
+        $this->assertEquals('1600', $results->first()->getStreetNumber());
+        $this->assertEquals('Pennsylvania Avenue Northwest', $results->first()->getStreetName());
+        $this->assertEquals('Washington', $results->first()->getLocality());
+        $this->assertEquals('20500', $results->first()->getPostalCode());
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testItResolvesAGivenIPAddress()
@@ -63,12 +66,13 @@ class GeocoderServiceTest extends TestCase
         // Arrange
 
         // Act
-        $result = app('geocoder')
+        $results = app('geocoder')
             ->geocode('8.8.8.8')
-            ->all();
+            ->get();
 
         // Assert
-        $this->assertEquals('US', $result[0]->getCountry()->getCode());
+        $this->assertEquals('US', $results->first()->getCountry()->getCode());
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testItResolvesAGivenAddressWithUmlauts()
@@ -76,15 +80,16 @@ class GeocoderServiceTest extends TestCase
         // Arrange
 
         // Act
-        $result = app('geocoder')
+        $results = app('geocoder')
             ->geocode('Obere Donaustrasse 22, Wien, Österreich')
-            ->all();
+            ->get();
 
         // Assert
-        $this->assertEquals('22', $result[0]->getStreetNumber());
-        $this->assertEquals('Obere Donaustraße', $result[0]->getStreetName());
-        $this->assertEquals('Wien', $result[0]->getLocality());
-        $this->assertEquals('1020', $result[0]->getPostalCode());
+        $this->assertEquals('22', $results->first()->getStreetNumber());
+        $this->assertEquals('Obere Donaustraße', $results->first()->getStreetName());
+        $this->assertEquals('Wien', $results->first()->getLocality());
+        $this->assertEquals('1020', $results->first()->getPostalCode());
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testItResolvesAGivenAddressWithUmlautsInRegion()
@@ -97,54 +102,59 @@ class GeocoderServiceTest extends TestCase
         app()->register(GeocoderService::class);
 
         // Act
-        $result = app('geocoder')
+        $results = app('geocoder')
             ->geocode('Obere Donaustrasse 22, Wien, Österreich')
-            ->all();
+            ->get();
 
         // Assert
-        $this->assertEquals('22', $result[0]->getStreetNumber());
-        $this->assertEquals('Obere Donaustraße', $result[0]->getStreetName());
-        $this->assertEquals('Wien', $result[0]->getLocality());
-        $this->assertEquals('1020', $result[0]->getPostalCode());
+        $this->assertEquals('22', $results->first()->getStreetNumber());
+        $this->assertEquals('Obere Donaustraße', $results->first()->getStreetName());
+        $this->assertEquals('Wien', $results->first()->getLocality());
+        $this->assertEquals('1020', $results->first()->getPostalCode());
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testItCanUseASpecificProvider()
     {
-        $result = app('geocoder')
+        $results = app('geocoder')
             ->using('google_maps')
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
-            ->all();
-        $this->assertEquals('1600', $result[0]->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Northwest', $result[0]->getStreetName());
-        $this->assertEquals('Washington', $result[0]->getLocality());
-        $this->assertEquals('20500', $result[0]->getPostalCode());
+            ->get();
+        $this->assertEquals('1600', $results->first()->getStreetNumber());
+        $this->assertEquals('Pennsylvania Avenue Northwest', $results->first()->getStreetName());
+        $this->assertEquals('Washington', $results->first()->getLocality());
+        $this->assertEquals('20500', $results->first()->getPostalCode());
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testItDumpsAndAddress()
     {
-        $result = app('geocoder')
+        $results = app('geocoder')
             ->using('google_maps')
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
             ->dump('geojson');
-        $jsonAddress = json_decode($result->first());
+        $jsonAddress = json_decode($results->first());
 
         $this->assertEquals('1600', $jsonAddress->properties->streetNumber);
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testItThrowsAnExceptionForInvalidDumper()
     {
         $this->expectException(InvalidDumperException::class);
-        $result = app('geocoder')
+        $results = app('geocoder')
             ->using('google_maps')
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
             ->dump('test');
-        $jsonAddress = json_decode($result->first());
+        $jsonAddress = json_decode($results->first());
 
         $this->assertEquals('1600', $jsonAddress->properties->streetNumber);
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testConfig()
     {
+        $this->assertEquals(999999999, config('geocoder.cache-duraction'));
         $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
         $this->assertCount(3, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
@@ -185,6 +195,7 @@ class GeocoderServiceTest extends TestCase
         $results = app('geocoder')->geocodeQuery($query)->get();
 
         $this->assertInstanceOf(Collection::class, $results);
+        $this->assertTrue($results->isNotEmpty());
     }
 
     /**
@@ -198,6 +209,7 @@ class GeocoderServiceTest extends TestCase
         $results = app('geocoder')->reverseQuery($query)->get();
 
         $this->assertInstanceOf(Collection::class, $results);
+        $this->assertTrue($results->isNotEmpty());
     }
 
     public function testFacadeProvidesResults()
@@ -205,5 +217,13 @@ class GeocoderServiceTest extends TestCase
         $results = Geocoder::geocode('1600 Pennsylvania Ave., Washington, DC USA')->get();
 
         $this->assertInstanceOf(Collection::class, $results);
+        $this->assertTrue($results->isNotEmpty());
+    }
+
+    public function testItCanUseMaxMindBinaryWithoutProvider()
+    {
+        $provider = new MaxMindBinary(__DIR__ . '/../../assets/GeoIP.dat');
+
+        app('geocoder')->registerProvider($provider);
     }
 }
