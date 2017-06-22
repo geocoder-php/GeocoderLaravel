@@ -178,9 +178,20 @@ class GeocoderServiceTest extends TestCase
     {
         $result = app('geocoder')->geocode('1600 Pennsylvania Ave., Washington, DC USA')
             ->get();
-        $cacheKey = 'geocoder-' . str_slug('1600 Pennsylvania Ave., Washington, DC USA');
+        $cacheKey = str_slug(strtolower(urlencode('1600 Pennsylvania Ave., Washington, DC USA')));
 
-        $this->assertTrue(cache()->has($cacheKey));
-        $this->assertEquals($result, cache($cacheKey));
+        $this->assertEquals($result, cache("geocoder-{$cacheKey}"));
+        $this->assertTrue(cache()->has("geocoder-{$cacheKey}"));
+    }
+
+    public function testJapaneseCharacterGeocoding()
+    {
+        $cacheKey = str_slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３')));
+
+        app('geocoder')->geocode('108-0075 東京都港区港南２丁目１６－３')
+            ->get();
+
+        $this->assertEquals($cacheKey, '108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93');
+        $this->assertTrue(cache()->has("geocoder-{$cacheKey}"));
     }
 }
