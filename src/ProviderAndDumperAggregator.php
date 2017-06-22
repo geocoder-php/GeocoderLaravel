@@ -110,8 +110,7 @@ class ProviderAndDumperAggregator
 
     public function geocode(string $value) : self
     {
-        #https://stackoverflow.com/questions/22112029/strslug-alternative-for-hindi-and-arabic-strings?noredirect=1&lq=1
-        $cacheKey = (empty(str_slug($value)))?urlencode($value):str_slug($value);
+        $cacheKey = str_slug(strtolower(urlencode($value)));
         $this->results = cache()->remember(
             "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
@@ -125,9 +124,9 @@ class ProviderAndDumperAggregator
 
     public function reverse(float $latitude, float $longitude) : self
     {
-        $cacheId = str_slug("{$latitude}-{$longitude}");
+        $cacheKey = str_slug(strtolower(urlencode("{$latitude}-{$longitude}")));
         $this->results = cache()->remember(
-            "geocoder-{$cacheId}",
+            "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
             function () use ($latitude, $longitude) {
                 return collect($this->aggregator->reverse($latitude, $longitude));
