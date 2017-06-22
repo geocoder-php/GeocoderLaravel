@@ -110,7 +110,8 @@ class ProviderAndDumperAggregator
 
     public function geocode(string $value) : self
     {
-        $cacheKey = str_slug($value);
+        #https://stackoverflow.com/questions/22112029/strslug-alternative-for-hindi-and-arabic-strings?noredirect=1&lq=1
+        $cacheKey = (empty(str_slug($value)))?urlencode($value):str_slug($value);
         $this->results = cache()->remember(
             "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
