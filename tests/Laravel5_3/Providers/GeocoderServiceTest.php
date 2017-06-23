@@ -7,7 +7,7 @@ use Geocoder\Laravel\Facades\Geocoder;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\Laravel\Providers\GeocoderService;
 use Geocoder\Provider\Chain\Chain;
-use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
+use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\MaxMindBinary\MaxMindBinary;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Geocoder\Query\GeocodeQuery;
@@ -67,10 +67,8 @@ class GeocoderServiceTest extends TestCase
 
         // Act
         $results = app('geocoder')
-            ->using('geo_plugin')
             ->geocode('72.229.28.185')
             ->get();
-        dump($results, app('geocoder'));
 
         // Assert
         $this->assertEquals('US', $results->first()->getCountry()->getCode());
@@ -158,9 +156,9 @@ class GeocoderServiceTest extends TestCase
     {
         $this->assertEquals(999999999, config('geocoder.cache-duraction'));
         $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
-        $this->assertCount(4, $providers);
+        $this->assertCount(3, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
-        $this->assertArrayHasKey(FreeGeoIp::class, $providers[Chain::class]);
+        $this->assertArrayHasKey(GeoPlugin::class, $providers[Chain::class]);
         $this->assertSame(CurlAdapter::class, $this->app['config']->get('geocoder.adapter'));
     }
 
@@ -265,7 +263,7 @@ class GeocoderServiceTest extends TestCase
     public function testGetProviders()
     {
         $providers = app('geocoder')->getProviders();
-        
+
         $this->assertTrue($providers->has('chain'));
         $this->assertTrue($providers->has('bing_maps'));
         $this->assertTrue($providers->has('google_maps'));
