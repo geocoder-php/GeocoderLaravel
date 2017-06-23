@@ -1,7 +1,7 @@
 [![Latest StableVersion](https://poser.pugx.org/toin0u/geocoder-laravel/v/stable.png)](https://packagist.org/packages/toin0u/geocoder-laravel)
 [![Total Downloads](https://poser.pugx.org/toin0u/geocoder-laravel/downloads.png)](https://packagist.org/packages/toin0u/geocoder-laravel)
 [![Build Status](https://secure.travis-ci.org/geocoder-php/GeocoderLaravel.png)](http://travis-ci.org/geocoder-php/GeocoderLaravel)
-[![Coverage Status](https://coveralls.io/repos/geocoder-php/GeocoderLaravel/badge.png)](https://coveralls.io/r/geocoder-php/GeocoderLaravel)
+[![Coveralls](https://img.shields.io/coveralls/geocoder-php/GeocoderLaravel.svg)](https://coveralls.io/github/geocoder-php/GeocoderLaravel)
 
 # Geocoder for Laravel
 
