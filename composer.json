@@ -27,6 +27,7 @@
         "geocoder-php/chain-provider": "dev-master@dev",
         "geocoder-php/common-http": "dev-master@dev",
         "geocoder-php/free-geoip-provider": "dev-master@dev",
+        "geocoder-php/geo-plugin-provider": "dev-master@dev",
         "geocoder-php/google-maps-provider": "dev-master@dev",
         "geocoder-php/maxmind-binary-provider": "dev-master@dev",
         "guzzlehttp/guzzle": "^6.2",

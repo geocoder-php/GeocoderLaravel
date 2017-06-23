@@ -9,6 +9,7 @@
 use Http\Client\Curl\Client;
 use Geocoder\Provider\BingMaps\BingMaps;
 use Geocoder\Provider\Chain\Chain;
+use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
 
@@ -26,7 +27,7 @@ return [
             'en-US',
             env('BING_MAPS_API_KEY'),
         ],
-        FreeGeoIp::class  => [],
+        GeoPlugin::class  => [],
         GoogleMaps::class => [
             'us',
             env('GOOGLE_MAPS_API_KEY'),

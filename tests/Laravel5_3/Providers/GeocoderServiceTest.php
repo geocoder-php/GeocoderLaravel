@@ -67,7 +67,7 @@ class GeocoderServiceTest extends TestCase
 
         // Act
         $results = app('geocoder')
-            ->using('free_geo_ip')
+            ->using('geo_plugin')
             ->geocode('72.229.28.185')
             ->get();
         dump($results, app('geocoder'));
@@ -265,6 +265,7 @@ class GeocoderServiceTest extends TestCase
     public function testGetProviders()
     {
         $providers = app('geocoder')->getProviders();
+        
         $this->assertTrue($providers->has('chain'));
         $this->assertTrue($providers->has('bing_maps'));
         $this->assertTrue($providers->has('google_maps'));
