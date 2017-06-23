@@ -70,6 +70,7 @@ class GeocoderServiceTest extends TestCase
             ->using('free_geo_ip')
             ->geocode('72.229.28.185')
             ->get();
+        dump($results, app('geocoder'));
 
         // Assert
         $this->assertEquals('US', $results->first()->getCountry()->getCode());
