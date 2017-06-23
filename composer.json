@@ -26,7 +26,6 @@
         "geocoder-php/bing-maps-provider": "dev-master@dev",
         "geocoder-php/chain-provider": "dev-master@dev",
         "geocoder-php/common-http": "dev-master@dev",
-        "geocoder-php/free-geoip-provider": "dev-master@dev",
         "geocoder-php/geo-plugin-provider": "dev-master@dev",
         "geocoder-php/google-maps-provider": "dev-master@dev",
         "geocoder-php/maxmind-binary-provider": "dev-master@dev",
@@ -42,16 +41,10 @@
     "require-dev": {
         "doctrine/dbal": "^2.5",
         "fzaninotto/faker": "~1.4",
-        "jakub-onderka/php-parallel-lint": "^0.9.2",
         "laravel/laravel": "5.4.*",
         "mockery/mockery": "0.9.*",
-        "pdepend/pdepend": "^2.2",
-        "phploc/phploc": "^3.0",
-        "phpmd/phpmd": "^2.4",
         "phpunit/phpunit": "~5.0",
-        "satooshi/php-coveralls" : "*",
-        "sebastian/phpcpd": "^2.0",
-        "squizlabs/php_codesniffer": "^2.7"
+        "satooshi/php-coveralls" : "dev-master@dev"
     },
     "autoload": {
         "psr-4": {
