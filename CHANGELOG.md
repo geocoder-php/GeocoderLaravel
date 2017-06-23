@@ -2,7 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.0.0-RC1] - 18 Jun 2017
+## [2.0.0-dev] - 23 Jun 2017
+### Fixed
+- failing Travis builds due TLS resolution issues by changing to a different
+ geocoding provider that was failing said resolution during CURL requests.
+ 
+### Changed
+- build and coverage badges back to Travis and Coveralls
+
+## [2.0.0-dev] - 18 Jun 2017
 ### Added
 - compatibility with Geocoder 4.0-dev.
 - caching to `geocodeQuery()` and `reverseQuery()` methods.
