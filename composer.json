@@ -23,11 +23,11 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
+        "php": "^7.0",
         "geocoder-php/bing-maps-provider": "dev-master@dev",
         "geocoder-php/chain-provider": "dev-master@dev",
         "geocoder-php/common-http": "dev-master@dev",
-        "php-http/curl-client": "dev-master@dev",
+        "php-http/curl-client": "^1.7",
         "geocoder-php/free-geoip-provider": "dev-master@dev",
         "geocoder-php/google-maps-provider": "dev-master@dev",
         "geocoder-php/maxmind-binary-provider": "dev-master@dev",
@@ -40,10 +40,10 @@
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
+        "mockery/mockery": "^0.9",
         "phpunit/phpunit": "~5.0",
-        "symfony/css-selector": "3.1.*",
-        "symfony/dom-crawler": "3.1.*",
+        "symfony/css-selector": "^3.1",
+        "symfony/dom-crawler": "^3.1",
         "doctrine/dbal": "^2.5",
         "laravel/laravel": "^5.3",
         "phploc/phploc": "^3.0",
