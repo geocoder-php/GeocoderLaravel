@@ -48,6 +48,7 @@
         "phploc/phploc": "^3.0",
         "phpmd/phpmd": "^2.4",
         "phpunit/phpunit": "~5.0",
+        "satooshi/php-coveralls" : "*",
         "sebastian/phpcpd": "^2.0",
         "squizlabs/php_codesniffer": "^2.7"
     },
