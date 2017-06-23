@@ -67,7 +67,7 @@ class GeocoderServiceTest extends TestCase
 
         // Act
         $results = app('geocoder')
-            ->geocode('8.8.8.8')
+            ->geocode('72.229.28.185')
             ->get();
 
         // Assert
