@@ -67,6 +67,7 @@ class GeocoderServiceTest extends TestCase
 
         // Act
         $results = app('geocoder')
+            ->using('free_geo_ip')
             ->geocode('72.229.28.185')
             ->get();
 
@@ -156,7 +157,7 @@ class GeocoderServiceTest extends TestCase
     {
         $this->assertEquals(999999999, config('geocoder.cache-duraction'));
         $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
-        $this->assertCount(3, $providers);
+        $this->assertCount(4, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
         $this->assertArrayHasKey(FreeGeoIp::class, $providers[Chain::class]);
         $this->assertSame(CurlAdapter::class, $this->app['config']->get('geocoder.adapter'));
@@ -239,7 +240,8 @@ class GeocoderServiceTest extends TestCase
 
         app('geocoder')->limit($expectedLimit);
         $actualLimit = app('geocoder')->getLimit();
-        $results = app('geocoder')->geocode('1600 Pennsylvania Ave., Washington, DC USA')
+        $results = app('geocoder')->using('chain')
+            ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
             ->get();
 
         $this->assertEquals($expectedLimit, $actualLimit);
@@ -262,12 +264,10 @@ class GeocoderServiceTest extends TestCase
     public function testGetProviders()
     {
         $providers = app('geocoder')->getProviders();
-
         $this->assertTrue($providers->has('chain'));
         $this->assertTrue($providers->has('bing_maps'));
         $this->assertTrue($providers->has('google_maps'));
     }
-
 
     public function testJapaneseCharacterGeocoding()
     {

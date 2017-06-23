@@ -26,6 +26,7 @@ return [
             'en-US',
             env('BING_MAPS_API_KEY'),
         ],
+        FreeGeoIp::class  => [],
         GoogleMaps::class => [
             'us',
             env('GOOGLE_MAPS_API_KEY'),
