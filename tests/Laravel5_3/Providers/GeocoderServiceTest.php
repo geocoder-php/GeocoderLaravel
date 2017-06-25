@@ -194,4 +194,19 @@ class GeocoderServiceTest extends TestCase
         $this->assertEquals($cacheKey, '108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93');
         $this->assertTrue(cache()->has("geocoder-{$cacheKey}"));
     }
+
+    public function testFailedGeocodingCanBeCaught()
+    {
+        $result = 'success';
+
+        try {
+            app('geocoder')
+                ->geocode('asd,Afghanistan')
+                ->get();
+        } catch (\Throwable $exception) {
+            $result = 'failure';
+        }
+
+        $this->assertEquals('failure', $result);
+    }
 }
