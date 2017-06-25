@@ -192,4 +192,4 @@ Please note that this project is released with a
 ## License
 GeocoderLaravel is released under the MIT License. See the bundled
  [LICENSE](https://github.com/geocoder-php/GeocoderLaravel/blob/master/LICENSE)
- file for details.
+ file for details. 
