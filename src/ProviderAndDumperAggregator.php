@@ -28,6 +28,7 @@ use ReflectionClass;
 class ProviderAndDumperAggregator
 {
     protected $aggregator;
+    protected $limit;
     protected $results;
 
     public function __construct()
@@ -141,6 +142,7 @@ class ProviderAndDumperAggregator
     {
         $this->aggregator = new ProviderAggregator(null, $limit);
         $this->registerProvidersFromConfig(collect(config('geocoder.providers')));
+        $this->limit = $limit;
 
         return $this;
     }
