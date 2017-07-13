@@ -75,7 +75,7 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
     public function geocode($value)
     {
         $cacheKey = str_slug(strtolower(urlencode($value)));
-        $this->results = cache()->remember(
+        $this->results = app('cache')->remember(
             "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
             function () use ($value) {
@@ -102,7 +102,7 @@ class ProviderAndDumperAggregator extends ProviderAggregator implements Geocoder
     public function reverse($latitude, $longitude)
     {
         $cacheKey = str_slug(strtolower(urlencode("{$latitude}-{$longitude}")));
-        $this->results = cache()->remember(
+        $this->results = app('cache')->remember(
             "geocoder-{$cacheKey}",
             config('geocoder.cache-duraction', 0),
             function () use ($latitude, $longitude) {

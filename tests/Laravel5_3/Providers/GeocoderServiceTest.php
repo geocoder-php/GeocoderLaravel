@@ -180,8 +180,8 @@ class GeocoderServiceTest extends TestCase
             ->get();
         $cacheKey = str_slug(strtolower(urlencode('1600 Pennsylvania Ave., Washington, DC USA')));
 
-        $this->assertEquals($result, cache("geocoder-{$cacheKey}"));
-        $this->assertTrue(cache()->has("geocoder-{$cacheKey}"));
+        $this->assertEquals($result, app('cache')->get("geocoder-{$cacheKey}"));
+        $this->assertTrue(app('cache')->has("geocoder-{$cacheKey}"));
     }
 
     public function testJapaneseCharacterGeocoding()
@@ -192,7 +192,7 @@ class GeocoderServiceTest extends TestCase
             ->get();
 
         $this->assertEquals($cacheKey, '108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93');
-        $this->assertTrue(cache()->has("geocoder-{$cacheKey}"));
+        $this->assertTrue(app('cache')->has("geocoder-{$cacheKey}"));
     }
 
     public function testFailedGeocodingCanBeCaught()
