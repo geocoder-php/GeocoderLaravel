@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - typo which caused cache to be in-effective.
 
 ### Changed
+- implemented geocoder-php 4.0.0.
 - version to 4.0.0 instead of 2.0.0 to maintain major version parity with
  parent package.
 - composer dependencies to release versions.
