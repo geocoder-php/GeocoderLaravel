@@ -11,9 +11,10 @@ use Geocoder\Provider\BingMaps\BingMaps;
 use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
+use Geocoder\Provider\HostIp\HostIp;
 
 return [
-    'cache-duraction' => 999999999,
+    'cache-duration' => 999999999,
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [

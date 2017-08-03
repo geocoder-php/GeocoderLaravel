@@ -67,7 +67,7 @@ class GeocoderServiceTest extends TestCase
 
         // Act
         $results = app('geocoder')
-            ->geocode('8.8.8.8')
+            ->geocode('72.229.28.185')
             ->get();
 
         // Assert
@@ -154,7 +154,7 @@ class GeocoderServiceTest extends TestCase
 
     public function testConfig()
     {
-        $this->assertEquals(999999999, config('geocoder.cache-duraction'));
+        $this->assertEquals(999999999, config('geocoder.cache-duration'));
         $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
         $this->assertCount(3, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);

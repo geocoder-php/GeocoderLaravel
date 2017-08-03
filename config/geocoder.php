@@ -13,7 +13,7 @@ use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
 
 return [
-    'cache-duraction' => 999999999,
+    'cache-duration' => 999999999,
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [
