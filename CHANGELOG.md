@@ -2,11 +2,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0] - 3 Aug 2017
+### Fixed
+- typo which caused cache to be in-effective.
+
+### Changed
+- version to 4.0.0 instead of 2.0.0 to maintain major version parity with
+ parent package.
+- composer dependencies to release versions.
+- unit tests to pass.
+- updated readme with some clarifying notes. May have to completely rewrite it
+ if it ends up being unclear.
+
 ## [2.0.0-dev] - 23 Jun 2017
 ### Fixed
 - failing Travis builds due TLS resolution issues by changing to a different
  geocoding provider that was failing said resolution during CURL requests.
- 
+
 ### Changed
 - build and coverage badges back to Travis and Coveralls
 

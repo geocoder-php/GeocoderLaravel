@@ -10,7 +10,7 @@
 > If you still use **Laravel 4**, please check out the `0.4.x` branch
  [here](https://github.com/geocoder-php/GeocoderLaravel/tree/0.4.x).
 
-**Version 2.0.0 is a backwards-compatibility-breaking update. Please review
+**Version 4.0.0 is a backwards-compatibility-breaking update. Please review
  this documentation, especially the _Usage_ section before installing.**
 
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
@@ -26,7 +26,7 @@ This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
 composer require toin0u/geocoder-laravel
 ```
 
-2. Find the `providers` array key in `config/app.php` and register the **Geocoder Service Provider**:
+2. **If you are running Laravel 5.5, skip this step.** Find the `providers` array key in `config/app.php` and register the **Geocoder Service Provider**:
  ```php
 // 'providers' => [
     Geocoder\Laravel\Providers\GeocoderService::class,
@@ -34,10 +34,10 @@ composer require toin0u/geocoder-laravel
 ```
 
 ## Upgrading
-### 1.x to 2.x
+### 1.x to 4.x
 Update your composer.json file:
 ```json
-    "toin0u/geocoder-laravel": "^2.0",
+    "toin0u/geocoder-laravel": "^4.0",
 ```
 
 The one change to keep in mind here is that the results returned from
@@ -108,19 +108,22 @@ Further, a special note on the GoogleMaps provider: if you are using an API key,
 See the [Geocoder documentation](http://geocoder-php.org/Geocoder/) for a list
  of available adapters and providers.
 
-### Default Settings
-If you are upgrading and do not update your config file with the `cache-duraction`
- variable, cache will by default be disabled (it will have a `0` cache duration).
- The default cache duration provided by the config file is `999999999` minutes,
- essentially forever.
+### Configuration
+#### Providers
+If you are upgrading and have previously published the geocoder config file, you
+ need to add the `cache-duration` variable, otherwise cache will be disabled
+ (it will default to a `0` cache duration). The default cache duration provided
+ by the config file is `999999999` minutes, essentially forever.
 
-By default, the configuration specifies a Chain Provider as the first provider,
- containing GoogleMaps and FreeGeoIp providers. The first to return a result
- will be returned. After the Chain Provider, we have added the BingMaps provider
- for use in specific situations (providers contained in the Chain provider will
- be run by default, providers not in the Chain provider need to be called
- explicitly). The second GoogleMaps Provider outside of the Chain Provider is
- there just to illustrate this point (and is used by the PHPUnit tests).
+By default, the configuration specifies a Chain provider, containing the
+ GoogleMaps provider for addresses as well as reverse lookups with lat/long,
+ and the GeoIP provider for IP addresses. The first to return a result
+ will be returned, and subsequent providers will not be executed. The default
+ config file is kept lean with only those two providers.
+
+However, you are free to add or remove providers as needed, both inside the
+ Chain provider, as well as along-side it. The following is an example config
+ with additional providers we use for testing:
 ```php
 use Http\Client\Curl\Client;
 use Geocoder\Provider\BingMaps\BingMaps;
@@ -129,7 +132,7 @@ use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
 
 return [
-    'cache-duraction' => 999999999,
+    'cache-duration' => 999999999,
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [
@@ -151,6 +154,13 @@ return [
 ];
 ```
 
+#### Adapters
+By default we provide a CURL adapter to get you running out of the box.
+ However, if you have already installed Guzzle or any other PSR-7-compatible
+ HTTP adapter, you are encouraged to replace the CURL adapter with it. Please
+ see the [Geocoder Documentation](https://github.com/geocoder-php/Geocoder) for
+ specific implementation details.
+
 ### Customization
 If you would like to make changes to the default configuration, publish and
  edit the configuration file:
@@ -166,6 +176,11 @@ The service provider initializes the `geocoder` service, accessible via the
 #### Get Collection of Addresses
 ```php
 app('geocoder')->geocode('Los Angeles, CA')->get();
+```
+
+#### Get IP Address Information
+```php
+app('geocoder')->geocode('8.8.8.8')->get();
 ```
 
 #### Reverse-Geocoding
@@ -193,4 +208,4 @@ Please note that this project is released with a
 ## License
 GeocoderLaravel is released under the MIT License. See the bundled
  [LICENSE](https://github.com/geocoder-php/GeocoderLaravel/blob/master/LICENSE)
- file for details. 
+ file for details.
