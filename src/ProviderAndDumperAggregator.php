@@ -82,7 +82,7 @@ class ProviderAndDumperAggregator
         $cacheKey = serialize($query);
         $this->results = app('cache')->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duraction', 0),
+            config('geocoder.cache-duration', 0),
             function () use ($query) {
                 return collect($this->aggregator->geocodeQuery($query));
             }
@@ -96,7 +96,7 @@ class ProviderAndDumperAggregator
         $cacheKey = serialize($query);
         $this->results = app('cache')->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duraction', 0),
+            config('geocoder.cache-duration', 0),
             function () use ($query) {
                 return collect($this->aggregator->reverseQuery($query));
             }
@@ -115,7 +115,7 @@ class ProviderAndDumperAggregator
         $cacheKey = str_slug(strtolower(urlencode($value)));
         $this->results = app('cache')->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duraction', 0),
+            config('geocoder.cache-duration', 0),
             function () use ($value) {
                 return collect($this->aggregator->geocode($value));
             }
@@ -129,7 +129,7 @@ class ProviderAndDumperAggregator
         $cacheKey = str_slug(strtolower(urlencode("{$latitude}-{$longitude}")));
         $this->results = app('cache')->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duraction', 0),
+            config('geocoder.cache-duration', 0),
             function () use ($latitude, $longitude) {
                 return collect($this->aggregator->reverse($latitude, $longitude));
             }
