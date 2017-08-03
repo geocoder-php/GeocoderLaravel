@@ -23,22 +23,19 @@
         }
     ],
     "require": {
+        "geocoder-php/chain-provider": "^4.0",
+        "geocoder-php/geo-plugin-provider": "^4.0",
+        "geocoder-php/google-maps-provider": "^4.0",
         "illuminate/cache": "5.*",
         "illuminate/support": "5.*",
         "php": "^7.0",
-        "php-http/message": "^1.5",
-        "php-http/curl-client": "^1.7",
-        "guzzlehttp/psr7": "^1.4",
-        "geocoder-php/chain-provider": "dev-master@dev",
-        "geocoder-php/bing-maps-provider": "dev-master@dev",
-        "geocoder-php/geo-plugin-provider": "dev-master@dev",
-        "geocoder-php/google-maps-provider": "dev-master@dev",
-        "willdurand/geocoder": "dev-master as 4.0.0-beta2"
+        "willdurand/geocoder": "^4.0"
     },
     "require-dev": {
         "doctrine/dbal": "^2.5",
         "fzaninotto/faker": "~1.4",
-        "geocoder-php/maxmind-binary-provider": "dev-master@dev",
+        "geocoder-php/bing-maps-provider": "^4.0",
+        "geocoder-php/maxmind-binary-provider": "^4.0",
         "laravel/laravel": "5.4.*",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~5.0",
@@ -56,8 +53,10 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "2.0.0-dev"
+        "laravel": {
+            "providers": [
+                "Geocoder\\Laravel\\Providers\\GeocoderService"
+            ]
         }
     },
     "minimum-stability": "dev",

@@ -19,6 +19,9 @@ abstract class TestCase extends BaseTestCase
     {
         $app = require __DIR__ . '/../../vendor/laravel/laravel/bootstrap/app.php';
         $app->make(Kernel::class)->bootstrap();
+        config([
+            'geocoder' => include(__DIR__ . '/../assets/testConfig.php'),
+        ]);
 
         return $app;
     }

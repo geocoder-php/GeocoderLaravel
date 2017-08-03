@@ -67,12 +67,12 @@ class GeocoderServiceTest extends TestCase
 
         // Act
         $results = app('geocoder')
-            ->geocode('72.229.28.185')
+            ->geocode('8.8.8.8')
             ->get();
 
         // Assert
-        $this->assertEquals('US', $results->first()->getCountry()->getCode());
         $this->assertTrue($results->isNotEmpty());
+        $this->assertEquals('US', $results->first()->getCountry()->getCode());
     }
 
     public function testItResolvesAGivenAddressWithUmlauts()

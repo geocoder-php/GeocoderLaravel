@@ -22,6 +22,14 @@ return [
             ],
             GeoPlugin::class  => [],
         ],
+        BingMaps::class => [
+            'en-US',
+            env('BING_MAPS_API_KEY'),
+        ],
+        GoogleMaps::class => [
+            'us',
+            env('GOOGLE_MAPS_API_KEY'),
+        ],
     ],
     'adapter'  => Client::class,
 ];
