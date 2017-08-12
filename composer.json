@@ -41,7 +41,8 @@
         "laravel/laravel": "5.4.*",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~5.0",
-        "satooshi/php-coveralls" : "dev-master@dev"
+        "satooshi/php-coveralls" : "dev-master@dev",
+        "sebastian/phpcpd": "*"
     },
     "autoload": {
         "psr-4": {
