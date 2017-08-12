@@ -26,7 +26,7 @@ class GeocoderService extends ServiceProvider
         $this->mergeConfigFrom($configPath, 'geocoder');
         $this->app->singleton('geocoder', function () {
             return (new ProviderAndDumperAggregator)
-            	->registerProvidersFromConfig(collect(config('geocoder.providers')));
+                ->registerProvidersFromConfig(collect(config('geocoder.providers')));
         });
     }
 
