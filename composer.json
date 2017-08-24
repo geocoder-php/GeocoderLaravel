@@ -10,16 +10,16 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Antoine Corcy",
-            "email": "contact@sbin.dk",
-            "homepage": "http://sbin.dk",
-            "role": "Developer"
-        },
-        {
             "name": "Mike Bronner",
             "email": "hello@genealabs.com",
             "homepage": "https://genealabs.com",
-            "role": "developer"
+            "role": "Developer, Maintainer"
+        },
+        {
+            "name": "Antoine Corcy",
+            "email": "contact@sbin.dk",
+            "homepage": "http://sbin.dk",
+            "role": "Original Creator"
         }
     ],
     "require": {
