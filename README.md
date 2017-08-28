@@ -34,6 +34,11 @@ composer require toin0u/geocoder-laravel
 ```
 
 ## Upgrading
+Anytime you upgrade this package, please remember to clear your cache, to prevent incompatible cached responses when breaking changes are introduced (hopefully only in major versions):
+```sh
+php artisan cache:clear
+```
+
 ### 1.x to 4.x
 Update your composer.json file:
 ```json
