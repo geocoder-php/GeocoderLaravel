@@ -292,4 +292,13 @@ class GeocoderServiceTest extends TestCase
 
         $this->assertEquals('District of Columbia', $results->first()->getAdminLevels()->first()->getName());
     }
+
+    public function testItHandlesOnlyCityAndState()
+    {
+        $results = Geocoder::geocode('Seatle, WA')->get();
+
+        $this->assertEquals('Seattle', $results->first()->getLocality());
+        $this->assertEquals('Washington', $results->first()->getAdminLevels()->first()->getName());
+        $this->assertEquals('United States', $results->first()->getCountry()->getName());
+    }
 }
