@@ -2,9 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.0.1] - 2 Sep 2017
+## [4.0.2] - 2 Sep 2017
 ### Fixed
 - erroneous method `getProvider()` and marked it as deprecated.
+
+## [4.0.1] - 7 Aug 2017
+### Fixed
+- missing PSR-7 dependency.
 
 ## [4.0.0] - 3 Aug 2017
 ### Added
