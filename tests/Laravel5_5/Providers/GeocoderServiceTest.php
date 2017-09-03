@@ -1,7 +1,7 @@
-<?php namespace Geocoder\Laravel\Tests\Laravel5_3\Providers;
+<?php namespace Geocoder\Laravel\Tests\Laravel5_5\Providers;
 
 use Geocoder\Exception\FunctionNotFound;
-use Geocoder\Laravel\Tests\Laravel5_3\TestCase;
+use Geocoder\Laravel\Tests\Laravel5_5\TestCase;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
 use Geocoder\Laravel\Facades\Geocoder;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
@@ -266,6 +266,13 @@ class GeocoderServiceTest extends TestCase
         $this->assertTrue($providers->has('chain'));
         $this->assertTrue($providers->has('bing_maps'));
         $this->assertTrue($providers->has('google_maps'));
+    }
+
+    public function testGetProvider()
+    {
+        $provider = app('geocoder')->getProvider();
+
+        $this->assertEquals($provider->getName(), 'chain');
     }
 
     public function testJapaneseCharacterGeocoding()

@@ -12,7 +12,7 @@
 >
     <testsuites>
         <testsuite name="Geocoder library for Laravel Test Suite">
-            <directory suffix="Test.php">./tests/Laravel5_3</directory>
+            <directory suffix="Test.php">./tests/Laravel5_5</directory>
         </testsuite>
     </testsuites>
     <filter>
