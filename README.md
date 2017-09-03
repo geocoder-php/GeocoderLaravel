@@ -22,16 +22,18 @@ This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
 
 ## Installation
 1. Install the package via composer:
- ```sh
-composer require toin0u/geocoder-laravel
-```
+  ```sh
+  composer require toin0u/geocoder-laravel
+  ```
 
-2. **If you are running Laravel 5.5, skip this step.** Find the `providers` array key in `config/app.php` and register the **Geocoder Service Provider**:
- ```php
-// 'providers' => [
-    Geocoder\Laravel\Providers\GeocoderService::class,
-// ];
-```
+2. **If you are running Laravel 5.5 (the package will be auto-discovered), skip
+  this step.** Find the `providers` array key in `config/app.php` and register
+  the **Geocoder Service Provider**:
+  ```php
+  // 'providers' => [
+      Geocoder\Laravel\Providers\GeocoderService::class,
+  // ];
+  ```
 
 ## Upgrading
 Anytime you upgrade this package, please remember to clear your cache, to prevent incompatible cached responses when breaking changes are introduced (this should hopefully only be necessary in major versions):
@@ -60,9 +62,13 @@ Also, `getProviders()` now returns a Laravel Collection instead of an array.
  needed. Simply iterate over your results as you would any other Laravel
  collection.
 
-**Deprecated:** the `all()` method on the geocoder is being deprecated in favor
- of using `get()`, which will return a Laravel Collection. You can then run
- `all()` on that. This method will be removed in version 3.0.0.
+**Deprecated:**
+  - the `all()` method on the geocoder is being deprecated in favor of using
+    `get()`, which will return a Laravel Collection. You can then run `all()`
+    on that. This method will be removed in version 5.0.0.
+  - the `getProvider()` method on the geocoder is being deprecated in favor of using
+    `getProviders()`, which will return a Laravel Collection. You can then run `first()`
+    on that to get the same result. This method will be removed in version 5.0.0.
 
 **Added:** this version introduces a new way to create more complex queries:
   - geocodeQuery()

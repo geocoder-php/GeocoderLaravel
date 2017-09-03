@@ -178,9 +178,12 @@ class ProviderAndDumperAggregator
         return collect($this->aggregator->getProviders());
     }
 
-    protected function getProvider()
+    /**
+     * @deprecated Use `getProviders()` instead.
+     */
+    public function getProvider()
     {
-        return $this->aggregator->getProvider();
+        return $this->getProviders()->first();
     }
 
     public function registerProvidersFromConfig(Collection $providers) : self
