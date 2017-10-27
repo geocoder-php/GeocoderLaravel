@@ -88,6 +88,8 @@ class ProviderAndDumperAggregator
             }
         );
 
+        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
+
         return $this;
     }
 
@@ -101,6 +103,8 @@ class ProviderAndDumperAggregator
                 return collect($this->aggregator->reverseQuery($query));
             }
         );
+
+        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
 
         return $this;
     }
@@ -121,6 +125,8 @@ class ProviderAndDumperAggregator
             }
         );
 
+        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
+
         return $this;
     }
 
@@ -134,6 +140,8 @@ class ProviderAndDumperAggregator
                 return collect($this->aggregator->reverse($latitude, $longitude));
             }
         );
+
+        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
 
         return $this;
     }
@@ -238,5 +246,14 @@ class ProviderAndDumperAggregator
         }
 
         return config('geocoder.adapter');
+    }
+
+    protected function removeEmptyCacheEntry(string $cacheKey)
+    {
+        $result = app('cache')->get($cacheKey);
+
+        if ($result && $result->isEmpty()) {
+            app('cache')->forget($cacheKey);
+        }
     }
 }

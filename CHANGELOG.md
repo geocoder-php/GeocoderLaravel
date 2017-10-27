@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.3] - 27 Oct 2017
+### Fixed
+- cache duration to work on 32-bit systems.
+- geocoder to not cache if no results are provided.
+
 ## [4.0.2] - 2 Sep 2017
 ### Fixed
 - erroneous method `getProvider()` and marked it as deprecated.

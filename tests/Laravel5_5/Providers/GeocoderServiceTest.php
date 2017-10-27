@@ -308,4 +308,13 @@ class GeocoderServiceTest extends TestCase
         $this->assertEquals('Washington', $results->first()->getAdminLevels()->first()->getName());
         $this->assertEquals('United States', $results->first()->getCountry()->getName());
     }
+
+    public function testEmptyResultsAreNotCached()
+    {
+        $cacheKey = str_slug(strtolower(urlencode('_')));
+
+        Geocoder::geocode('_')->get();
+
+        $this->assertFalse(app('cache')->has("geocoder-{$cacheKey}"));
+    }
 }
