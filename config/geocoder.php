@@ -12,7 +12,7 @@ use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Http\Client\Curl\Client;
 
 return [
-    'cache-duration' => 999999999,
+    'cache-duration' => 9999999,
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [
