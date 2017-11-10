@@ -59,7 +59,10 @@
         "laravel": {
             "providers": [
                 "Geocoder\\Laravel\\Providers\\GeocoderService"
-            ]
+            ],
+            "aliases": {
+                "Geocoder": "Geocoder\\Laravel\\Facades\\Geocoder"
+            }
         }
     },
     "prefer-stable": true,
