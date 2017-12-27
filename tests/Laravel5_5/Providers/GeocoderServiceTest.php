@@ -17,6 +17,8 @@ use Http\Client\Curl\Client as CurlAdapter;
 use Illuminate\Support\Collection;
 
 /**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GeocoderServiceTest extends TestCase
@@ -30,12 +32,8 @@ class GeocoderServiceTest extends TestCase
 
     public function testItReverseGeocodesCoordinates()
     {
-        // Arrange
-
-        // Act
         $results = app('geocoder')->reverse(38.8791981, -76.9818437)->get();
 
-        // Assert
         $this->assertEquals('1600', $results->first()->getStreetNumber());
         $this->assertEquals('Pennsylvania Avenue Southeast', $results->first()->getStreetName());
         $this->assertEquals('Washington', $results->first()->getLocality());
@@ -45,15 +43,11 @@ class GeocoderServiceTest extends TestCase
 
     public function testItResolvesAGivenAddress()
     {
-        // Arrange
-
-        // Act
         $results = app('geocoder')
             ->using('chain')
             ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
             ->get();
 
-        // Assert
         $this->assertEquals('1600', $results->first()->getStreetNumber());
         $this->assertEquals('Pennsylvania Avenue Northwest', $results->first()->getStreetName());
         $this->assertEquals('Washington', $results->first()->getLocality());
@@ -63,28 +57,20 @@ class GeocoderServiceTest extends TestCase
 
     public function testItResolvesAGivenIPAddress()
     {
-        // Arrange
-
-        // Act
         $results = app('geocoder')
             ->geocode('72.229.28.185')
             ->get();
 
-        // Assert
         $this->assertTrue($results->isNotEmpty());
         $this->assertEquals('US', $results->first()->getCountry()->getCode());
     }
 
     public function testItResolvesAGivenAddressWithUmlauts()
     {
-        // Arrange
-
-        // Act
         $results = app('geocoder')
             ->geocode('Obere Donaustrasse 22, Wien, Österreich')
             ->get();
 
-        // Assert
         $this->assertEquals('22', $results->first()->getStreetNumber());
         $this->assertEquals('Obere Donaustraße', $results->first()->getStreetName());
         $this->assertEquals('Wien', $results->first()->getLocality());
@@ -94,19 +80,16 @@ class GeocoderServiceTest extends TestCase
 
     public function testItResolvesAGivenAddressWithUmlautsInRegion()
     {
-        // Arrange
         config()->set('geocoder.providers.Geocoder\Provider\Chain\Chain.Geocoder\Provider\GoogleMaps\GoogleMaps', [
             'de-DE',
             null,
         ]);
         app()->register(GeocoderService::class);
 
-        // Act
         $results = app('geocoder')
             ->geocode('Obere Donaustrasse 22, Wien, Österreich')
             ->get();
 
-        // Assert
         $this->assertEquals('22', $results->first()->getStreetNumber());
         $this->assertEquals('Obere Donaustraße', $results->first()->getStreetName());
         $this->assertEquals('Wien', $results->first()->getLocality());
