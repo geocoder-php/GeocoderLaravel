@@ -28,20 +28,21 @@
         "geocoder-php/geo-plugin-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.0",
         "guzzlehttp/psr7": "*",
-        "illuminate/cache": "5.0.* || 5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.*",
-        "illuminate/support": "5.0.* || 5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.*",
+        "illuminate/cache": "5.0 - 5.5",
+        "illuminate/support": "5.0 - 5.5",
         "php": "^7.0",
         "willdurand/geocoder": "^4.0"
     },
     "require-dev": {
+        "codedungeon/phpunit-result-printer": "^0.4.4",
         "doctrine/dbal": "^2.5",
         "fzaninotto/faker": "~1.4",
         "geocoder-php/bing-maps-provider": "^4.0",
         "geocoder-php/maxmind-binary-provider": "^4.0",
         "laravel/laravel": "5.5.*",
         "mockery/mockery": "0.9.*",
+        "php-coveralls/php-coveralls": "^2.0",
         "phpunit/phpunit": "~5.0",
-        "satooshi/php-coveralls" : "dev-master@dev",
         "sebastian/phpcpd": "*"
     },
     "autoload": {
