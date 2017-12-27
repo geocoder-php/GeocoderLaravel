@@ -28,8 +28,8 @@
         "geocoder-php/geo-plugin-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.0",
         "guzzlehttp/psr7": "*",
-        "illuminate/cache": "5.*",
-        "illuminate/support": "5.*",
+        "illuminate/cache": "5.0.* || 5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.*",
+        "illuminate/support": "5.0.* || 5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.*",
         "php": "^7.0",
         "willdurand/geocoder": "^4.0"
     },
