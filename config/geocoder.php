@@ -64,4 +64,21 @@ return [
     */
     'adapter'  => Client::class,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Reader
+    |--------------------------------------------------------------------------
+    |
+    | You can specify a reader for specific providers, like GeoIp2, which
+    | connect to a local file-database. The reader should be set to an
+    | instance of the required reader class.
+    |
+    | Please consult the official Geocoder documentation for more info.
+    | https://github.com/geocoder-php/geoip2-provider
+    |
+    | Default: null
+    |
+    */
+    'reader' => null,
+
 ];
