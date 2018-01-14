@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.5] - 14 Jan 2018
+### Fixed
+- loading of GeoIP2 provider from within Chain provider.
+
+### Changed
+- unit testing to use Orchstral Testbench.
+
+## [4.0.4] - 27 Dec 2017
+### Added
+- environment variable configuration option in default config to set Google Maps Locale.
+- documentation comments in configuration file.
+
+### Changed
+- composer dependency version constraints for Laravel to be within a specific range, instead of open-ended.
+
 ## [4.0.3] - 27 Oct 2017
 ### Fixed
 - cache duration to work on 32-bit systems.

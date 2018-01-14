@@ -69,35 +69,90 @@ By default, the configuration specifies a Chain provider, containing the
  config file is kept lean with only those two providers.
 
 However, you are free to add or remove providers as needed, both inside the
- Chain provider, as well as along-side it. The following is an example config
- with additional providers we use for testing:
+ Chain provider, as well as along-side it. The following is the default
+ configuration provided by the package:
 ```php
-use Http\Client\Curl\Client;
-use Geocoder\Provider\BingMaps\BingMaps;
 use Geocoder\Provider\Chain\Chain;
-use Geocoder\Provider\FreeGeoIp\FreeGeoIp;
+use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
+use Http\Client\Curl\Client;
 
 return [
-    'cache-duration' => 999999999,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Duration
+    |--------------------------------------------------------------------------
+    |
+    | Specify the cache duration in seconds. The default approximates a forever
+    | cache, but there are certain issues with Laravel's forever caching
+    | methods that prevent us from using them in this project.
+    |
+    | Default: 9999999 (integer)
+    |
+    */
+    'cache-duration' => 9999999,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Providers
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify any number of providers that should be used to
+    | perform geocaching operations. The `chain` provider is special,
+    | in that it can contain multiple providers that will be run in
+    | the sequence listed, should the previous provider fail. By
+    | default the first provider listed will be used, but you
+    | can explicitly call subsequently listed providers by
+    | alias: `app('geocoder')->using('google_maps')`.
+    |
+    | Please consult the official Geocoder documentation for more info.
+    | https://github.com/geocoder-php/Geocoder#providers
+    |
+    */
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [
-                'en-US',
+                env('GOOGLE_MAPS_LOCALE', 'en-US'),
                 env('GOOGLE_MAPS_API_KEY'),
             ],
-            FreeGeoIp::class  => [],
-        ],
-        BingMaps::class => [
-            'en-US',
-            env('BING_MAPS_API_KEY'),
-        ],
-        GoogleMaps::class => [
-            'us',
-            env('GOOGLE_MAPS_API_KEY'),
+            GeoPlugin::class  => [],
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Adapter
+    |--------------------------------------------------------------------------
+    |
+    | You can specify which PSR-7-compliant HTTP adapter you would like to use.
+    | There are multiple options at your disposal: CURL, Guzzle, and others.
+    |
+    | Please consult the official Geocoder documentation for more info.
+    | https://github.com/geocoder-php/Geocoder#usage
+    |
+    | Default: Client::class (FQCN for CURL adapter)
+    |
+    */
     'adapter'  => Client::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reader
+    |--------------------------------------------------------------------------
+    |
+    | You can specify a reader for specific providers, like GeoIp2, which
+    | connect to a local file-database. The reader should be set to an
+    | instance of the required reader class.
+    |
+    | Please consult the official Geocoder documentation for more info.
+    | https://github.com/geocoder-php/geoip2-provider
+    |
+    | Default: null
+    |
+    */
+    'reader' => null,
+
 ];
 ```
 
@@ -216,7 +271,7 @@ If you are upgrading from a pre-1.x version of this package, please keep the
 - Clear cache: `php artisan cache:clear`.
 - If you are still experiencing difficulties, please please open an issue on GitHub:
  https://github.com/geocoder-php/GeocoderLaravel/issues.
- 
+
 ## Changelog
 https://github.com/geocoder-php/GeocoderLaravel/blob/master/CHANGELOG.md
 
