@@ -226,19 +226,33 @@ class ProviderAndDumperAggregator
         }
 
         $adapter = $this->getAdapterClass($provider);
+        $reader = null;
 
         if ($adapter) {
-            array_unshift($arguments, (new $adapter));
+            if ($this->requiresReader($provider)) {
+                $reader = config('geocoder.reader');
+            }
+
+            array_unshift($arguments, new $adapter($reader));
         }
 
         return $arguments;
     }
 
+    protected function requiresReader(string $class) : bool
+    {
+        $specificAdapters = collect([
+            'Geocoder\Provider\GeoIP2\GeoIP2',
+        ]);
+
+        return $specificAdapters->contains($class);
+    }
+
     protected function getAdapterClass(string $provider) : string
     {
         $specificAdapters = collect([
-            'Geocoder\Provider\GeoIP2' => 'Geocoder\Adapter\GeoIP2Adapter',
-            'Geocoder\Provider\MaxMindBinary' => null,
+            'Geocoder\Provider\GeoIP2\GeoIP2' => 'Geocoder\Provider\GeoIP2\GeoIP2Adapter',
+            'Geocoder\Provider\MaxMindBinary\MaxMindBinary' => '',
         ]);
 
         if ($specificAdapters->has($provider)) {
