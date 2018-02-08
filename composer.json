@@ -27,8 +27,8 @@
         "geocoder-php/geo-plugin-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.0",
         "guzzlehttp/psr7": "*",
-        "illuminate/cache": "5.0 - 5.5",
-        "illuminate/support": "5.0 - 5.5",
+        "illuminate/cache": "5.0 - 5.6",
+        "illuminate/support": "5.0 - 5.6",
         "php-http/curl-client": "^1.7",
         "php": "^7.0",
         "willdurand/geocoder": "^4.0"
@@ -41,12 +41,12 @@
         "geocoder-php/geoip2-provider": "^4.0",
         "geocoder-php/maxmind-binary-provider": "^4.0",
         "mockery/mockery": "0.9.*",
-        "orchestra/database": "^3.5",
-        "orchestra/testbench": "^3.5",
-        "orchestra/testbench-browser-kit": "^3.5",
-        "orchestra/testbench-dusk": "^3.5",
+        "orchestra/database": "3.6.x-dev@dev",
+        "orchestra/testbench": "^3.6.0",
+        "orchestra/testbench-browser-kit": "3.6.x-dev@dev",
+        "orchestra/testbench-dusk": "3.6.x-dev@dev",
         "php-coveralls/php-coveralls": "*",
-        "phpunit/phpunit": "*",
+        "phpunit/phpunit": "^7.0",
         "sebastian/phpcpd": "*"
     },
     "autoload": {
