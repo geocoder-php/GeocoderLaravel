@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.6] - 9 Feb 2018
+### Added
+- Laravel 5.6 compatibility.
+
 ## [4.0.5] - 14 Jan 2018
 ### Fixed
 - loading of GeoIP2 provider from within Chain provider.
