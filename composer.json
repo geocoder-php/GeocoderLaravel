@@ -30,7 +30,7 @@
         "illuminate/cache": "5.0 - 5.6",
         "illuminate/support": "5.0 - 5.6",
         "php-http/curl-client": "^1.7",
-        "php": "^7.0",
+        "php": ">=7.0.25",
         "willdurand/geocoder": "^4.0"
     },
     "require-dev": {

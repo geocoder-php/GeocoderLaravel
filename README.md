@@ -17,7 +17,7 @@ This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
  in [**Laravel 5**](http://laravel.com/).
 
 ## Requirements
-- PHP >= 7.0.0
+- PHP >= 7.0.25
 - Laravel >= 5.0
 
 ## Installation
