@@ -4,7 +4,7 @@ use Geocoder\Exception\FunctionNotFound;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
 use Geocoder\Laravel\Facades\Geocoder;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
-use Geocoder\Laravel\Tests\FeatureTestCase;
+use Geocoder\Laravel\Tests\UnitTestCase;
 use Geocoder\Laravel\Providers\GeocoderService;
 use Geocoder\Model\Coordinates;
 use Geocoder\Provider\Chain\Chain;
@@ -22,7 +22,7 @@ use Illuminate\Support\Collection;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class GeocoderServiceTest extends FeatureTestCase
+class GeocoderServiceTest extends UnitTestCase
 {
     public function testItReverseGeocodesCoordinates()
     {
