@@ -141,7 +141,8 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testConfig()
     {
-        $this->assertEquals(999999999, config('geocoder.cache-duration'));
+        $this->assertEquals(null, config('geocoder.cache.store'));
+        $this->assertEquals(999999999, config('geocoder.cache.duration'));
         $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
         $this->assertCount(3, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
@@ -169,8 +170,8 @@ class GeocoderServiceTest extends UnitTestCase
         $result = app('geocoder')->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
             ->get();
 
-        $this->assertTrue(app('cache')->has("geocoder-{$cacheKey}"));
-        $this->assertEquals($result, app('cache')->get("geocoder-{$cacheKey}"));
+        $this->assertTrue(app('cache')->store(config('geocoder.cache.store', null))->has("geocoder-{$cacheKey}"));
+        $this->assertEquals($result, app('cache')->store(config('geocoder.cache.store', null))->get("geocoder-{$cacheKey}"));
     }
 
     /**
