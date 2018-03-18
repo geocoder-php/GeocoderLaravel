@@ -165,7 +165,7 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testCacheIsUsed()
     {
-        $cacheKey = str_slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')));
+        $cacheKey = md5(str_slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA'))));
 
         $result = app('geocoder')->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
             ->get();
@@ -265,14 +265,14 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testJapaneseCharacterGeocoding()
     {
-        $cacheKey = str_slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３')));
+        $cacheKey = md5(str_slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３'))));
 
         app('geocoder')->geocode('108-0075 東京都港区港南２丁目１６－３')
             ->get();
 
         $this->assertEquals(
             $cacheKey,
-            '108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93'
+            md5('108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93')
         );
         $this->assertTrue(app('cache')->has("geocoder-{$cacheKey}"));
     }
@@ -304,7 +304,7 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testEmptyResultsAreNotCached()
     {
-        $cacheKey = str_slug(strtolower(urlencode('_')));
+        $cacheKey = md5(str_slug(strtolower(urlencode('_'))));
 
         Geocoder::geocode('_')->get();
 
