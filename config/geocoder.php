@@ -9,17 +9,44 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Cache Duration
+    | Cache Settings
     |--------------------------------------------------------------------------
     |
-    | Specify the cache duration in minutes. The default approximates a forever
-    | cache, but there are certain issues with Laravel's forever caching
-    | methods that prevent us from using them in this project.
-    |
-    | Default: 9999999 (integer)
+    | Here you may define all of the cache settings.
     |
     */
-    'cache-duration' => 9999999,
+
+    'cache' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cache Store
+        |--------------------------------------------------------------------------
+        |
+        | Specify the cache store to use for caching. The default value null will
+        | use the default cache store specified in the cache.php cofig file.
+        |
+        | Default: null
+        |
+        */
+
+        'store' => null,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cache Duration
+        |--------------------------------------------------------------------------
+        |
+        | Specify the cache duration in minutes. The default approximates a forever
+        | cache, but there are certain issues with Laravel's forever caching
+        | methods that prevent us from using them in this project.
+        |
+        | Default: 9999999 (integer)
+        |
+        */
+
+        'duration' => 9999999,
+    ],
 
     /*
     |--------------------------------------------------------------------------

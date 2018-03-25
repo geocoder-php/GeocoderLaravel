@@ -79,10 +79,10 @@ class ProviderAndDumperAggregator
 
     public function geocodeQuery(GeocodeQuery $query) : self
     {
-        $cacheKey = serialize($query);
-        $this->results = app('cache')->remember(
+        $cacheKey = md5(serialize($query));
+        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duration', 0),
+            config('geocoder.cache.duration', 0),
             function () use ($query) {
                 return collect($this->aggregator->geocodeQuery($query));
             }
@@ -95,10 +95,10 @@ class ProviderAndDumperAggregator
 
     public function reverseQuery(ReverseQuery $query) : self
     {
-        $cacheKey = serialize($query);
-        $this->results = app('cache')->remember(
+        $cacheKey = md5(serialize($query));
+        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duration', 0),
+            config('geocoder.cache.duration', 0),
             function () use ($query) {
                 return collect($this->aggregator->reverseQuery($query));
             }
@@ -116,10 +116,10 @@ class ProviderAndDumperAggregator
 
     public function geocode(string $value) : self
     {
-        $cacheKey = str_slug(strtolower(urlencode($value)));
-        $this->results = app('cache')->remember(
+        $cacheKey = md5(str_slug(strtolower(urlencode($value))));
+        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duration', 0),
+            config('geocoder.cache.duration', 0),
             function () use ($value) {
                 return collect($this->aggregator->geocode($value));
             }
@@ -132,10 +132,10 @@ class ProviderAndDumperAggregator
 
     public function reverse(float $latitude, float $longitude) : self
     {
-        $cacheKey = str_slug(strtolower(urlencode("{$latitude}-{$longitude}")));
-        $this->results = app('cache')->remember(
+        $cacheKey = md5(str_slug(strtolower(urlencode("{$latitude}-{$longitude}"))));
+        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
             "geocoder-{$cacheKey}",
-            config('geocoder.cache-duration', 0),
+            config('geocoder.cache.duration', 0),
             function () use ($latitude, $longitude) {
                 return collect($this->aggregator->reverse($latitude, $longitude));
             }
@@ -264,7 +264,7 @@ class ProviderAndDumperAggregator
 
     protected function removeEmptyCacheEntry(string $cacheKey)
     {
-        $result = app('cache')->get($cacheKey);
+        $result = app('cache')->store(config('geocoder.cache.store', null))->get($cacheKey);
 
         if ($result && $result->isEmpty()) {
             app('cache')->forget($cacheKey);
