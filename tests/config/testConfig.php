@@ -16,7 +16,10 @@ use GeoIp2\Database\Reader;
 use Http\Client\Curl\Client;
 
 return [
-    'cache-duration' => 999999999,
+    'cache' => [
+        'store' => null,
+        'duration' => 999999999,
+    ],
     'providers' => [
         Chain::class => [
             GeoIP2::class => [],

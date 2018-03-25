@@ -56,6 +56,45 @@ Further, a special note on the GoogleMaps provider: if you are using an API key,
 See the [Geocoder documentation](http://geocoder-php.org/Geocoder/) for a list
  of available adapters and providers.
 
+### Dedicated Cache Store *Recommended*
+To implement the dedicated cache store, add another redis store entry in
+`config/database.php`, something like the following:
+```php
+    "redis" => [
+        // ...
+
+        "geocode-cache" => [ // choose an appropriate name
+            'host' => env('REDIS_HOST', '192.168.10.10'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => 1, // be sure this number differs from your other redis databases
+        ],
+    ]
+```
+
+You will also need to add an entry in `config/cache.php` to point to this redis
+database:
+```php
+    "stores" => [
+        // ...
+
+        "geocode" => [
+            'driver' => 'redis',
+            'connection' => 'geocode-cache',
+        ],
+    ],
+```
+
+Finally, configure Geocoder for Laraver to use this store. Edit
+`config/geocoder.php`:
+```php
+    "cache" => [
+        "store" => "geocode",
+
+        // ...
+    ],
+```
+
 ### Providers
 If you are upgrading and have previously published the geocoder config file, you
  need to add the `cache-duration` variable, otherwise cache will be disabled

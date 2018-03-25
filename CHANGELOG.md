@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.7] - 25 Mar 2018
+### Added
+- optional dedicated cache store.
+- hashed cache keys and hash collision prevention.
+- custom cache store configuration instructions.
+
 ## [4.0.6] - 9 Feb 2018
 ### Added
 - Laravel 5.6 compatibility.
