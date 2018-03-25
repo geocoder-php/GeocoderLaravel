@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.8] - 25 Mar 2018
+### Added
+- work-around for missing `config_path()` function in Lumen.
+
 ## [4.0.7] - 25 Mar 2018
 ### Added
 - optional dedicated cache store.

@@ -21,22 +21,40 @@ class GeocoderService extends ServiceProvider
 
     public function boot()
     {
-        $configPath = __DIR__ . '/../../config/geocoder.php';
-        $this->publishes([$configPath => config_path('geocoder.php')], 'config');
-        $this->mergeConfigFrom($configPath, 'geocoder');
-        $this->app->singleton('geocoder', function () {
+        $configPath = __DIR__ . "/../../config/geocoder.php";
+        $this->publishes(
+            [$configPath => $this->configPath("geocoder.php")],
+            "config"
+        );
+        $this->mergeConfigFrom($configPath, "geocoder");
+        $this->app->singleton("geocoder", function () {
             return (new ProviderAndDumperAggregator)
-                ->registerProvidersFromConfig(collect(config('geocoder.providers')));
+                ->registerProvidersFromConfig(collect(config("geocoder.providers")));
         });
     }
 
     public function register()
     {
-        $this->app->alias('Geocoder', Geocoder::class);
+        $this->app->alias("Geocoder", Geocoder::class);
     }
 
     public function provides() : array
     {
-        return ['geocoder'];
+        return ["geocoder"];
+    }
+
+    protected function configPath(string $path = "") : string
+    {
+        if (function_exists("config_path")) {
+            return config_path($path);
+        }
+
+        $pathParts = [
+            app()->basePath(),
+            "config",
+            trim($path, "/"),
+        ];
+
+        return implode("/", $pathParts);
     }
 }
