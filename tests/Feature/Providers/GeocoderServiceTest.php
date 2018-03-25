@@ -141,7 +141,8 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testConfig()
     {
-        $this->assertEquals(999999999, config('geocoder.cache-duration'));
+        $this->assertEquals(null, config('geocoder.cache.store'));
+        $this->assertEquals(999999999, config('geocoder.cache.duration'));
         $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
         $this->assertCount(3, $providers);
         $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
@@ -164,13 +165,20 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testCacheIsUsed()
     {
-        $cacheKey = str_slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')));
+        $cacheKey = sha1(str_slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA'))));
 
-        $result = app('geocoder')->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        $result = app('geocoder')
+            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
             ->get();
+        $cachedResult = app('cache')
+            ->store(config('geocoder.cache.store'))
+            ->get($cacheKey)["value"];
+        $isCached = app('cache')
+            ->store(config('geocoder.cache.store'))
+            ->has($cacheKey);
 
-        $this->assertTrue(app('cache')->has("geocoder-{$cacheKey}"));
-        $this->assertEquals($result, app('cache')->get("geocoder-{$cacheKey}"));
+        $this->assertTrue($isCached);
+        $this->assertEquals($result, $cachedResult);
     }
 
     /**
@@ -213,6 +221,10 @@ class GeocoderServiceTest extends UnitTestCase
     {
         $provider = new MaxMindBinary(__DIR__ . '/../../resources/assets/GeoIP.dat');
         app('geocoder')->registerProvider($provider);
+
+        // dummy assertion, as we are running this test to make sure no
+        // exception is thrown in the above provider registration
+        $this->assertTrue(true);
     }
 
     public function testGetNameReturnsString()
@@ -264,16 +276,17 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testJapaneseCharacterGeocoding()
     {
-        $cacheKey = str_slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３')));
+        $cacheKey = sha1(str_slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３'))));
 
-        app('geocoder')->geocode('108-0075 東京都港区港南２丁目１６－３')
+        app('geocoder')
+            ->geocode('108-0075 東京都港区港南２丁目１６－３')
             ->get();
 
         $this->assertEquals(
             $cacheKey,
-            '108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93'
+            sha1('108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93')
         );
-        $this->assertTrue(app('cache')->has("geocoder-{$cacheKey}"));
+        $this->assertTrue(app('cache')->has($cacheKey));
     }
 
     public function testItProvidesState()
@@ -303,7 +316,7 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testEmptyResultsAreNotCached()
     {
-        $cacheKey = str_slug(strtolower(urlencode('_')));
+        $cacheKey = md5(str_slug(strtolower(urlencode('_'))));
 
         Geocoder::geocode('_')->get();
 
