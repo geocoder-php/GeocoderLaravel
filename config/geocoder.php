@@ -6,25 +6,15 @@ use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Http\Client\Curl\Client;
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cache Settings
-    |--------------------------------------------------------------------------
-    |
-    | Here you may define all of the cache settings.
-    |
-    */
-
     'cache' => [
 
         /*
-        |--------------------------------------------------------------------------
+        |-----------------------------------------------------------------------
         | Cache Store
-        |--------------------------------------------------------------------------
+        |-----------------------------------------------------------------------
         |
-        | Specify the cache store to use for caching. The default value null will
-        | use the default cache store specified in the cache.php cofig file.
+        | Specify the cache store to use for caching. The value "null" will use
+        | the default cache store specified in /config/cache.php file.
         |
         | Default: null
         |
@@ -33,13 +23,13 @@ return [
         'store' => null,
 
         /*
-        |--------------------------------------------------------------------------
+        |-----------------------------------------------------------------------
         | Cache Duration
-        |--------------------------------------------------------------------------
+        |-----------------------------------------------------------------------
         |
-        | Specify the cache duration in minutes. The default approximates a forever
-        | cache, but there are certain issues with Laravel's forever caching
-        | methods that prevent us from using them in this project.
+        | Specify the cache duration in minutes. The default approximates a
+        | "forever" cache, but there are certain issues with Laravel's forever
+        | caching methods that prevent us from using them in this project.
         |
         | Default: 9999999 (integer)
         |
@@ -49,9 +39,9 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Providers
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     |
     | Here you may specify any number of providers that should be used to
     | perform geocaching operations. The `chain` provider is special,
@@ -76,9 +66,9 @@ return [
     ],
 
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Adapter
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     |
     | You can specify which PSR-7-compliant HTTP adapter you would like to use.
     | There are multiple options at your disposal: CURL, Guzzle, and others.
@@ -92,9 +82,9 @@ return [
     'adapter'  => Client::class,
 
     /*
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     | Reader
-    |--------------------------------------------------------------------------
+    |---------------------------------------------------------------------------
     |
     | You can specify a reader for specific providers, like GeoIp2, which
     | connect to a local file-database. The reader should be set to an

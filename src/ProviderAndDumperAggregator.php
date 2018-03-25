@@ -15,10 +15,11 @@ use Geocoder\Dumper\Kml;
 use Geocoder\Dumper\Wkb;
 use Geocoder\Dumper\Wkt;
 use Geocoder\Geocoder;
-use Geocoder\Query\GeocodeQuery;
-use Geocoder\Query\ReverseQuery;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
 use Geocoder\ProviderAggregator;
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\Query;
+use Geocoder\Query\ReverseQuery;
 use Illuminate\Support\Collection;
 use ReflectionClass;
 
@@ -77,73 +78,30 @@ class ProviderAndDumperAggregator
         });
     }
 
-    public function geocodeQuery(GeocodeQuery $query) : self
+    public function geocode(string $value) : self
     {
-        $cacheKey = md5(serialize($query));
-        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
-            "geocoder-{$cacheKey}",
-            config('geocoder.cache.duration', 0),
-            function () use ($query) {
-                return collect($this->aggregator->geocodeQuery($query));
-            }
-        );
-
-        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
+        $cacheKey = str_slug(strtolower(urlencode($value)));
+        $this->results = $this->cacheRequest($cacheKey, [$value], "geocode");
 
         return $this;
     }
 
-    public function reverseQuery(ReverseQuery $query) : self
+    public function geocodeQuery(GeocodeQuery $query) : self
     {
-        $cacheKey = md5(serialize($query));
-        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
-            "geocoder-{$cacheKey}",
-            config('geocoder.cache.duration', 0),
-            function () use ($query) {
-                return collect($this->aggregator->reverseQuery($query));
-            }
-        );
-
-        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
+        $cacheKey = serialize($query);
+        $this->results = $this->cacheRequest($cacheKey, [$query], "geocodeQuery");
 
         return $this;
+    }
+
+    public function getLimit() : int
+    {
+        return $this->limit;
     }
 
     public function getName() : string
     {
         return $this->aggregator->getName();
-    }
-
-    public function geocode(string $value) : self
-    {
-        $cacheKey = md5(str_slug(strtolower(urlencode($value))));
-        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
-            "geocoder-{$cacheKey}",
-            config('geocoder.cache.duration', 0),
-            function () use ($value) {
-                return collect($this->aggregator->geocode($value));
-            }
-        );
-
-        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
-
-        return $this;
-    }
-
-    public function reverse(float $latitude, float $longitude) : self
-    {
-        $cacheKey = md5(str_slug(strtolower(urlencode("{$latitude}-{$longitude}"))));
-        $this->results = app('cache')->store(config('geocoder.cache.store', null))->remember(
-            "geocoder-{$cacheKey}",
-            config('geocoder.cache.duration', 0),
-            function () use ($latitude, $longitude) {
-                return collect($this->aggregator->reverse($latitude, $longitude));
-            }
-        );
-
-        $this->removeEmptyCacheEntry("geocoder-{$cacheKey}");
-
-        return $this;
     }
 
     public function limit(int $limit) : self
@@ -155,9 +113,17 @@ class ProviderAndDumperAggregator
         return $this;
     }
 
-    public function getLimit() : int
+    /**
+     * @deprecated Use `getProviders()` instead.
+     */
+    public function getProvider()
     {
-        return $this->limit;
+        return $this->getProviders()->first();
+    }
+
+    public function getProviders() : Collection
+    {
+        return collect($this->aggregator->getProviders());
     }
 
     public function registerProvider($provider) : self
@@ -174,26 +140,6 @@ class ProviderAndDumperAggregator
         return $this;
     }
 
-    public function using(string $name) : self
-    {
-        $this->aggregator = $this->aggregator->using($name);
-
-        return $this;
-    }
-
-    public function getProviders() : Collection
-    {
-        return collect($this->aggregator->getProviders());
-    }
-
-    /**
-     * @deprecated Use `getProviders()` instead.
-     */
-    public function getProvider()
-    {
-        return $this->getProviders()->first();
-    }
-
     public function registerProvidersFromConfig(Collection $providers) : self
     {
         $this->registerProviders($this->getProvidersFromConfiguration($providers));
@@ -201,20 +147,67 @@ class ProviderAndDumperAggregator
         return $this;
     }
 
-    protected function getProvidersFromConfiguration(Collection $providers) : array
+    public function reverse(float $latitude, float $longitude) : self
     {
-        $providers = $providers->map(function ($arguments, $provider) {
-            $arguments = $this->getArguments($arguments, $provider);
-            $reflection = new ReflectionClass($provider);
+        $cacheKey = str_slug(strtolower(urlencode("{$latitude}-{$longitude}")));
+        $this->results = $this->cacheRequest($cacheKey, [$latitude, $longitude], "reverse");
 
-            if ($provider === 'Geocoder\Provider\Chain\Chain') {
-                return $reflection->newInstance($arguments);
-            }
+        return $this;
+    }
 
-            return $reflection->newInstanceArgs($arguments);
-        });
+    public function reverseQuery(ReverseQuery $query) : self
+    {
+        $cacheKey = serialize($query);
+        $this->results = $this->cacheRequest($cacheKey, [$query], "reverseQuery");
 
-        return $providers->toArray();
+        return $this;
+    }
+
+    public function using(string $name) : self
+    {
+        $this->aggregator = $this->aggregator->using($name);
+
+        return $this;
+    }
+
+    protected function cacheRequest(string $cacheKey, array $queryElements, string $queryType)
+    {
+        $hashedCacheKey = sha1($cacheKey);
+        $duration = config("geocoder.cache.duration", 0);
+        $store = config('geocoder.cache.store');
+
+        $result = app("cache")
+            ->store($store)
+            ->remember($hashedCacheKey, $duration, function () use ($cacheKey, $queryElements, $queryType) {
+                return [
+                    "key" => $cacheKey,
+                    "value" => collect($this->aggregator->{$queryType}(...$queryElements)),
+                ];
+            });
+        $result = $this->preventCacheKeyHashCollision(
+            $result,
+            $hashedCacheKey,
+            $cacheKey,
+            $queryElements,
+            $queryType
+        );
+        $this->removeEmptyCacheEntry($result, $hashedCacheKey);
+
+        return $result;
+    }
+
+    protected function getAdapterClass(string $provider) : string
+    {
+        $specificAdapters = collect([
+            'Geocoder\Provider\GeoIP2\GeoIP2' => 'Geocoder\Provider\GeoIP2\GeoIP2Adapter',
+            'Geocoder\Provider\MaxMindBinary\MaxMindBinary' => '',
+        ]);
+
+        if ($specificAdapters->has($provider)) {
+            return $specificAdapters->get($provider);
+        }
+
+        return config('geocoder.adapter');
     }
 
     protected function getArguments(array $arguments, string $provider) : array
@@ -239,6 +232,47 @@ class ProviderAndDumperAggregator
         return $arguments;
     }
 
+    protected function getProvidersFromConfiguration(Collection $providers) : array
+    {
+        $providers = $providers->map(function ($arguments, $provider) {
+            $arguments = $this->getArguments($arguments, $provider);
+            $reflection = new ReflectionClass($provider);
+
+            if ($provider === 'Geocoder\Provider\Chain\Chain') {
+                return $reflection->newInstance($arguments);
+            }
+
+            return $reflection->newInstanceArgs($arguments);
+        });
+
+        return $providers->toArray();
+    }
+
+    protected function preventCacheKeyHashCollision(
+        array $result,
+        string $hashedCacheKey,
+        string $cacheKey,
+        array $queryElements,
+        string $queryType
+    ) {
+        if ($result["key"] === $cacheKey) {
+            return $result["value"];
+        }
+
+        app("cache")
+            ->store(config('geocoder.cache.store'))
+            ->forget($hashedCacheKey);
+
+        return $this->cacheRequest($cacheKey, $queryElements, $queryType);
+    }
+
+    protected function removeEmptyCacheEntry(Collection $result, string $cacheKey)
+    {
+        if ($result && $result->isEmpty()) {
+            app('cache')->forget($cacheKey);
+        }
+    }
+
     protected function requiresReader(string $class) : bool
     {
         $specificAdapters = collect([
@@ -246,28 +280,5 @@ class ProviderAndDumperAggregator
         ]);
 
         return $specificAdapters->contains($class);
-    }
-
-    protected function getAdapterClass(string $provider) : string
-    {
-        $specificAdapters = collect([
-            'Geocoder\Provider\GeoIP2\GeoIP2' => 'Geocoder\Provider\GeoIP2\GeoIP2Adapter',
-            'Geocoder\Provider\MaxMindBinary\MaxMindBinary' => '',
-        ]);
-
-        if ($specificAdapters->has($provider)) {
-            return $specificAdapters->get($provider);
-        }
-
-        return config('geocoder.adapter');
-    }
-
-    protected function removeEmptyCacheEntry(string $cacheKey)
-    {
-        $result = app('cache')->store(config('geocoder.cache.store', null))->get($cacheKey);
-
-        if ($result && $result->isEmpty()) {
-            app('cache')->forget($cacheKey);
-        }
     }
 }
