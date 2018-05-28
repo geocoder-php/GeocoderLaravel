@@ -234,7 +234,7 @@ app('geocoder')->reverse(43.882587,-103.454067)->get();
 app('geocoder')->geocode('Los Angeles, CA')->dump('kml');
 ```
 
-#### Using Controller
+#### Dependency Injection
 ```php
 use Geocoder\Laravel\ProviderAndDumperAggregator as Geocoder;
 
