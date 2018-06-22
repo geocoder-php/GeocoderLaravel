@@ -25,19 +25,16 @@ class GeocoderService extends ServiceProvider
             "config"
         );
         $this->mergeConfigFrom($configPath, "geocoder");
-        $geocoder = (new ProviderAndDumperAggregator)
-            ->registerProvidersFromConfig(collect(config("geocoder.providers")));
-        $this->app
-            ->singleton("geocoder", function () use ($geocoder) {
-                return $geocoder;
-            });
-        $this->app
-            ->instance(ProviderAndDumperAggregator::class, $geocoder);
     }
 
     public function register()
     {
         $this->app->alias("Geocoder", Geocoder::class);
+        $this->app->singleton(ProviderAndDumperAggregator::class, function () {
+            return (new ProviderAndDumperAggregator)
+                ->registerProvidersFromConfig(collect(config("geocoder.providers")));
+        });
+        $this->app->bind('geocoder', ProviderAndDumperAggregator::class);
     }
 
     public function provides() : array
