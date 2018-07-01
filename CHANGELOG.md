@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.10] - 1 Jul 2018
+### Changed
+- service provider to register singleton and alias in `register()` method.
+
 ## [4.0.9] - 28 May 2018
 ### Added
 - class-name resolution from Service container, allowing for dependency
