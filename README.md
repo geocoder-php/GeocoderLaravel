@@ -234,6 +234,19 @@ app('geocoder')->reverse(43.882587,-103.454067)->get();
 app('geocoder')->geocode('Los Angeles, CA')->dump('kml');
 ```
 
+#### Dependency Injection
+```php
+use Geocoder\Laravel\ProviderAndDumperAggregator as Geocoder;
+
+class GeocoderController extends Controller
+{
+    public function getGeocode(Geocoder $geocoder)
+    {
+       $geocoder->geocode('Los Angeles, CA')->get()
+    }
+}
+```
+
 ## Upgrading
 Anytime you upgrade this package, please remember to clear your cache, to prevent incompatible cached responses when breaking changes are introduced (this should hopefully only be necessary in major versions):
 ```sh
