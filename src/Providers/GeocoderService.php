@@ -18,7 +18,7 @@ class GeocoderService extends ServiceProvider
     protected $defer = false;
 
     public function boot()
-    { 
+    {
         $configPath = __DIR__ . "/../../config/geocoder.php";
         $this->publishes(
             [$configPath => $this->configPath("geocoder.php")],
