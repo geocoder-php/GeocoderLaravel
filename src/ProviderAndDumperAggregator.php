@@ -51,6 +51,13 @@ class ProviderAndDumperAggregator
         return $this->results;
     }
 
+    public function toJson() : string
+    {
+        return $this
+            ->dump("geojson")
+            ->first();
+    }
+
     public function dump(string $dumper) : Collection
     {
         $dumperClasses = collect([
