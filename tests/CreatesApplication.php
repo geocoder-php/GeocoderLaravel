@@ -5,7 +5,7 @@ use Geocoder\Laravel\Providers\GeocoderService;
 
 trait CreatesApplication
 {
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
