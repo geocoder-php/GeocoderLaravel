@@ -27,6 +27,7 @@
         "geocoder-php/geo-plugin-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.0",
         "guzzlehttp/psr7": "*",
+        "http-interop/http-factory-guzzle": "^1.0",
         "illuminate/cache": "5.0 - 5.8",
         "illuminate/support": "5.0 - 5.8",
         "php-http/curl-client": "*",
