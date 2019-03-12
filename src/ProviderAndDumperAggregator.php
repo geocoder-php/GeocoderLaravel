@@ -9,19 +9,20 @@
  * @license    MIT License
  */
 
-use Geocoder\Dumper\GeoJson;
+use ReflectionClass;
+use Geocoder\Geocoder;
 use Geocoder\Dumper\Gpx;
 use Geocoder\Dumper\Kml;
 use Geocoder\Dumper\Wkb;
 use Geocoder\Dumper\Wkt;
-use Geocoder\Geocoder;
-use Geocoder\Laravel\Exceptions\InvalidDumperException;
+use Geocoder\Query\Query;
+use Illuminate\Support\Str;
+use Geocoder\Dumper\GeoJson;
 use Geocoder\ProviderAggregator;
 use Geocoder\Query\GeocodeQuery;
-use Geocoder\Query\Query;
 use Geocoder\Query\ReverseQuery;
 use Illuminate\Support\Collection;
-use ReflectionClass;
+use Geocoder\Laravel\Exceptions\InvalidDumperException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -73,6 +74,7 @@ class ProviderAndDumperAggregator
                 "The dumper specified ('{$dumper}') is invalid. Valid dumpers ",
                 "are: geojson, gpx, kml, wkb, wkt.",
             ]);
+
             throw new InvalidDumperException($errorMessage);
         }
 
@@ -87,7 +89,7 @@ class ProviderAndDumperAggregator
 
     public function geocode(string $value) : self
     {
-        $cacheKey = str_slug(strtolower(urlencode($value)));
+        $cacheKey = Str::slug(strtolower(urlencode($value)));
         $this->results = $this->cacheRequest($cacheKey, [$value], "geocode");
 
         return $this;
@@ -156,7 +158,7 @@ class ProviderAndDumperAggregator
 
     public function reverse(float $latitude, float $longitude) : self
     {
-        $cacheKey = str_slug(strtolower(urlencode("{$latitude}-{$longitude}")));
+        $cacheKey = Str::slug(strtolower(urlencode("{$latitude}-{$longitude}")));
         $this->results = $this->cacheRequest($cacheKey, [$latitude, $longitude], "reverse");
 
         return $this;
@@ -191,6 +193,7 @@ class ProviderAndDumperAggregator
                     "value" => collect($this->aggregator->{$queryType}(...$queryElements)),
                 ];
             });
+
         $result = $this->preventCacheKeyHashCollision(
             $result,
             $hashedCacheKey,
@@ -198,6 +201,7 @@ class ProviderAndDumperAggregator
             $queryElements,
             $queryType
         );
+
         $this->removeEmptyCacheEntry($result, $hashedCacheKey);
 
         return $result;
