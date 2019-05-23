@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.2] - 23 May 2019
+### Fixed
+- initialization of geocoder adapter.
+
 ## [4.0.21] - 3 Nov 2018
 ### Added
 - `->toJson()` method when querying results.
