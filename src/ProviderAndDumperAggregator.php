@@ -228,14 +228,13 @@ class ProviderAndDumperAggregator
         }
 
         $adapter = $this->getAdapterClass($provider);
-        $reader = null;
 
         if ($adapter) {
-            if ($this->requiresReader($provider)) {
-                $reader = config('geocoder.reader');
-            }
+            $adapter = $this->requiresReader($provider)
+                ? new $adapter(config('geocoder.reader'))
+                : new $adapter;
 
-            array_unshift($arguments, new $adapter($reader));
+            array_unshift($arguments, $adapter);
         }
 
         return $arguments;
