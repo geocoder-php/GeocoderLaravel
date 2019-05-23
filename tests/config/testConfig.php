@@ -11,7 +11,6 @@ use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\GeoIP2\GeoIP2;
 use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
-use Geocoder\Provider\HostIp\HostIp;
 use GeoIp2\Database\Reader;
 use Http\Client\Curl\Client;
 

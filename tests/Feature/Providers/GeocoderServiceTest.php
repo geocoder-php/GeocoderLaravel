@@ -81,14 +81,8 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testItResolvesAGivenAddressWithUmlautsInRegion()
     {
-        config()->set('geocoder.providers.Geocoder\Provider\Chain\Chain.Geocoder\Provider\GoogleMaps\GoogleMaps', [
-            'de-DE',
-            null,
-        ]);
-        app()->register(GeocoderService::class);
-
         $results = app('geocoder')
-            ->geocode('Obere Donaustrasse 22, Wien, Österreich')
+            ->geocode('Obere Donaustraße 22, Wien, Österreich')
             ->get();
 
         $this->assertEquals('22', $results->first()->getStreetNumber());
