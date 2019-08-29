@@ -1,6 +1,5 @@
 <?php namespace Geocoder\Laravel\Tests;
 
-use Orchestra\Database\ConsoleServiceProvider;
 use Geocoder\Laravel\Providers\GeocoderService;
 
 trait CreatesApplication
@@ -20,7 +19,6 @@ trait CreatesApplication
     {
         return [
             GeocoderService::class,
-            ConsoleServiceProvider::class,
         ];
     }
 
