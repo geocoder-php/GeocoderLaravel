@@ -42,7 +42,6 @@
         "geocoder-php/maxmind-binary-provider": "^4.0",
         "mockery/mockery": "*",
         "orchestra/testbench-browser-kit": "3.9.x-dev@dev",
-        "orchestra/database": "3.9.x-dev@dev",
         "orchestra/testbench-dusk": "3.9.x-dev@dev",
         "orchestra/testbench": "3.9.x-dev@dev",
         "php-coveralls/php-coveralls": "*",
