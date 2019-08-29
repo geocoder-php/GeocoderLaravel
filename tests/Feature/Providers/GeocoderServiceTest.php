@@ -16,6 +16,7 @@ use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
 use Http\Client\Curl\Client as CurlAdapter;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -30,7 +31,7 @@ class GeocoderServiceTest extends UnitTestCase
             ->reverse(38.897957, -77.036560)
             ->get()
             ->filter(function (GoogleAddress $address) {
-                return str_contains($address->getStreetName() ?? '', 'Northwest');
+                return Str::contains($address->getStreetName() ?? '', 'Northwest');
             })
             ->first();
 
@@ -159,7 +160,7 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testCacheIsUsed()
     {
-        $cacheKey = sha1(str_slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA'))));
+        $cacheKey = sha1(Str::slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA'))));
 
         $result = app('geocoder')
             ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
@@ -270,7 +271,7 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testJapaneseCharacterGeocoding()
     {
-        $cacheKey = sha1(str_slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３'))));
+        $cacheKey = sha1(Str::slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３'))));
 
         app('geocoder')
             ->geocode('108-0075 東京都港区港南２丁目１６－３')
@@ -310,7 +311,7 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testEmptyResultsAreNotCached()
     {
-        $cacheKey = md5(str_slug(strtolower(urlencode('_'))));
+        $cacheKey = md5(Str::slug(strtolower(urlencode('_'))));
 
         Geocoder::geocode('_')->get();
 
