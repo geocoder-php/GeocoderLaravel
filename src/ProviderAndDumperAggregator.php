@@ -247,7 +247,13 @@ class ProviderAndDumperAggregator
             $reflection = new ReflectionClass($provider);
 
             if ($provider === 'Geocoder\Provider\Chain\Chain') {
-                return $reflection->newInstance($arguments);
+                $chainProvider = $reflection->newInstance($arguments);
+
+                if (in_array(\Psr\Log\LoggerAwareTrait::class, class_uses($chainProvider)) && app(\Illuminate\Log\Logger::class) !== null) {
+                    $chainProvider->setLogger(app(\Illuminate\Log\Logger::class));
+                }
+
+                return $chainProvider;
             }
 
             return $reflection->newInstanceArgs($arguments);
