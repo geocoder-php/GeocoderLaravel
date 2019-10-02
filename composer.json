@@ -41,9 +41,9 @@
         "geocoder-php/geoip2-provider": "^4.0",
         "geocoder-php/maxmind-binary-provider": "^4.0",
         "mockery/mockery": "*",
-        "orchestra/testbench-browser-kit": "3.9.x-dev@dev",
-        "orchestra/testbench-dusk": "3.9.x-dev@dev",
-        "orchestra/testbench": "3.9.x-dev@dev",
+        "orchestra/testbench-browser-kit": "^4.0",
+        "orchestra/testbench-dusk": "^4.0",
+        "orchestra/testbench": "^4.0",
         "php-coveralls/php-coveralls": "*",
         "phpunit/phpunit": "8.*",
         "sebastian/phpcpd": "*"
