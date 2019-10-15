@@ -251,7 +251,8 @@ class ProviderAndDumperAggregator
             if ($provider === "Geocoder\Provider\Chain\Chain") {
                 $chainProvider = $reflection->newInstance($arguments);
 
-                if (in_array(LoggerAwareTrait::class, class_uses($chainProvider))
+                if (class_exists(Logger::class)
+                    && in_array(LoggerAwareTrait::class, class_uses($chainProvider))
                     && app(Logger::class) !== null
                 ) {
                     $chainProvider->setLogger(app(Logger::class));
