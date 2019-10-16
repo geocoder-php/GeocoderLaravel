@@ -221,6 +221,18 @@ class ProviderAndDumperAggregator
         return config('geocoder.adapter');
     }
 
+    protected function getReader()
+    {
+        if (is_array(config('geocoder.reader'))) {
+            $reflection = new ReflectionClass(config('geocoder.reader.class'));
+            $reader = $reflection->newInstanceArgs(config('geocoder.reader.arguments'));
+        } else {
+            $reader = config('geocoder.reader');
+        }
+
+        return $reader;
+    }
+
     protected function getArguments(array $arguments, string $provider) : array
     {
         if ($provider === 'Geocoder\Provider\Chain\Chain') {
@@ -232,9 +244,11 @@ class ProviderAndDumperAggregator
         $adapter = $this->getAdapterClass($provider);
 
         if ($adapter) {
-            $adapter = $this->requiresReader($provider)
-                ? new $adapter(config('geocoder.reader'))
-                : new $adapter;
+            if ($this->requiresReader($provider)) {
+                $adapter = new $adapter($this->getReader());
+            } else {
+                $adapter = new $adapter;
+            }
 
             array_unshift($arguments, $adapter);
         }
