@@ -223,11 +223,13 @@ class ProviderAndDumperAggregator
 
     protected function getReader()
     {
+        $reader = config('geocoder.reader');
+
         if (is_array(config('geocoder.reader'))) {
-            $reflection = new ReflectionClass(config('geocoder.reader.class'));
-            $reader = $reflection->newInstanceArgs(config('geocoder.reader.arguments'));
-        } else {
-            $reader = config('geocoder.reader');
+            $readerClass = array_key_first(config('geocoder.reader'));
+            $readerArguments = config('geocoder.reader')[$readerClass];
+            $reflection = new ReflectionClass($readerClass);
+            $reader = $reflection->newInstanceArgs($readerArguments);
         }
 
         return $reader;

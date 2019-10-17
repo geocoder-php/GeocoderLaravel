@@ -96,6 +96,14 @@ return [
     |
     | Default: null
     |
+    | Example:
+    |   'reader' => [
+    |       WebService::class => [
+    |           env('MAXMIND_USER_ID'),
+    |           env('MAXMIND_LICENSE_KEY')
+    |       ],
+    |   ],
+    |
     */
     'reader' => null,
 

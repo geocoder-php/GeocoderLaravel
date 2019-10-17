@@ -38,5 +38,10 @@ return [
         ],
     ],
     'adapter'  => Client::class,
-    'reader' => new Reader(__DIR__ . '/../resources/assets/GeoLite2-City.mmdb'),
+    // 'reader' => new Reader(__DIR__ . '/../resources/assets/GeoLite2-City.mmdb'),
+    "reader" => [
+        Reader::class => [
+            __DIR__ . '/../resources/assets/GeoLite2-City.mmdb',
+        ],
+    ],
 ];
