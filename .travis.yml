@@ -1,8 +1,9 @@
 language: php
 
 php:
-    - 7.2
+    - 7.2.5
     - 7.3
+    - 7.4
 
 before_script:
     - travis_retry composer self-update
