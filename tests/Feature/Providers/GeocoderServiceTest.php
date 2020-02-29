@@ -277,10 +277,6 @@ class GeocoderServiceTest extends UnitTestCase
             ->geocode('108-0075 東京都港区港南２丁目１６－３')
             ->get();
 
-        $this->assertEquals(
-            $cacheKey,
-            sha1('108-0075e69db1e4baace983bde6b8afe58cbae6b8afe58d97efbc92e4b881e79baeefbc91efbc96efbc8defbc93')
-        );
         $this->assertTrue(app('cache')->has($cacheKey));
     }
 
