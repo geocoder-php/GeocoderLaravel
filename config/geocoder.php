@@ -27,7 +27,7 @@ return [
         | Cache Duration
         |-----------------------------------------------------------------------
         |
-        | Specify the cache duration in minutes. The default approximates a
+        | Specify the cache duration in seconds. The default approximates a
         | "forever" cache, but there are certain issues with Laravel's forever
         | caching methods that prevent us from using them in this project.
         |
