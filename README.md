@@ -99,7 +99,7 @@ Finally, configure Geocoder for Laraver to use this store. Edit
 If you are upgrading and have previously published the geocoder config file, you
  need to add the `cache-duration` variable, otherwise cache will be disabled
  (it will default to a `0` cache duration). The default cache duration provided
- by the config file is `999999999` minutes, essentially forever.
+ by the config file is `999999999` seconds, essentially forever.
 
 By default, the configuration specifies a Chain provider, containing the
  GoogleMaps provider for addresses as well as reverse lookups with lat/long,
