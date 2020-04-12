@@ -85,7 +85,7 @@ database:
     ],
 ```
 
-Finally, configure Geocoder for Laraver to use this store. Edit
+Finally, configure Geocoder for Laravel to use this store. Edit
 `config/geocoder.php`:
 ```php
     "cache" => [
