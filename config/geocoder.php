@@ -27,7 +27,7 @@ return [
         | Cache Duration
         |-----------------------------------------------------------------------
         |
-        | Specify the cache duration in minutes. The default approximates a
+        | Specify the cache duration in seconds. The default approximates a
         | "forever" cache, but there are certain issues with Laravel's forever
         | caching methods that prevent us from using them in this project.
         |
@@ -58,7 +58,7 @@ return [
     'providers' => [
         Chain::class => [
             GoogleMaps::class => [
-                env('GOOGLE_MAPS_LOCALE', 'en-US'),
+                env('GOOGLE_MAPS_LOCALE', 'us'),
                 env('GOOGLE_MAPS_API_KEY'),
             ],
             GeoPlugin::class  => [],
