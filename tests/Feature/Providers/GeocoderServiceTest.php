@@ -313,4 +313,17 @@ class GeocoderServiceTest extends UnitTestCase
 
         $this->assertFalse(app('cache')->has("geocoder-{$cacheKey}"));
     }
+
+    public function testCachingCanBeDisabled()
+    {
+        $results = app("geocoder")
+            ->doNotCache()
+            ->geocode('Los Angeles, CA')
+            ->get();
+
+        $this->assertEquals(
+            "Los Angeles, CA, USA",
+            $results->first()->getFormattedAddress()
+        );
+    }
 }

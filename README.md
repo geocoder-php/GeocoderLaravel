@@ -95,6 +95,15 @@ Finally, configure Geocoder for Laraver to use this store. Edit
     ],
 ```
 
+#### Disabling Caching on a Query-Basis
+You can disable caching on a query-by-query basis as needed, like so:
+```php
+    $results = app("geocoder")
+        ->doNotCache()
+        ->geocode('Los Angeles, CA')
+        ->get();
+```
+
 ### Providers
 If you are upgrading and have previously published the geocoder config file, you
  need to add the `cache-duration` variable, otherwise cache will be disabled

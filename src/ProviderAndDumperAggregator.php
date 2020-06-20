@@ -32,6 +32,7 @@ class ProviderAndDumperAggregator
     protected $aggregator;
     protected $limit;
     protected $results;
+    protected $isCaching = true;
 
     public function __construct()
     {
@@ -57,6 +58,13 @@ class ProviderAndDumperAggregator
         return $this
             ->dump("geojson")
             ->first();
+    }
+
+    public function doNotCache() : self
+    {
+        $this->isCaching = false;
+
+        return $this;
     }
 
     public function dump(string $dumper) : Collection
@@ -181,6 +189,10 @@ class ProviderAndDumperAggregator
 
     protected function cacheRequest(string $cacheKey, array $queryElements, string $queryType)
     {
+        if (! $this->isCaching) {
+            return collect($this->aggregator->{$queryType}(...$queryElements));
+        }
+
         $hashedCacheKey = sha1($cacheKey);
         $duration = config("geocoder.cache.duration", 0);
         $store = config('geocoder.cache.store');
