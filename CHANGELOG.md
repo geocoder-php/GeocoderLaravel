@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [4.3.4] - 2020-06-21
 ### Fixed
 - non-caching declaration to only apply to current query.
+- caching to take provider into account.
 
 ### Changed
 - `getProvider()` method to no longer be deprecated, and instead return the

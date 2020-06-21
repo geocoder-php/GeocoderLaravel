@@ -160,7 +160,10 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testCacheIsUsed()
     {
-        $cacheKey = sha1(Str::slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA'))));
+        $cacheKey = sha1(
+            app('geocoder')->getProvider()->getName()
+            . "-" . Str::slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')))
+        );
 
         $result = app('geocoder')
             ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
@@ -271,7 +274,9 @@ class GeocoderServiceTest extends UnitTestCase
 
     public function testJapaneseCharacterGeocoding()
     {
-        $cacheKey = sha1(Str::slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３'))));
+        $cacheKey = sha1(app('geocoder')->getProvider()->getName()
+            . "-" . Str::slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３')))
+        );
 
         app('geocoder')
             ->geocode('108-0075 東京都港区港南２丁目１６－３')

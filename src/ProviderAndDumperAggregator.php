@@ -197,7 +197,7 @@ class ProviderAndDumperAggregator
             return collect($this->aggregator->{$queryType}(...$queryElements));
         }
 
-        $hashedCacheKey = sha1($cacheKey);
+        $hashedCacheKey = sha1($this->getProvider()->getName() . "-" . $cacheKey);
         $duration = config("geocoder.cache.duration", 0);
         $store = config('geocoder.cache.store');
 
