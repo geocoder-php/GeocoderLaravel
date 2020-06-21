@@ -130,12 +130,14 @@ class ProviderAndDumperAggregator
         return $this;
     }
 
-    /**
-     * @deprecated Use `getProviders()` instead.
-     */
     public function getProvider()
     {
-        return $this->getProviders()->first();
+        $reflectedClass = new ReflectionClass(ProviderAggregator::class);
+        $reflectedProperty = $reflectedClass->getProperty('provider');
+        $reflectedProperty->setAccessible(true);
+
+        return $reflectedProperty->getValue($this->aggregator)
+            ?? $this->getProviders()->first();
     }
 
     public function getProviders() : Collection
@@ -190,6 +192,8 @@ class ProviderAndDumperAggregator
     protected function cacheRequest(string $cacheKey, array $queryElements, string $queryType)
     {
         if (! $this->isCaching) {
+            $this->isCaching = true;
+
             return collect($this->aggregator->{$queryType}(...$queryElements));
         }
 

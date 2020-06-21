@@ -326,4 +326,13 @@ class GeocoderServiceTest extends UnitTestCase
             $results->first()->getFormattedAddress()
         );
     }
+
+    public function testGetProviderReturnsCurrentProvider()
+    {
+        $provider = app("geocoder")
+            ->using("google_maps")
+            ->getProvider();
+
+        $this->assertEquals("google_maps", $provider->getName());
+    }
 }
