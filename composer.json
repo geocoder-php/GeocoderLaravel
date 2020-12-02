@@ -34,7 +34,7 @@
 
     ],
     "require": {
-        "geocoder-php/chain-provider": "dev-patch-1@dev",
+        "geocoder-php/chain-provider": "php8_support@dev",
         "geocoder-php/geo-plugin-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.0",
         "guzzlehttp/psr7": "*",
