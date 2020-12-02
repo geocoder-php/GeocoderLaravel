@@ -42,7 +42,7 @@
         "illuminate/cache": "^5.0|^6.0|^7.0|^8.0",
         "illuminate/support": "^5.0|^6.0|^7.0|^8.0",
         "php-http/curl-client": "*",
-        "php": ">=7.3",
+        "php": "^7.3|^8.0",
         "willdurand/geocoder": "dev-patch-1@dev"
     },
     "require-dev": {
