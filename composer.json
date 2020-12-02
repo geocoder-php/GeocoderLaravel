@@ -34,7 +34,7 @@
 
     ],
     "require": {
-        "geocoder-php/chain-provider": "php8_support@dev",
+        "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/geo-plugin-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.0",
         "guzzlehttp/psr7": "*",
@@ -43,7 +43,7 @@
         "illuminate/support": "^5.0|^6.0|^7.0|^8.0",
         "php-http/curl-client": "*",
         "php": "^7.3|^8.0",
-        "willdurand/geocoder": "dev-patch-1@dev"
+        "willdurand/geocoder": "^4.0"
     },
     "require-dev": {
         "doctrine/dbal": "*",
