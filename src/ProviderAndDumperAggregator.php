@@ -14,6 +14,7 @@ use Geocoder\Dumper\Gpx;
 use Geocoder\Dumper\Kml;
 use Geocoder\Dumper\Wkb;
 use Geocoder\Dumper\Wkt;
+use Geocoder\Laravel\Contracts\ResolveFromContainer;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
 use Geocoder\ProviderAggregator;
 use Geocoder\Query\GeocodeQuery;
@@ -277,6 +278,10 @@ class ProviderAndDumperAggregator
     protected function getProvidersFromConfiguration(Collection $providers) : array
     {
         $providers = $providers->map(function ($arguments, $provider) {
+            if (is_string($arguments) && $arguments === ResolveFromContainer::class) {
+                return app($provider);
+            }
+
             $arguments = $this->getArguments($arguments, $provider);
             $reflection = new ReflectionClass($provider);
 
