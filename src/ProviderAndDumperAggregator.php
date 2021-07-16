@@ -320,7 +320,9 @@ class ProviderAndDumperAggregator
     protected function removeEmptyCacheEntry(Collection $result, string $cacheKey)
     {
         if ($result && $result->isEmpty()) {
-            app('cache')->forget($cacheKey);
+            app('cache')
+                ->store(config('geocoder.cache.store'))
+                ->forget($cacheKey);
         }
     }
 
