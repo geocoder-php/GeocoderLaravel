@@ -44,8 +44,8 @@
         "orchestra/testbench-browser-kit": "^6.0",
         "orchestra/testbench-dusk": "^6.0",
         "php-coveralls/php-coveralls": "*",
-        "phpunit/phpunit": "8.5",
-        "sebastian/phpcpd": "^5.0"
+        "phpunit/phpunit": "8.5|^9.0",
+        "sebastian/phpcpd": "^5.0|^6.0"
     },
     "autoload": {
         "psr-4": {
