@@ -22,17 +22,6 @@
             "role": "Original Creator"
         }
     ],
-    "repositories": [
-        {
-            "type": "git",
-            "url": "git@github.com:mikebronner/chain-provider.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:mikebronner/geocoder.git"
-        }
-
-    ],
     "require": {
         "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/geo-plugin-provider": "^4.0",
