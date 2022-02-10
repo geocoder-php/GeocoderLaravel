@@ -1,46 +1,45 @@
 <?php namespace Geocoder\Laravel\Tests\Feature\Providers;
 
-use Geocoder\Exception\FunctionNotFound;
-use Geocoder\Laravel\Exceptions\InvalidDumperException;
-use Geocoder\Laravel\Facades\Geocoder;
-use Geocoder\Laravel\ProviderAndDumperAggregator;
-use Geocoder\Laravel\Tests\UnitTestCase;
-use Geocoder\Laravel\Providers\GeocoderService;
+use Illuminate\Support\Str;
 use Geocoder\Model\Coordinates;
-use Geocoder\Provider\Chain\Chain;
-use Geocoder\Provider\GeoPlugin\GeoPlugin;
-use Geocoder\Provider\GoogleMaps\GoogleMaps;
-use Geocoder\Provider\GoogleMaps\Model\GoogleAddress;
-use Geocoder\Provider\MaxMindBinary\MaxMindBinary;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
-use Http\Client\Curl\Client as CurlAdapter;
+use Geocoder\Provider\Chain\Chain;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use Geocoder\Laravel\Facades\Geocoder;
+use Geocoder\Provider\GeoPlugin\GeoPlugin;
+use Geocoder\Laravel\Tests\FeatureTestCase;
+use Http\Client\Curl\Client as CurlAdapter;
+use Geocoder\Provider\GoogleMaps\GoogleMaps;
+use Geocoder\Laravel\Providers\GeocoderService;
+use Geocoder\Laravel\ProviderAndDumperAggregator;
+use Geocoder\Provider\MaxMindBinary\MaxMindBinary;
+use Geocoder\Provider\GoogleMaps\Model\GoogleAddress;
+use Geocoder\Laravel\Exceptions\InvalidDumperException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class GeocoderServiceTest extends UnitTestCase
+class GeocoderServiceTest extends FeatureTestCase
 {
-    public function testItReverseGeocodesCoordinates()
-    {
-        $result = app('geocoder')
-            ->reverse(38.897957, -77.036560)
-            ->get()
-            ->filter(function (GoogleAddress $address) {
-                return Str::contains($address->getStreetName() ?? '', 'Northwest');
-            })
-            ->first();
+    // public function testItReverseGeocodesCoordinates()
+    // {
+    //     $result = app('geocoder')
+    //         ->reverse(38.897957, -77.036560)
+    //         ->get()
+    //         ->filter(function (GoogleAddress $address) {
+    //             return Str::contains($address->getStreetName() ?? '', 'Northwest');
+    //         })
+    //         ->first();
 
-        $this->assertNotNull($result);
-        $this->assertEquals('1600', $result->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Northwest', $result->getStreetName());
-        $this->assertEquals('Washington', $result->getLocality());
-        $this->assertEquals('20500', $result->getPostalCode());
-    }
+    //     $this->assertNotNull($result);
+    //     $this->assertEquals('1600', $result->getStreetNumber());
+    //     $this->assertEquals('Pennsylvania Avenue Northwest', $result->getStreetName());
+    //     $this->assertEquals('Washington', $result->getLocality());
+    //     $this->assertEquals('20500', $result->getPostalCode());
+    // }
 
     public function testItResolvesAGivenAddress()
     {
