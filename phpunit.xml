@@ -30,6 +30,5 @@
     <env name="SESSION_DRIVER" value="array"/>
     <env name="QUEUE_DRIVER" value="sync"/>
     <env name="DB_CONNECTION" value="testing"/>
-    <env name="GOOGLE_MAPS_API_KEY" value="AIzaSyDmhnOp1tZaLNvGtAkJqSjbKp1ifxAEqqY"/>
   </php>
 </phpunit>
