@@ -274,7 +274,7 @@ The one change to keep in mind here is that the results returned from
  instead of returning an instance of `AddressCollection`. This should provide
  greater versatility in manipulation of the results, and be inline with
  expectations for working with Laravel. The existing `AddressCollection`
- methods should map strait over to Laravel's `Collection` methods. But be sure
+ methods should map straight over to Laravel's `Collection` methods. But be sure
  to double-check your results, if you have been using `count()`,
  `first()`, `isEmpty()`, `slice()`, `has()`, `get()`, or `all()` on your results.
 
