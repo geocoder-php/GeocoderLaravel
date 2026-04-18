@@ -168,7 +168,7 @@ class ProviderAndDumperAggregator
 
     public function reverse(float $latitude, float $longitude) : self
     {
-        $cacheKey = (new Str)->slug(strtolower(urlencode("{$latitude}-{$longitude}")));
+        $cacheKey = strtolower(urlencode("{$latitude}-{$longitude}"));
         $this->results = $this->cacheRequest($cacheKey, [$latitude, $longitude], "reverse");
 
         return $this;
