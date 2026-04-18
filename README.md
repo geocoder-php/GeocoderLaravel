@@ -10,9 +10,16 @@
 > If you still use **Laravel 4**, please check out the `0.4.x` branch
  [here](https://github.com/geocoder-php/GeocoderLaravel/tree/0.4.x).
 
-**Version 5.0.0 is a backwards-compatibility-breaking update. Please review
+**Version 13.0.0 is a backwards-compatibility-breaking update. Please review
  the _Upgrading_ section, especially the new default HTTP adapter, before
  installing.**
+
+> **Versioning change:** starting with `13.0.0`, this package's major version
+> tracks the highest supported Laravel major version, instead of the upstream
+> Geocoder PHP version. So `13.x` supports Laravel 11/12/13, the next major
+> will be `14.x` when Laravel 14 ships, and so on. The previous tag was
+> `5.0.0`; the jump to `13.0.0` reflects the new versioning scheme, not 9
+> intermediate releases.
 
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
  in [**Laravel**](http://laravel.com/).
@@ -274,11 +281,14 @@ Anytime you upgrade this package, please remember to clear your cache, to preven
 php artisan cache:clear
 ```
 
-### 4.x to 5.x
+### 5.x to 13.x
 Update your `composer.json`:
 ```json
-    "toin0u/geocoder-laravel": "^5.0",
+    "toin0u/geocoder-laravel": "^13.0",
 ```
+
+> Yes, the jump from `5.x` to `13.x` is intentional — see the versioning note
+> at the top of this README. There are no `5.x` through `12.x` releases.
 
 **Breaking: default HTTP adapter changed.** The default `'adapter'` in
  `config/geocoder.php` is now `Geocoder\Laravel\Http\LaravelHttpClient`
@@ -299,12 +309,18 @@ If you have **published the geocoder config previously**, your config file
   `composer require php-http/curl-client`. The published config keeps working
   unchanged.
 
-**Other notable changes in 5.x:**
+**Other notable changes in 13.x:**
 - Minimum PHP raised to 8.2; minimum Laravel raised to 11.x.
 - `php-http/curl-client` removed from required dependencies (install it
   yourself if you still need it).
 - `MaxMindBinary` provider support removed (the underlying PHP package was
   abandoned). Use `geocoder-php/geoip2-provider` for MaxMind data instead.
+
+### 4.x to 5.x
+Update your `composer.json`:
+```json
+    "toin0u/geocoder-laravel": "^5.0",
+```
 
 ### 1.x to 4.x
 Update your composer.json file:
