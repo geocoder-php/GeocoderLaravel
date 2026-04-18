@@ -6,13 +6,9 @@
  * file that was distributed with this source code.
  */
 
-use Geocoder\Provider\BingMaps\BingMaps;
+use Geocoder\Laravel\Http\LaravelHttpClient;
 use Geocoder\Provider\Chain\Chain;
-use Geocoder\Provider\GeoIP2\GeoIP2;
-use Geocoder\Provider\GeoPlugin\GeoPlugin;
-use Geocoder\Provider\GoogleMaps\GoogleMaps;
-use GeoIp2\Database\Reader;
-use Http\Client\Curl\Client;
+use Geocoder\Provider\Nominatim\Nominatim;
 
 return [
     'cache' => [
@@ -21,27 +17,16 @@ return [
     ],
     'providers' => [
         Chain::class => [
-            GeoIP2::class => [],
-            GoogleMaps::class => [
-                'en-US',
-                env('GOOGLE_MAPS_API_KEY'),
+            Nominatim::class => [
+                'https://nominatim.openstreetmap.org',
+                'GeocoderLaravel-Tests/1.0 (https://github.com/geocoder-php/GeocoderLaravel)',
             ],
-            GeoPlugin::class  => [],
         ],
-        BingMaps::class => [
-            'en-US',
-            env('BING_MAPS_API_KEY'),
-        ],
-        GoogleMaps::class => [
-            'us',
-            env('GOOGLE_MAPS_API_KEY'),
+        Nominatim::class => [
+            'https://nominatim.openstreetmap.org',
+            'GeocoderLaravel-Tests/1.0 (https://github.com/geocoder-php/GeocoderLaravel)',
         ],
     ],
-    'adapter'  => Client::class,
-    // 'reader' => new Reader(__DIR__ . '/../resources/assets/GeoLite2-City.mmdb'),
-    "reader" => [
-        Reader::class => [
-            __DIR__ . '/../resources/assets/GeoLite2-City.mmdb',
-        ],
-    ],
+    'adapter' => LaravelHttpClient::class,
+    'reader' => [],
 ];

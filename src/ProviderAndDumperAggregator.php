@@ -227,7 +227,6 @@ class ProviderAndDumperAggregator
     {
         $specificAdapters = collect([
             'Geocoder\Provider\GeoIP2\GeoIP2' => 'Geocoder\Provider\GeoIP2\GeoIP2Adapter',
-            'Geocoder\Provider\MaxMindBinary\MaxMindBinary' => '',
         ]);
 
         if ($specificAdapters->has($provider)) {

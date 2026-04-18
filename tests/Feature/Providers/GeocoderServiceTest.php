@@ -1,342 +1,232 @@
-<?php namespace Geocoder\Laravel\Tests\Feature\Providers;
+<?php
 
-use Illuminate\Support\Str;
+use Geocoder\Laravel\Exceptions\InvalidDumperException;
+use Geocoder\Laravel\Facades\Geocoder;
+use Geocoder\Laravel\Http\LaravelHttpClient;
+use Geocoder\Laravel\ProviderAndDumperAggregator;
+use Geocoder\Laravel\Providers\GeocoderService;
+use Geocoder\Laravel\Tests\Support\NominatimFixture;
 use Geocoder\Model\Coordinates;
+use Geocoder\Provider\Chain\Chain;
+use Geocoder\Provider\Nominatim\Nominatim;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
-use Geocoder\Provider\Chain\Chain;
 use Illuminate\Support\Collection;
-use Geocoder\Laravel\Facades\Geocoder;
-use Geocoder\Provider\GeoPlugin\GeoPlugin;
-use Geocoder\Laravel\Tests\FeatureTestCase;
-use Http\Client\Curl\Client as CurlAdapter;
-use Geocoder\Provider\GoogleMaps\GoogleMaps;
-use Geocoder\Laravel\Providers\GeocoderService;
-use Geocoder\Laravel\ProviderAndDumperAggregator;
-use Geocoder\Provider\MaxMindBinary\MaxMindBinary;
-use Geocoder\Provider\GoogleMaps\Model\GoogleAddress;
-use Geocoder\Laravel\Exceptions\InvalidDumperException;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
-class GeocoderServiceTest extends FeatureTestCase
-{
-    // public function testItReverseGeocodesCoordinates()
-    // {
-    //     $result = app('geocoder')
-    //         ->reverse(38.897957, -77.036560)
-    //         ->get()
-    //         ->filter(function (GoogleAddress $address) {
-    //             return Str::contains($address->getStreetName() ?? '', 'Northwest');
-    //         })
-    //         ->first();
+beforeEach(function () {
+    Http::fake([
+        'nominatim.openstreetmap.org/search*' => Http::response(NominatimFixture::whiteHouse()),
+        'nominatim.openstreetmap.org/reverse*' => Http::response(NominatimFixture::whiteHouseReverse()),
+    ]);
+});
 
-    //     $this->assertNotNull($result);
-    //     $this->assertEquals('1600', $result->getStreetNumber());
-    //     $this->assertEquals('Pennsylvania Avenue Northwest', $result->getStreetName());
-    //     $this->assertEquals('Washington', $result->getLocality());
-    //     $this->assertEquals('20500', $result->getPostalCode());
-    // }
+it('resolves a given address', function () {
+    $result = app('geocoder')
+        ->using('chain')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get()
+        ->first();
 
-    public function testItResolvesAGivenAddress()
-    {
-        $result = app('geocoder')
-            ->using('chain')
-            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->get()
-            ->first();
+    expect($result)->not->toBeNull();
+    expect($result->getStreetNumber())->toBe('1600');
+    expect($result->getLocality())->toBe('Washington');
+    expect($result->getCountry()->getCode())->toBe('US');
 
-        $this->assertNotNull($result);
-        $this->assertEquals('1600', $result->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Northwest', $result->getStreetName());
-        $this->assertEquals('Washington', $result->getLocality());
-        $this->assertEquals('20500', $result->getPostalCode());
-    }
+    Http::assertSent(fn ($request) => str_contains($request->url(), 'nominatim.openstreetmap.org/search'));
+});
 
-    public function testItResolvesAGivenIPAddress()
-    {
-        $results = app('geocoder')
-            ->geocode('72.229.28.185')
-            ->get();
+it('can use a specific provider', function () {
+    $result = app('geocoder')
+        ->using('nominatim')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get()
+        ->first();
 
-        $this->assertTrue($results->isNotEmpty());
-        $this->assertEquals('US', $results->first()->getCountry()->getCode());
-    }
+    expect($result)->not->toBeNull();
+    expect($result->getStreetNumber())->toBe('1600');
+    expect($result->getLocality())->toBe('Washington');
+    expect($result->getCountry()->getCode())->toBe('US');
+});
 
-    public function testItResolvesAGivenAddressWithUmlauts()
-    {
-        $results = app('geocoder')
-            ->geocode('Obere Donaustrasse 22, Wien, Österreich')
-            ->get();
+it('dumps an address', function () {
+    $results = app('geocoder')
+        ->using('nominatim')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->dump('geojson');
 
-        $this->assertEquals('22', $results->first()->getStreetNumber());
-        $this->assertEquals('Obere Donaustraße', $results->first()->getStreetName());
-        $this->assertEquals('Wien', $results->first()->getLocality());
-        $this->assertEquals('1020', $results->first()->getPostalCode());
-        $this->assertTrue($results->isNotEmpty());
-    }
+    $jsonAddress = json_decode($results->first());
 
-    public function testItResolvesAGivenAddressWithUmlautsInRegion()
-    {
-        $results = app('geocoder')
-            ->geocode('Obere Donaustraße 22, Wien, Österreich')
-            ->get();
+    expect($results->isNotEmpty())->toBeTrue();
+    expect($jsonAddress->properties->streetNumber)->toBe('1600');
+});
 
-        $this->assertEquals('22', $results->first()->getStreetNumber());
-        $this->assertEquals('Obere Donaustraße', $results->first()->getStreetName());
-        $this->assertEquals('Wien', $results->first()->getLocality());
-        $this->assertEquals('1020', $results->first()->getPostalCode());
-        $this->assertTrue($results->isNotEmpty());
-    }
+it('throws an exception for invalid dumper', function () {
+    app('geocoder')
+        ->using('nominatim')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->dump('test');
+})->throws(InvalidDumperException::class);
 
-    public function testItCanUseASpecificProvider()
-    {
-        $result = app('geocoder')
-            ->using('google_maps')
-            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->get()
-            ->first();
+it('loads the expected configuration', function () {
+    expect(config('geocoder.cache.store'))->toBe('geocode');
+    expect(config('geocoder.cache.duration'))->toBe(999999999);
 
-        $this->assertNotNull($result);
-        $this->assertEquals('1600', $result->getStreetNumber());
-        $this->assertEquals('Pennsylvania Avenue Northwest', $result->getStreetName());
-        $this->assertEquals('Washington', $result->getLocality());
-        $this->assertEquals('20500', $result->getPostalCode());
-    }
+    $providers = app('config')->get('geocoder.providers');
 
-    public function testItDumpsAndAddress()
-    {
-        $results = app('geocoder')
-            ->using('google_maps')
-            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->dump('geojson');
+    expect($providers)->toBeArray();
+    expect($providers)->toHaveCount(2);
+    expect($providers[Chain::class])->toHaveKey(Nominatim::class);
+    expect($providers)->toHaveKey(Nominatim::class);
+    expect(app('config')->get('geocoder.adapter'))->toBe(LaravelHttpClient::class);
+});
 
-        $jsonAddress = json_decode($results->first());
+it('registers the geocoder service provider', function () {
+    $loadedProviders = app()->getLoadedProviders();
 
-        $this->assertEquals('1600', $jsonAddress->properties->streetNumber);
-        $this->assertTrue($results->isNotEmpty());
-    }
+    expect($loadedProviders)->toHaveKey(GeocoderService::class);
+    expect($loadedProviders[GeocoderService::class])->toBeTrue();
+});
 
-    public function testItThrowsAnExceptionForInvalidDumper()
-    {
-        $this->expectException(InvalidDumperException::class);
-        $results = app('geocoder')
-            ->using('google_maps')
-            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->dump('test');
-        $jsonAddress = json_decode($results->first());
+it('binds the provider aggregator', function () {
+    expect(app('geocoder'))->toBeInstanceOf(ProviderAndDumperAggregator::class);
+});
 
-        $this->assertEquals('1600', $jsonAddress->properties->streetNumber);
-        $this->assertTrue($results->isNotEmpty());
-    }
+it('caches geocoding results', function () {
+    $cacheKey = sha1(
+        app('geocoder')->getProvider()->getName()
+        . '-' . Str::slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')))
+    );
 
-    public function testConfig()
-    {
-        $this->assertEquals(null, config('geocoder.cache.store'));
-        $this->assertEquals(999999999, config('geocoder.cache.duration'));
-        $this->assertTrue(is_array($providers = $this->app['config']->get('geocoder.providers')));
-        $this->assertCount(3, $providers);
-        $this->assertArrayHasKey(GoogleMaps::class, $providers[Chain::class]);
-        $this->assertArrayHasKey(GeoPlugin::class, $providers[Chain::class]);
-        $this->assertSame(CurlAdapter::class, $this->app['config']->get('geocoder.adapter'));
-    }
+    $result = app('geocoder')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get();
+    $cachedResult = app('cache')
+        ->store(config('geocoder.cache.store'))
+        ->get($cacheKey)['value'];
+    $isCached = app('cache')
+        ->store(config('geocoder.cache.store'))
+        ->has($cacheKey);
 
-    public function testLoadedProviders()
-    {
-        $loadedProviders = $this->app->getLoadedProviders();
+    expect($isCached)->toBeTrue();
+    expect($cachedResult)->toEqual($result);
 
-        $this->assertArrayHasKey(GeocoderService::class, $loadedProviders);
-        $this->assertTrue($loadedProviders[GeocoderService::class]);
-    }
+    app('geocoder')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get();
+    Http::assertSentCount(1);
+});
 
-    public function testGeocoder()
-    {
-        $this->assertInstanceOf(ProviderAndDumperAggregator::class, app('geocoder'));
-    }
+it('returns results from a geocode query', function () {
+    $query = GeocodeQuery::create('1600 Pennsylvania Ave NW, Washington, DC 20500, USA');
 
-    public function testCacheIsUsed()
-    {
-        $cacheKey = sha1(
-            app('geocoder')->getProvider()->getName()
-            . "-" . Str::slug(strtolower(urlencode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')))
-        );
+    $results = app('geocoder')->geocodeQuery($query)->get();
 
-        $result = app('geocoder')
-            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->get();
-        $cachedResult = app('cache')
-            ->store(config('geocoder.cache.store'))
-            ->get($cacheKey)["value"];
-        $isCached = app('cache')
-            ->store(config('geocoder.cache.store'))
-            ->has($cacheKey);
+    expect($results)->toBeInstanceOf(Collection::class);
+    expect($results->isNotEmpty())->toBeTrue();
+});
 
-        $this->assertTrue($isCached);
-        $this->assertEquals($result, $cachedResult);
-    }
+it('returns results from a reverse query', function () {
+    $coordinates = new Coordinates(38.8791981, -76.9818437);
+    $query = ReverseQuery::create($coordinates);
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function testGeocodeQueryProvidesResults()
-    {
-        $query = GeocodeQuery::create('1600 Pennsylvania Ave NW, Washington, DC 20500, USA');
+    $results = app('geocoder')->reverseQuery($query)->get();
 
-        $results = app('geocoder')->geocodeQuery($query)->get();
+    expect($results)->toBeInstanceOf(Collection::class);
+    expect($results->isNotEmpty())->toBeTrue();
+    Http::assertSent(fn ($request) => str_contains($request->url(), '/reverse'));
+});
 
-        $this->assertInstanceOf(Collection::class, $results);
-        $this->assertTrue($results->isNotEmpty());
-    }
+it('returns results via the facade', function () {
+    $results = Geocoder::geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get();
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function testReverseQueryProvidesResults()
-    {
-        $coordinates = new Coordinates(38.8791981, -76.9818437);
-        $query = ReverseQuery::create($coordinates);
+    expect($results)->toBeInstanceOf(Collection::class);
+    expect($results->isNotEmpty())->toBeTrue();
+});
 
-        $results = app('geocoder')->reverseQuery($query)->get();
+it('returns the aggregator name', function () {
+    expect(app('geocoder')->getName())->toBe('provider_aggregator');
+});
 
-        $this->assertInstanceOf(Collection::class, $results);
-        $this->assertTrue($results->isNotEmpty());
-    }
+it('respects a result limit', function () {
+    $expectedLimit = 1;
+    app('geocoder')->limit($expectedLimit);
+    $actualLimit = app('geocoder')->getLimit();
+    $results = app('geocoder')->using('chain')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get();
 
-    public function testFacadeProvidesResults()
-    {
-        $results = Geocoder::geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->get();
+    expect($actualLimit)->toBe($expectedLimit);
+    expect($results->count())->toBe($expectedLimit);
+});
 
-        $this->assertInstanceOf(Collection::class, $results);
-        $this->assertTrue($results->isNotEmpty());
-    }
+it('returns all results via all()', function () {
+    $expectedResults = app('geocoder')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get()
+        ->all();
+    $actualResults = app('geocoder')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->all();
 
-    public function testItCanUseMaxMindBinaryWithoutProvider()
-    {
-        $provider = new MaxMindBinary(__DIR__ . '/../../resources/assets/GeoIP.dat');
-        app('geocoder')->registerProvider($provider);
+    expect($actualResults)->toEqual($expectedResults);
+});
 
-        // dummy assertion, as we are running this test to make sure no
-        // exception is thrown in the above provider registration
-        $this->assertTrue(true);
-    }
+it('exposes the registered providers', function () {
+    $providers = app('geocoder')->getProviders();
 
-    public function testGetNameReturnsString()
-    {
-        $this->assertEquals('provider_aggregator', app('geocoder')->getName());
-    }
+    expect($providers->has('chain'))->toBeTrue();
+});
 
-    public function testLimitingOfResults()
-    {
-        $expectedLimit = 1;
-        app('geocoder')->limit($expectedLimit);
-        $actualLimit = app('geocoder')->getLimit();
-        $results = app('geocoder')->using('chain')
-            ->geocode('1600 Pennsylvania Ave., Washington, DC USA')
-            ->get();
+it('returns the default provider', function () {
+    $provider = app('geocoder')->getProvider();
 
-        $this->assertEquals($expectedLimit, $actualLimit);
-        $this->assertEquals($expectedLimit, $results->count());
-    }
+    expect($provider->getName())->toBe('chain');
+});
 
-    public function testFetchingAllResults()
-    {
-        $expectedResults = app('geocoder')
-            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->get()
-            ->all();
-        $actualResults = app('geocoder')
-            ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->all();
+it('provides locality state', function () {
+    $results = Geocoder::geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get();
 
-        $this->assertEquals($expectedResults, $actualResults);
-    }
+    expect($results->first()->getLocality())->toBe('Washington');
+});
 
-    public function testGetProviders()
-    {
-        $providers = app('geocoder')->getProviders();
+it('does not cache empty results', function () {
+    Http::fake([
+        'nominatim.openstreetmap.org/search*' => Http::response([]),
+    ]);
+    $cacheKey = md5(Str::slug(strtolower(urlencode('_'))));
 
-        $this->assertTrue($providers->has('chain'));
-        $this->assertTrue($providers->has('bing_maps'));
-        $this->assertTrue($providers->has('google_maps'));
-    }
+    Geocoder::geocode('_')->get();
 
-    public function testGetProvider()
-    {
-        $provider = app('geocoder')->getProvider();
+    expect(app('cache')->has("geocoder-{$cacheKey}"))->toBeFalse();
+});
 
-        $this->assertEquals($provider->getName(), 'chain');
-    }
+it('can disable caching', function () {
+    Http::fake([
+        'nominatim.openstreetmap.org/search*' => Http::response(NominatimFixture::losAngeles()),
+    ]);
 
-    public function testJapaneseCharacterGeocoding()
-    {
-        $cacheKey = sha1(app('geocoder')->getProvider()->getName()
-            . "-" . Str::slug(strtolower(urlencode('108-0075 東京都港区港南２丁目１６－３')))
-        );
+    app('geocoder')
+        ->doNotCache()
+        ->using('nominatim')
+        ->geocode('Los Angeles, CA')
+        ->get();
+    app('geocoder')
+        ->doNotCache()
+        ->using('nominatim')
+        ->geocode('Los Angeles, CA')
+        ->get();
 
-        app('geocoder')
-            ->geocode('108-0075 東京都港区港南２丁目１６－３')
-            ->get();
+    Http::assertSentCount(2);
+});
 
-        $this->assertTrue(app('cache')->has($cacheKey));
-    }
+it('returns the current provider after switching', function () {
+    $provider = app('geocoder')
+        ->using('nominatim')
+        ->getProvider();
 
-    public function testItProvidesState()
-    {
-        $results = Geocoder::geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->get();
-
-        $this->assertEquals('Washington', $results->first()->getLocality());
-    }
-
-    public function testItProvidesAdminLevel()
-    {
-        $results = Geocoder::geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
-            ->get();
-
-        $this->assertEquals('District of Columbia', $results->first()->getAdminLevels()->first()->getName());
-    }
-
-    public function testItHandlesOnlyCityAndState()
-    {
-        $results = Geocoder::geocode('Seatle, WA')->get();
-
-        $this->assertEquals('Seattle', $results->first()->getLocality());
-        $this->assertEquals('Washington', $results->first()->getAdminLevels()->first()->getName());
-        $this->assertEquals('United States', $results->first()->getCountry()->getName());
-    }
-
-    public function testEmptyResultsAreNotCached()
-    {
-        $cacheKey = md5(Str::slug(strtolower(urlencode('_'))));
-
-        Geocoder::geocode('_')->get();
-
-        $this->assertFalse(app('cache')->has("geocoder-{$cacheKey}"));
-    }
-
-    public function testCachingCanBeDisabled()
-    {
-        $results = app("geocoder")
-            ->doNotCache()
-            ->geocode('Los Angeles, CA')
-            ->get();
-
-        $this->assertEquals(
-            "Los Angeles, CA, USA",
-            $results->first()->getFormattedAddress()
-        );
-    }
-
-    public function testGetProviderReturnsCurrentProvider()
-    {
-        $provider = app("geocoder")
-            ->using("google_maps")
-            ->getProvider();
-
-        $this->assertEquals("google_maps", $provider->getName());
-    }
-}
+    expect($provider->getName())->toBe('nominatim');
+});

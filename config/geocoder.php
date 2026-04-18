@@ -1,9 +1,9 @@
 <?php
 
+use Geocoder\Laravel\Http\LaravelHttpClient;
 use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
-use Http\Client\Curl\Client;
 
 return [
     'cache' => [
@@ -70,16 +70,19 @@ return [
     | Adapter
     |---------------------------------------------------------------------------
     |
-    | You can specify which PSR-7-compliant HTTP adapter you would like to use.
-    | There are multiple options at your disposal: CURL, Guzzle, and others.
+    | The HTTP adapter to use when communicating with geocoding services. By
+    | default this package ships a PSR-18 client that delegates to Laravel's
+    | `Http` facade — this gives you `Http::fake()` in tests, native retry
+    | and timeout configuration, and any HTTP middleware you've registered.
     |
-    | Please consult the official Geocoder documentation for more info.
-    | https://github.com/geocoder-php/Geocoder#usage
+    | Provide any class that implements `Psr\Http\Client\ClientInterface` to
+    | swap in a different adapter (e.g., `Http\Client\Curl\Client` from
+    | `php-http/curl-client`, which you would need to install separately).
     |
-    | Default: Client::class (FQCN for CURL adapter)
+    | Default: LaravelHttpClient::class
     |
     */
-    'adapter'  => Client::class,
+    'adapter'  => LaravelHttpClient::class,
 
     /*
     |---------------------------------------------------------------------------

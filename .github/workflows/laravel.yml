@@ -57,8 +57,8 @@ jobs:
     - name: Install Dependencies
       run: composer update --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-    - name: Execute tests via PHPUnit
-      run: vendor/bin/phpunit --configuration phpunit.xml ${{ matrix.php == '8.5' && matrix.laravel == '13.*' && '--coverage-clover coverage.xml' || '' }}
+    - name: Execute tests via Pest
+      run: vendor/bin/pest --configuration phpunit.xml ${{ matrix.php == '8.5' && matrix.laravel == '13.*' && '--coverage-clover coverage.xml' || '' }}
 
     - name: Upload coverage to Codecov
       if: matrix.php == '8.5' && matrix.laravel == '13.*'

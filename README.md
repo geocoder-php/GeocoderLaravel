@@ -10,15 +10,16 @@
 > If you still use **Laravel 4**, please check out the `0.4.x` branch
  [here](https://github.com/geocoder-php/GeocoderLaravel/tree/0.4.x).
 
-**Version 4.0.0 is a backwards-compatibility-breaking update. Please review
- this documentation, especially the _Usage_ section before installing.**
+**Version 5.0.0 is a backwards-compatibility-breaking update. Please review
+ the _Upgrading_ section, especially the new default HTTP adapter, before
+ installing.**
 
 This package allows you to use [**Geocoder**](http://geocoder-php.org/Geocoder/)
- in [**Laravel 5**](http://laravel.com/).
+ in [**Laravel**](http://laravel.com/).
 
 ## Requirements
-- PHP >= 7.1.3
-- Laravel >= 5.0
+- PHP >= 8.2
+- Laravel >= 11.0
 
 ## Installation
 1. Install the package via composer:
@@ -120,10 +121,10 @@ However, you are free to add or remove providers as needed, both inside the
  Chain provider, as well as along-side it. The following is the default
  configuration provided by the package:
 ```php
+use Geocoder\Laravel\Http\LaravelHttpClient;
 use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
-use Http\Client\Curl\Client;
 
 return [
 
@@ -173,16 +174,19 @@ return [
     | Adapter
     |--------------------------------------------------------------------------
     |
-    | You can specify which PSR-7-compliant HTTP adapter you would like to use.
-    | There are multiple options at your disposal: CURL, Guzzle, and others.
+    | The HTTP adapter to use when communicating with geocoding services. By
+    | default this package ships a PSR-18 client that delegates to Laravel's
+    | `Http` facade — this gives you `Http::fake()` in tests, native retry
+    | and timeout configuration, and any HTTP middleware you've registered.
     |
-    | Please consult the official Geocoder documentation for more info.
-    | https://github.com/geocoder-php/Geocoder#usage
+    | Provide any class that implements `Psr\Http\Client\ClientInterface` to
+    | swap in a different adapter (e.g., `Http\Client\Curl\Client` from
+    | `php-http/curl-client`, which you would need to install separately).
     |
-    | Default: Client::class (FQCN for CURL adapter)
+    | Default: LaravelHttpClient::class
     |
     */
-    'adapter'  => Client::class,
+    'adapter'  => LaravelHttpClient::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -206,11 +210,18 @@ return [
 ```
 
 ### Adapters
-By default we provide a CURL adapter to get you running out of the box.
- However, if you have already installed Guzzle or any other PSR-7-compatible
- HTTP adapter, you are encouraged to replace the CURL adapter with it. Please
- see the [Geocoder Documentation](https://github.com/geocoder-php/Geocoder) for
- specific implementation details.
+By default we ship `Geocoder\Laravel\Http\LaravelHttpClient`, a thin PSR-18
+ client that delegates every request to Laravel's `Http` facade. This means:
+
+- `Http::fake()` and `Http::assertSent()` work in your tests with no extra setup
+- `Http::timeout()`, `Http::retry()`, `Http::withMiddleware()`, and any other
+  Laravel HTTP client configuration applies to geocoder requests
+- One less third-party HTTP client to manage
+
+If you need a different transport, set `'adapter'` in `config/geocoder.php` to
+ any class that implements `Psr\Http\Client\ClientInterface`. To go back to the
+ previous CURL adapter, install `php-http/curl-client` and set
+ `'adapter' => Http\Client\Curl\Client::class`.
 
 ### Customization
 If you would like to make changes to the default configuration, publish and
@@ -262,6 +273,38 @@ Anytime you upgrade this package, please remember to clear your cache, to preven
 ```sh
 php artisan cache:clear
 ```
+
+### 4.x to 5.x
+Update your `composer.json`:
+```json
+    "toin0u/geocoder-laravel": "^5.0",
+```
+
+**Breaking: default HTTP adapter changed.** The default `'adapter'` in
+ `config/geocoder.php` is now `Geocoder\Laravel\Http\LaravelHttpClient`
+ instead of `Http\Client\Curl\Client`. The new adapter is a PSR-18 client
+ that delegates to Laravel's `Http` facade, so `Http::fake()`, retries,
+ timeouts, and middleware all work transparently.
+
+If you have **published the geocoder config previously**, your config file
+ still pins the old curl adapter and will fail at runtime once
+ `php-http/curl-client` is no longer installed. Pick one:
+
+- **Recommended:** delete (or rename) your published `config/geocoder.php`
+  and re-publish it, then re-apply your customizations.
+- Or edit the existing file: change `use Http\Client\Curl\Client;` to
+  `use Geocoder\Laravel\Http\LaravelHttpClient;` and change
+  `'adapter' => Client::class` to `'adapter' => LaravelHttpClient::class`.
+- Or, if you want to keep the curl adapter, install it explicitly:
+  `composer require php-http/curl-client`. The published config keeps working
+  unchanged.
+
+**Other notable changes in 5.x:**
+- Minimum PHP raised to 8.2; minimum Laravel raised to 11.x.
+- `php-http/curl-client` removed from required dependencies (install it
+  yourself if you still need it).
+- `MaxMindBinary` provider support removed (the underlying PHP package was
+  abandoned). Use `geocoder-php/geoip2-provider` for MaxMind data instead.
 
 ### 1.x to 4.x
 Update your composer.json file:

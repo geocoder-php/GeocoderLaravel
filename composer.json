@@ -30,20 +30,18 @@
         "guzzlehttp/psr7": "*",
         "http-interop/http-factory-guzzle": "^1.0",
         "illuminate/cache": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
         "illuminate/support": "^11.0|^12.0|^13.0",
-        "php-http/curl-client": "*",
         "willdurand/geocoder": "^4.0|^5.0"
     },
     "require-dev": {
-        "doctrine/dbal": "*",
+        "geocoder-php/nominatim-provider": "^5.0",
         "geocoder-php/bing-maps-provider": "^4.0",
         "geocoder-php/geoip2-provider": "^4.0",
         "geocoder-php/maxmind-binary-provider": "^4.0",
         "orchestra/testbench": "^9.0|^10.0|^11.0",
-        "orchestra/testbench-browser-kit": "^9.0|^10.0|^11.0",
-        "orchestra/testbench-dusk": "^9.0|^10.0|^11.0",
-        "php-coveralls/php-coveralls": "*",
-        "phpunit/phpunit": "^10.5|^11.5.3|^12.5.12"
+        "pestphp/pest": "^3.0|^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0|^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -52,7 +50,6 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\": "vendor/laravel/laravel/app/",
             "Geocoder\\Laravel\\Tests\\": "tests/"
         }
     },
@@ -69,7 +66,8 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "pestphp/pest-plugin": true
         }
     }
 }
