@@ -265,7 +265,7 @@ class ProviderAndDumperAggregator
             if ($this->requiresReader($provider)) {
                 $adapter = new $adapter($this->getReader());
             } else {
-                $adapter = new $adapter;
+                $adapter = app($adapter);
             }
 
             array_unshift($arguments, $adapter);
