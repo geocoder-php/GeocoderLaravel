@@ -190,7 +190,17 @@ return [
     | swap in a different adapter (e.g., `Http\Client\Curl\Client` from
     | `php-http/curl-client`, which you would need to install separately).
     |
+    | To pass constructor arguments (timeouts, proxies, client options, etc.)
+    | use the array form `[Class => [args]]`. Arguments are forwarded to the
+    | adapter's constructor — it's on you to match its signature. Named args
+    | are supported: `[Class => ['timeout' => 10]]`.
+    |
     | Default: LaravelHttpClient::class
+    |
+    | Examples:
+    |   'adapter' => LaravelHttpClient::class,
+    |   'adapter' => [LaravelHttpClient::class => ['timeout' => 10, 'retry' => [3, 100]]],
+    |   'adapter' => [Http\Client\Curl\Client::class => [null, null, [CURLOPT_PROXY => '...']]],
     |
     */
     'adapter'  => LaravelHttpClient::class,
@@ -221,14 +231,37 @@ By default we ship `Geocoder\Laravel\Http\LaravelHttpClient`, a thin PSR-18
  client that delegates every request to Laravel's `Http` facade. This means:
 
 - `Http::fake()` and `Http::assertSent()` work in your tests with no extra setup
-- `Http::timeout()`, `Http::retry()`, `Http::withMiddleware()`, and any other
-  Laravel HTTP client configuration applies to geocoder requests
 - One less third-party HTTP client to manage
 
-If you need a different transport, set `'adapter'` in `config/geocoder.php` to
- any class that implements `Psr\Http\Client\ClientInterface`. To go back to the
- previous CURL adapter, install `php-http/curl-client` and set
- `'adapter' => Http\Client\Curl\Client::class`.
+#### Configuring Adapter Options
+You can pass constructor arguments to the adapter via the array form
+ `[Class => [args]]` in `config/geocoder.php`. Arguments are forwarded directly
+ to the adapter's constructor — it's on you to match its signature. Named
+ arguments are supported.
+
+The default `LaravelHttpClient` accepts `timeout`, `connectTimeout`, `retry`,
+ and `options` (Guzzle transport options). These are forwarded to the
+ underlying Laravel `PendingRequest`:
+```php
+'adapter' => [LaravelHttpClient::class => [
+    'timeout' => 10,
+    'connectTimeout' => 3,
+    'retry' => [3, 100],             // [times, sleepMilliseconds]
+    'options' => ['verify' => false], // Guzzle transport options
+]],
+```
+
+#### Using a Different Transport
+Set `'adapter'` to any class that implements `Psr\Http\Client\ClientInterface`.
+ To go back to the previous CURL adapter, install `php-http/curl-client` and
+ pass your CURL options the same way:
+```php
+'adapter' => [Http\Client\Curl\Client::class => [
+    null,
+    null,
+    [CURLOPT_PROXY => env('CURL_PROXY'), CURLOPT_PROXYUSERPWD => env('CURL_PROXYUSERPWD')],
+]],
+```
 
 ### Customization
 If you would like to make changes to the default configuration, publish and

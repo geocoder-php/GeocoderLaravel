@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Geocoder\Laravel\Http\LaravelHttpClient;
 use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\GeoPlugin\GeoPlugin;
@@ -79,7 +81,17 @@ return [
     | swap in a different adapter (e.g., `Http\Client\Curl\Client` from
     | `php-http/curl-client`, which you would need to install separately).
     |
+    | To pass constructor arguments (timeouts, proxies, client options, etc.)
+    | use the array form `[Class => [args]]`. Arguments are forwarded to the
+    | adapter's constructor — it's on you to match its signature. Named args
+    | are supported: `[Class => ['timeout' => 10]]`.
+    |
     | Default: LaravelHttpClient::class
+    |
+    | Examples:
+    |   'adapter' => LaravelHttpClient::class,
+    |   'adapter' => [LaravelHttpClient::class => ['timeout' => 10, 'retry' => [3, 100]]],
+    |   'adapter' => [Http\Client\Curl\Client::class => [null, null, [CURLOPT_PROXY => '...']]],
     |
     */
     'adapter'  => LaravelHttpClient::class,

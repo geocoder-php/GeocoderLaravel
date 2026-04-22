@@ -194,14 +194,17 @@ it('provides locality state', function () {
 });
 
 it('does not cache empty results', function () {
+    Http::swap(new \Illuminate\Http\Client\Factory());
     Http::fake([
         'nominatim.openstreetmap.org/search*' => Http::response([]),
     ]);
-    $cacheKey = md5(Str::slug(strtolower(urlencode('_'))));
+    $providerName = app('geocoder')->getProvider()->getName();
+    $hashedCacheKey = sha1("{$providerName}-" . Str::slug(strtolower(urlencode('_'))));
 
     Geocoder::geocode('_')->get();
 
-    expect(app('cache')->has("geocoder-{$cacheKey}"))->toBeFalse();
+    $store = app('cache')->store(config('geocoder.cache.store'));
+    expect($store->has($hashedCacheKey))->toBeFalse();
 });
 
 it('can disable caching', function () {
@@ -229,6 +232,44 @@ it('returns the current provider after switching', function () {
         ->getProvider();
 
     expect($provider->getName())->toBe('nominatim');
+});
+
+it('accepts configuration options on the default adapter', function () {
+    $client = new LaravelHttpClient(
+        timeout: 7,
+        connectTimeout: 3,
+        retry: [2, 50],
+        options: ['verify' => false],
+    );
+
+    expect($client->timeout)->toBe(7);
+    expect($client->connectTimeout)->toBe(3);
+    expect($client->retry)->toBe([2, 50]);
+    expect($client->options)->toBe(['verify' => false]);
+});
+
+it('defaults to null adapter options when none are configured', function () {
+    $client = new LaravelHttpClient();
+
+    expect($client->timeout)->toBeNull();
+    expect($client->connectTimeout)->toBeNull();
+    expect($client->retry)->toBeNull();
+    expect($client->options)->toBe([]);
+});
+
+it('resolves array-form adapter config with constructor arguments', function () {
+    config()->set('geocoder.adapter', [
+        LaravelHttpClient::class => ['timeout' => 15, 'retry' => [2, 100]],
+    ]);
+
+    $result = app('geocoder')
+        ->using('nominatim')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get()
+        ->first();
+
+    expect($result)->not->toBeNull();
+    expect($result->getStreetNumber())->toBe('1600');
 });
 
 it('does not collide reverse cache keys across coordinate signs', function () {

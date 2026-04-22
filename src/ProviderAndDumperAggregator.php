@@ -233,7 +233,26 @@ class ProviderAndDumperAggregator
             return $specificAdapters->get($provider);
         }
 
-        return config('geocoder.adapter');
+        $adapter = config('geocoder.adapter');
+
+        if (is_array($adapter)) {
+            return array_key_first($adapter);
+        }
+
+        return $adapter;
+    }
+
+    protected function buildAdapter(string $class)
+    {
+        $adapterConfig = config('geocoder.adapter');
+
+        if (is_array($adapterConfig) && isset($adapterConfig[$class])) {
+            $reflection = new ReflectionClass($class);
+
+            return $reflection->newInstanceArgs($adapterConfig[$class]);
+        }
+
+        return app($class);
     }
 
     protected function getReader()
@@ -264,7 +283,7 @@ class ProviderAndDumperAggregator
             if ($this->requiresReader($provider)) {
                 $adapter = new $adapter($this->getReader());
             } else {
-                $adapter = app($adapter);
+                $adapter = $this->buildAdapter($adapter);
             }
 
             array_unshift($arguments, $adapter);
