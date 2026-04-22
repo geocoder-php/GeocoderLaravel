@@ -230,3 +230,21 @@ it('returns the current provider after switching', function () {
 
     expect($provider->getName())->toBe('nominatim');
 });
+
+it('does not collide reverse cache keys across coordinate signs', function () {
+    $providerName = app('geocoder')->getProvider()->getName();
+    $negativeKey = sha1("{$providerName}-" . strtolower(urlencode('-45.473282--73.834721')));
+    $positiveKey = sha1("{$providerName}-" . strtolower(urlencode('45.473282-73.834721')));
+
+    app('geocoder')->reverse(-45.473282, -73.834721)->get();
+    app('geocoder')->reverse(45.473282, 73.834721)->get();
+
+    $store = app('cache')->store(config('geocoder.cache.store'));
+
+    expect($negativeKey)->not->toBe($positiveKey);
+    expect($store->has($negativeKey))->toBeTrue();
+    expect($store->has($positiveKey))->toBeTrue();
+    expect($store->get($negativeKey)['key'])->toBe('-45.473282--73.834721');
+    expect($store->get($positiveKey)['key'])->toBe('45.473282-73.834721');
+    Http::assertSentCount(2);
+});

@@ -22,6 +22,12 @@
             "role": "Original Creator"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:mikebronner/development-settings.git"
+        }
+    ],
     "require": {
         "php": "^8.2|^8.3|^8.4|^8.5",
         "geocoder-php/chain-provider": "^4.0|^5.0",
@@ -35,13 +41,18 @@
         "willdurand/geocoder": "^4.0|^5.0"
     },
     "require-dev": {
-        "geocoder-php/nominatim-provider": "^5.0",
         "geocoder-php/bing-maps-provider": "^4.0",
         "geocoder-php/geoip2-provider": "^4.0",
         "geocoder-php/maxmind-binary-provider": "^4.0",
+        "geocoder-php/nominatim-provider": "^5.0",
+        "larastan/larastan": "^3.5",
+        "laravel/boost": "^2.4",
+        "laravel/pint": "^1.24",
+        "mikebronner/development-settings": "^0.1",
         "orchestra/testbench": "^9.0|^10.0|^11.0",
         "pestphp/pest": "^3.0|^4.0",
-        "pestphp/pest-plugin-laravel": "^3.0|^4.0"
+        "pestphp/pest-plugin-laravel": "^3.0|^4.0",
+        "slevomat/coding-standard": "^8.24"
     },
     "autoload": {
         "psr-4": {
@@ -66,8 +77,10 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "php-http/discovery": true,
-            "pestphp/pest-plugin": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "mikebronner/development-settings": true,
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     }
 }
