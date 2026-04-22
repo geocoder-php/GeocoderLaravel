@@ -15,6 +15,7 @@ use Geocoder\Dumper\Kml;
 use Geocoder\Dumper\Wkb;
 use Geocoder\Dumper\Wkt;
 use Geocoder\Laravel\Exceptions\InvalidDumperException;
+use Geocoder\Provider\Chain\Chain;
 use Geocoder\ProviderAggregator;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
@@ -295,6 +296,10 @@ class ProviderAndDumperAggregator
     protected function getProvidersFromConfiguration(Collection $providers) : array
     {
         $providers = $providers->map(function ($arguments, $provider) {
+            if (app()->bound($provider)) {
+                return app($provider);
+            }
+
             $arguments = $this->getArguments($arguments, $provider);
             $reflection = new ReflectionClass($provider);
 

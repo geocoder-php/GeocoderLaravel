@@ -272,6 +272,26 @@ it('resolves array-form adapter config with constructor arguments', function () 
     expect($result->getStreetNumber())->toBe('1600');
 });
 
+it('resolves providers from the service container when bound', function () {
+    app()->bind(Nominatim::class, fn () => Nominatim::withOpenStreetMapServer(
+        app(LaravelHttpClient::class),
+        'ContainerBoundAgent/1.0',
+    ));
+    config()->set('geocoder.providers', [
+        Nominatim::class => [],
+    ]);
+
+    $result = app('geocoder')
+        ->using('nominatim')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get()
+        ->first();
+
+    expect($result)->not->toBeNull();
+    expect($result->getStreetNumber())->toBe('1600');
+    Http::assertSent(fn ($request) => $request->header('User-Agent')[0] === 'ContainerBoundAgent/1.0');
+});
+
 it('does not collide reverse cache keys across coordinate signs', function () {
     $providerName = app('geocoder')->getProvider()->getName();
     $negativeKey = sha1("{$providerName}-" . strtolower(urlencode('-45.473282--73.834721')));

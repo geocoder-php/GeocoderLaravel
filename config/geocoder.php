@@ -53,6 +53,19 @@ return [
     | can explicitly call subsequently listed providers by
     | alias: `app('geocoder')->using('google_maps')`.
     |
+    | Providers that require a static factory method (e.g. `Nominatim::
+    | withOpenStreetMapServer()`, `GoogleMaps::business()`) can be bound
+    | in your AppServiceProvider — they'll be resolved via the container.
+    | Configure the provider here with an empty args array:
+    |
+    |   // AppServiceProvider::register()
+    |   $this->app->bind(Nominatim::class, fn ($app) => Nominatim::
+    |       withOpenStreetMapServer($app->make(LaravelHttpClient::class),
+    |       'MyApp/1.0'));
+    |
+    |   // config/geocoder.php
+    |   Nominatim::class => [],
+    |
     | Please consult the official Geocoder documentation for more info.
     | https://github.com/geocoder-php/Geocoder#providers
     |
