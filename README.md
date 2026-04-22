@@ -290,6 +290,25 @@ app('geocoder')->geocode('8.8.8.8')->get();
 app('geocoder')->reverse(43.882587,-103.454067)->get();
 ```
 
+#### Localizing Results
+Use the `locale()` method to request localized formatting from providers that
+ support it (GoogleMaps, Nominatim, etc.). Results are cached separately per
+ locale, so switching locales doesn't pollute each other's cache entries:
+```php
+app('geocoder')->locale('it')->geocode('Bologna')->get();
+app('geocoder')->locale('fr')->reverse(45.5, -73.5)->get();
+```
+
+If you need to build a query with additional options, you can also set the
+ locale directly on a query and pass it through `geocodeQuery()` or
+ `reverseQuery()`:
+```php
+use Geocoder\Query\GeocodeQuery;
+
+$query = GeocodeQuery::create('Bologna')->withLocale('it');
+app('geocoder')->geocodeQuery($query)->get();
+```
+
 #### Dumping Results
 ```php
 app('geocoder')->geocode('Los Angeles, CA')->dump('kml');
