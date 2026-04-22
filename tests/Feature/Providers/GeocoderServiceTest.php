@@ -292,6 +292,50 @@ it('resolves providers from the service container when bound', function () {
     Http::assertSent(fn ($request) => $request->header('User-Agent')[0] === 'ContainerBoundAgent/1.0');
 });
 
+it('propagates locale via the fluent locale() method on geocode()', function () {
+    app('geocoder')
+        ->locale('it')
+        ->geocode('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->get();
+
+    Http::assertSent(fn ($request) => str_contains($request->url(), 'accept-language=it'));
+});
+
+it('propagates locale via the fluent locale() method on reverse()', function () {
+    app('geocoder')
+        ->locale('fr')
+        ->reverse(38.8791981, -76.9818437)
+        ->get();
+
+    Http::assertSent(fn ($request) =>
+        str_contains($request->url(), '/reverse')
+        && str_contains($request->url(), 'accept-language=fr')
+    );
+});
+
+it('caches locale-scoped convenience-method results separately per locale', function () {
+    app('geocoder')->locale('it')->geocode('Washington')->get();
+    app('geocoder')->locale('fr')->geocode('Washington')->get();
+    app('geocoder')->locale('it')->geocode('Washington')->get();
+
+    Http::assertSentCount(2);
+});
+
+it('propagates locale from geocodeQuery to the provider and caches per-locale', function () {
+    $italianQuery = GeocodeQuery::create('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->withLocale('it');
+    $frenchQuery = GeocodeQuery::create('1600 Pennsylvania Ave NW, Washington, DC 20500, USA')
+        ->withLocale('fr');
+
+    app('geocoder')->geocodeQuery($italianQuery)->get();
+    app('geocoder')->geocodeQuery($frenchQuery)->get();
+    app('geocoder')->geocodeQuery($italianQuery)->get();
+
+    Http::assertSent(fn ($request) => str_contains($request->url(), 'accept-language=it'));
+    Http::assertSent(fn ($request) => str_contains($request->url(), 'accept-language=fr'));
+    Http::assertSentCount(2);
+});
+
 it('does not collide reverse cache keys across coordinate signs', function () {
     $providerName = app('geocoder')->getProvider()->getName();
     $negativeKey = sha1("{$providerName}-" . strtolower(urlencode('-45.473282--73.834721')));

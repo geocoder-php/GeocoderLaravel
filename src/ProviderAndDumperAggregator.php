@@ -34,6 +34,7 @@ class ProviderAndDumperAggregator
     protected $limit;
     protected $results;
     protected $isCaching = true;
+    protected ?string $locale = null;
 
     public function __construct()
     {
@@ -98,8 +99,19 @@ class ProviderAndDumperAggregator
 
     public function geocode(string $value) : self
     {
+        if ($this->locale !== null) {
+            return $this->geocodeQuery(GeocodeQuery::create($value)->withLocale($this->locale));
+        }
+
         $cacheKey = (new Str)->slug(strtolower(urlencode($value)));
         $this->results = $this->cacheRequest($cacheKey, [$value], "geocode");
+
+        return $this;
+    }
+
+    public function locale(?string $locale) : self
+    {
+        $this->locale = $locale;
 
         return $this;
     }
@@ -169,6 +181,12 @@ class ProviderAndDumperAggregator
 
     public function reverse(float $latitude, float $longitude) : self
     {
+        if ($this->locale !== null) {
+            return $this->reverseQuery(
+                ReverseQuery::fromCoordinates($latitude, $longitude)->withLocale($this->locale)
+            );
+        }
+
         $cacheKey = strtolower(urlencode("{$latitude}-{$longitude}"));
         $this->results = $this->cacheRequest($cacheKey, [$latitude, $longitude], "reverse");
 
