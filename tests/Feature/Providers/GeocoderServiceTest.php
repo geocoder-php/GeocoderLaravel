@@ -353,3 +353,22 @@ it('does not collide reverse cache keys across coordinate signs', function () {
     expect($store->get($positiveKey)['key'])->toBe('45.473282-73.834721');
     Http::assertSentCount(2);
 });
+
+it('self-heals when a cached entry has a non-Collection value', function () {
+    $address = '1600 Pennsylvania Ave NW, Washington, DC 20500, USA';
+    $providerName = app('geocoder')->getProvider()->getName();
+    $cacheKey = Str::slug(strtolower(urlencode($address)));
+    $hashedCacheKey = sha1("{$providerName}-{$cacheKey}");
+    $store = app('cache')->store(config('geocoder.cache.store'));
+
+    $store->put($hashedCacheKey, [
+        'key' => $cacheKey,
+        'value' => 'corrupted-not-a-collection',
+    ], 999999);
+
+    $results = app('geocoder')->geocode($address)->get();
+
+    expect($results)->toBeInstanceOf(Collection::class);
+    expect($results->isNotEmpty())->toBeTrue();
+    expect($store->get($hashedCacheKey)['value'])->toBeInstanceOf(Collection::class);
+});
