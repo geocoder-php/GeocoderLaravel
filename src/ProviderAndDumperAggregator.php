@@ -341,13 +341,18 @@ class ProviderAndDumperAggregator
     }
 
     protected function preventCacheKeyHashCollision(
-        array $result,
+        mixed $result,
         string $hashedCacheKey,
         string $cacheKey,
         array $queryElements,
-        string $queryType
-    ) {
-        if ($result["key"] === $cacheKey) {
+        string $queryType,
+    ): Collection {
+        $isValid = is_array($result)
+            && isset($result["key"], $result["value"])
+            && $result["key"] === $cacheKey
+            && $result["value"] instanceof Collection;
+
+        if ($isValid) {
             return $result["value"];
         }
 
@@ -358,9 +363,13 @@ class ProviderAndDumperAggregator
         return $this->cacheRequest($cacheKey, $queryElements, $queryType);
     }
 
-    protected function removeEmptyCacheEntry(Collection $result, string $cacheKey)
+    protected function removeEmptyCacheEntry(mixed $result, string $cacheKey)
     {
-        if ($result && $result->isEmpty()) {
+        if (! $result instanceof Collection) {
+            return;
+        }
+
+        if ($result->isEmpty()) {
             app('cache')
                 ->store(config('geocoder.cache.store'))
                 ->forget($cacheKey);
