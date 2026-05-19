@@ -15,9 +15,11 @@ namespace Geocoder\Laravel\Providers;
 
 use Geocoder\Laravel\Facades\Geocoder;
 use Geocoder\Laravel\ProviderAndDumperAggregator;
+use Geocoder\Model\Address;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use PhpToken;
+use ReflectionClass;
 
 class GeocoderService extends ServiceProvider
 {
@@ -74,9 +76,15 @@ class GeocoderService extends ServiceProvider
 
     protected function discoverSerializableClasses(): array
     {
+        $vendorRoot = $this->vendorRoot();
+
+        if ($vendorRoot === null) {
+            return [Collection::class];
+        }
+
         return collect([
-                base_path("vendor/willdurand/geocoder/Model"),
-                base_path("vendor/geocoder-php/*/Model"),
+                "{$vendorRoot}/willdurand/geocoder/Model",
+                "{$vendorRoot}/geocoder-php/*/Model",
             ])
             ->flatMap(function (string $pattern): array {
                 return glob($pattern)
@@ -93,6 +101,35 @@ class GeocoderService extends ServiceProvider
             ->unique()
             ->values()
             ->toArray();
+    }
+
+    protected function vendorRoot(): ?string
+    {
+        $addressFile = (new ReflectionClass(Address::class))->getFileName();
+
+        if ($addressFile === false) {
+            return null;
+        }
+
+        $directory = dirname($addressFile);
+
+        while (
+            $directory !== ""
+            && $directory !== "/"
+            && basename($directory) !== "vendor"
+        ) {
+            $parent = dirname($directory);
+
+            if ($parent === $directory) {
+                return null;
+            }
+
+            $directory = $parent;
+        }
+
+        return basename($directory) === "vendor"
+            ? $directory
+            : null;
     }
 
     protected function classNamesFromVendorFile(string $file): array
