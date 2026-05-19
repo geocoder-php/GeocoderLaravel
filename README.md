@@ -112,6 +112,50 @@ You can disable caching on a query-by-query basis as needed, like so:
         ->get();
 ```
 
+#### ⚠️ Laravel 13 `cache.serializable_classes` — Important
+
+> Laravel 13 introduced [`cache.serializable_classes`](https://laravel.com/docs/13.x/upgrade#cache-serializable_classes-configuration) as a security hardening measure, defaulting to `false` to block deserialization of arbitrary PHP objects from the cache. This package stores `Collection`s of `Address` objects in the cache, which would silently break caching under the new default.
+
+To keep caching working out of the box without forcing you to maintain an
+allow-list as new providers are installed, **this package scans the installed
+Geocoder vendor directories at boot and merges every model class it finds into
+your application's `cache.serializable_classes` allow-list**. Whatever
+providers you have installed under `vendor/geocoder-php/*` are covered
+automatically — there's no curated list to go stale.
+
+**🔐 Security implication:** the package narrowly relaxes Laravel 13's hardening
+for the geocoder model classes installed in your `vendor/` directory. Other
+PHP objects you store in the cache remain blocked unless you explicitly allow
+them. The blast radius is bounded to classes you've already deliberately
+installed via composer.
+
+**Opting out.** Set `auto_register_serializable_classes` to `false` in your
+`config/geocoder.php`:
+
+```php
+    'cache' => [
+        // ...
+
+        'auto_register_serializable_classes' => false,
+    ],
+```
+
+When opted out, the package will not touch `cache.serializable_classes` at all.
+You then have two reasonable paths:
+
+1. **Manage the allow-list yourself.** Add the geocoder model classes to
+   `config/cache.php`'s `serializable_classes` directly. Caching keeps working
+   under your explicit control. Pick this if you want to audit exactly which
+   PHP objects your application allows to deserialize from cache.
+
+2. **Disable caching for geocoder queries.** Call
+   `app('geocoder')->doNotCache()` on each query, or set `cache.duration` to
+   `0` in `config/geocoder.php`. Pick this if you don't want to maintain the
+   allow-list and can absorb the per-request API cost.
+
+Doing neither under Laravel 13 could cause `__PHP_Incomplete_Class` corruption
+on cached results.
+
 ### Providers
 If you are upgrading and have previously published the geocoder config file, you
  need to add the `cache-duration` variable, otherwise cache will be disabled
