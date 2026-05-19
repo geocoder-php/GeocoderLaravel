@@ -372,3 +372,121 @@ it('self-heals when a cached entry has a non-Collection value', function () {
     expect($results->isNotEmpty())->toBeTrue();
     expect($store->get($hashedCacheKey)['value'])->toBeInstanceOf(Collection::class);
 });
+
+it('discovers and registers base Geocoder model classes from vendor', function () {
+    $registered = config('cache.serializable_classes');
+
+    expect($registered)->toBeArray();
+    expect($registered)->toContain(Collection::class);
+    expect($registered)->toContain(\Geocoder\Model\Address::class);
+    expect($registered)->toContain(\Geocoder\Model\AdminLevel::class);
+    expect($registered)->toContain(\Geocoder\Model\AdminLevelCollection::class);
+    expect($registered)->toContain(\Geocoder\Model\Bounds::class);
+    expect($registered)->toContain(\Geocoder\Model\Coordinates::class);
+    expect($registered)->toContain(\Geocoder\Model\Country::class);
+});
+
+it('discovers and registers installed provider model classes from vendor', function () {
+    $registered = config('cache.serializable_classes');
+
+    expect($registered)->toContain(\Geocoder\Provider\Nominatim\Model\NominatimAddress::class);
+});
+
+it('does not register provider classes whose package is not installed', function () {
+    $registered = config('cache.serializable_classes');
+
+    expect(class_exists('Geocoder\\Provider\\BingMaps\\Model\\BingAddress'))->toBeFalse();
+    expect($registered)->not->toContain('Geocoder\\Provider\\BingMaps\\Model\\BingAddress');
+});
+
+it('produces no duplicate entries in cache.serializable_classes', function () {
+    $registered = config('cache.serializable_classes');
+
+    expect($registered)->toBe(array_values(array_unique($registered)));
+});
+
+it('preserves pre-existing cache.serializable_classes entries when merging', function () {
+    config(['cache.serializable_classes' => [\stdClass::class]]);
+
+    $provider = new GeocoderService(app());
+    $method = new \ReflectionMethod($provider, 'registerSerializableClasses');
+    $method->setAccessible(true);
+    $method->invoke($provider);
+
+    $registered = config('cache.serializable_classes');
+    expect($registered)->toContain(\stdClass::class);
+    expect($registered)->toContain(Collection::class);
+});
+
+it('coerces a false cache.serializable_classes (Laravel 13 default) to an array', function () {
+    config(['cache.serializable_classes' => false]);
+
+    $provider = new GeocoderService(app());
+    $method = new \ReflectionMethod($provider, 'registerSerializableClasses');
+    $method->setAccessible(true);
+    $method->invoke($provider);
+
+    $registered = config('cache.serializable_classes');
+    expect($registered)->toBeArray();
+    expect($registered)->toContain(Collection::class);
+});
+
+it('skips auto-registration when geocoder.cache.auto_register_serializable_classes is false', function () {
+    config([
+        'geocoder.cache.auto_register_serializable_classes' => false,
+        'cache.serializable_classes' => false,
+    ]);
+
+    $provider = new GeocoderService(app());
+    $method = new \ReflectionMethod($provider, 'registerSerializableClasses');
+    $method->setAccessible(true);
+    $method->invoke($provider);
+
+    expect(config('cache.serializable_classes'))->toBeFalse();
+});
+
+it('extracts every class from a multi-class file', function () {
+    $provider = new GeocoderService(app());
+    $method = new \ReflectionMethod($provider, 'classNamesFromVendorFile');
+    $method->setAccessible(true);
+
+    $result = $method->invoke(
+        $provider,
+        __DIR__ . '/../../Support/Fixtures/MultipleClasses.php'
+    );
+
+    expect($result)->toBe([
+        'Geocoder\\Laravel\\Tests\\Support\\Fixtures\\Multi\\First',
+        'Geocoder\\Laravel\\Tests\\Support\\Fixtures\\Multi\\Second',
+    ]);
+});
+
+it('handles bracketed namespace syntax', function () {
+    $provider = new GeocoderService(app());
+    $method = new \ReflectionMethod($provider, 'classNamesFromVendorFile');
+    $method->setAccessible(true);
+
+    $result = $method->invoke(
+        $provider,
+        __DIR__ . '/../../Support/Fixtures/BracketedNamespace.php'
+    );
+
+    expect($result)->toBe([
+        'Geocoder\\Laravel\\Tests\\Support\\Fixtures\\Bracketed\\InsideBrackets',
+    ]);
+});
+
+it('skips anonymous classes and string-literal class declarations', function () {
+    $provider = new GeocoderService(app());
+    $method = new \ReflectionMethod($provider, 'classNamesFromVendorFile');
+    $method->setAccessible(true);
+
+    $result = $method->invoke(
+        $provider,
+        __DIR__ . '/../../Support/Fixtures/AnonymousAndStringLiteral.php'
+    );
+
+    expect($result)->toBe([
+        'Geocoder\\Laravel\\Tests\\Support\\Fixtures\\Tricky\\Real',
+    ]);
+});

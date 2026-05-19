@@ -38,6 +38,28 @@ return [
         */
 
         'duration' => 9999999,
+
+        /*
+        |-----------------------------------------------------------------------
+        | Auto-Register Serializable Classes (Laravel 13+)
+        |-----------------------------------------------------------------------
+        |
+        | Laravel 13 hardens cache deserialization via `cache.serializable_classes`,
+        | which defaults to `false` and blocks all object deserialization. With
+        | this option enabled (the default), the package scans the installed
+        | Geocoder vendor directories at boot and merges every model class it
+        | finds into `cache.serializable_classes`, so caching keeps working with
+        | any provider you have installed.
+        |
+        | Set to `false` to opt out entirely — the package will not touch
+        | `cache.serializable_classes`, and you take responsibility for managing
+        | the allow-list yourself (or for disabling caching via `doNotCache()`).
+        |
+        | Default: true
+        |
+        */
+
+        'auto_register_serializable_classes' => true,
     ],
 
     /*
