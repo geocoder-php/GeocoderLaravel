@@ -56,11 +56,21 @@ class GeocoderService extends ServiceProvider
             return;
         }
 
+        $existing = config("cache.serializable_classes");
+
+        // Laravel 13 treats a `null` `serializable_classes` as "enforcement
+        // disabled" — any class may be unserialized from the cache. Converting
+        // it to an array here would silently switch the entire application into
+        // strict allow-list mode, breaking cache reads for classes outside this
+        // package. When enforcement is off there is nothing to register. See #210.
+        if ($existing === null) {
+            return;
+        }
+
         if (self::$discoveredSerializableClasses === []) {
             self::$discoveredSerializableClasses = $this->discoverSerializableClasses();
         }
 
-        $existing = config("cache.serializable_classes");
         $existing = is_array($existing)
             ? $existing
             : [];

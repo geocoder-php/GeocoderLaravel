@@ -23,5 +23,9 @@ trait CreatesApplication
             'serialize' => false,
         ]);
         $app['config']->set('geocoder.cache.store', 'geocode');
+        // Mirror the Laravel 13 default so discovery tests exercise the real
+        // hardened starting point (`false`) rather than the implicit null
+        // Testbench would otherwise leave in place.
+        $app['config']->set('cache.serializable_classes', false);
     }
 }

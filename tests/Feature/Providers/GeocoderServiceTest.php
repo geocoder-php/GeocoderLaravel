@@ -431,6 +431,17 @@ it('coerces a false cache.serializable_classes (Laravel 13 default) to an array'
     expect($registered)->toContain(Collection::class);
 });
 
+it('leaves a null cache.serializable_classes untouched (Laravel 13 enforcement disabled)', function () {
+    config(['cache.serializable_classes' => null]);
+
+    $provider = new GeocoderService(app());
+    $method = new \ReflectionMethod($provider, 'registerSerializableClasses');
+    $method->setAccessible(true);
+    $method->invoke($provider);
+
+    expect(config('cache.serializable_classes'))->toBeNull();
+});
+
 it('skips auto-registration when geocoder.cache.auto_register_serializable_classes is false', function () {
     config([
         'geocoder.cache.auto_register_serializable_classes' => false,
