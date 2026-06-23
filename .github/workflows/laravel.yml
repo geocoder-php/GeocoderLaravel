@@ -68,3 +68,29 @@ jobs:
         fail_ci_if_error: false
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  security-audit:
+
+    runs-on: ubuntu-latest
+
+    name: Security Audit
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+
+    # Resolve the latest versions allowed by composer.json (matching how
+    # consumers and CI install this package), then fail the build on any known
+    # vulnerability. --abandoned=ignore keeps the gate scoped to security
+    # advisories rather than the unrelated abandoned-package notice.
+    - name: Install Dependencies
+      run: composer update --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Audit dependencies for known vulnerabilities
+      run: composer audit --no-ansi --no-interaction --abandoned=ignore
